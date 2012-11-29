@@ -1,0 +1,118 @@
+<!DOCTYPE html> 
+<html>
+<head>
+  <title>Code Change Viewer design</title>
+  <style>
+	body {
+		font-family: verdana, arial, helvetica, sans-serif, Tahoma;	
+		font-size: 14px;
+		margin: 16px;
+	}
+
+	sup.codeSup {
+		font-style: italic;
+		color: #aa0000;
+	}	
+	
+	div.ccvTitle {
+		font-size: 22px;
+		color: #333;
+		text-align: center;
+		font-weight: bold;
+		margin-bottom: 24px;
+	}
+	
+	span.ccvName {
+		color: #aa0000;	
+	}
+
+	div.footer {
+		text-align: right;
+		margin-top: 40px;
+		font-style: italic;
+	}	
+	
+	.hiddenElement {
+		display: none;	
+	}
+		
+	
+	/**
+	 * section, subSection
+	 */		
+	div.section {
+		margin-bottom: 48px;
+	}
+
+	div.section .subSection {
+		margin-bottom: 30px;
+	}
+	
+	div.section .sectionTitle {
+		font-size: 15px;
+		font-weight: bold;
+		margin-bottom: 4px;
+	}
+	
+	div.section .subSection .subSectionTitle {
+		font-size: 14px;
+		margin-bottom: 4px;
+	}	
+	
+	div.section .sectionNumber,
+	div.section .subSection  .subSectionNumber {
+		color: #aa0000;
+		font-weight: bold;
+		padding-right: 4px;
+	}
+	
+	div.section div.content {
+		font-size: 14px;
+		margin-left: 24px;
+	}
+
+	div.section div.content .imgDesignGraph {
+		width: 1050px;
+		border: 1px solid #ddd;
+		padding: 16px;
+		margin-bottom: 58px;
+	}
+  </style>	
+</head>
+
+<body>
+<div class="ccvTitle"><a name="CcvManual">Code<sup class="codeSup">cvs/svn</sup> Change Viewer(<span class="ccvName">CCV</span>) Design</a></div>
+
+<div class="design section">
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">I </span>Overall design graph</div>
+    <div class="content">
+      <img class="imgDesignGraph" src="img/manual/ccv.design.graph.png"/>
+    </div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">II </span>Generate.report.runtime layers graph</div>
+    <div class="content">
+      <img class="imgDesignGraph" src="img/manual/ccv.design.graph.layer.png"/>
+    </div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">III </span>Front-end viewer graph</div>
+    <div class="content">
+      <img class="imgDesignGraph" src="img/manual/clientview.layer.png"/>
+    </div>
+  </div>
+</div><!--section-->
+
+<div class="footer section>">
+by: lilongen(lilongen@163.com) last update: 08/16/2011
+</div>
+
+</body>
+</html>
+
+<script lanaguage="javascript">
+
+</script>

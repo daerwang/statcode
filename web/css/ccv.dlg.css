@@ -1,0 +1,67 @@
+.ccv div.dlgs {
+}
+
+.ccv .dlgs .dlgEdit,
+.ccv .dlgs .dlgProgress {
+	display: none;	
+}
+
+.dlgEdit textarea.editor {
+}
+
+.dlgEdit div.elements4New {
+	display: none;
+	padding-top: 8px;
+	float: right;
+}
+
+.dlgEdit div.errMsg {
+    background-color: #FBF594;
+    border: 1px solid #CCCCCC;
+    color: #AA0000;
+    display: none;
+    font-size: 18px;
+    height: 40px;
+    left: 130px;
+    line-height: 40px;
+    position: absolute;
+    text-align: center;
+    top: 240px;
+    width: 480px;
+}
+
+.dlgEdit div.elements4New .itemLabel{
+	float: right;
+	padding-top: 4px;
+	padding-right: 6px;
+}
+
+.dlgEdit div.elements4New input.xmlFileName,
+.dlgEdit div.elements4New input.xmlFilePwd {
+	padding: 2px 4px;
+	height: 18px;
+	border: 1px solid #ccc;
+	color: #aa0000;
+	float: right;
+	border-radius: 6px;
+}
+
+.dlgEdit .hint {
+	font-size: 12px;
+	color: #777;
+}
+
+div.dlgProgress div.progress {
+  	border: solid 1px #ccc;
+  	width: 620px;
+  	height: 300px;
+  	overflow-y: auto;
+  	overflow-x: hidden;
+  	font-size: 11px;
+}
+
+div.dlgProgress div.progress .queryBatchTimesNo {
+    color: #aa0000;
+    font-weight: bold;
+    font-style: italic;    
+}

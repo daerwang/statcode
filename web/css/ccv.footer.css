@@ -1,0 +1,14 @@
+.ccv .footer {
+	padding: 2px 0 0 0;
+	text-align: right;
+	clear: both;
+}
+
+.ccv .footer .author{
+    color: #000;
+    font-style: italic;
+}
+
+.ccv .footer .author .mail {
+	color: #777;	
+}

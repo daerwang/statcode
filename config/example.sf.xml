@@ -1,0 +1,83 @@
+<configs>
+  <!-- cvs co :pserver@winscp.cvs.sourceforge.net/cvsroot/winscp winscp3 --> 
+  <module>
+    <id>winscp.winscp3</id>
+    <type>cvs</type>
+    <access_mode>pserver</access_mode>
+    <module>winscp3</module>
+    <server>winscp.cvs.sourceforge.net</server>
+    <repository>/cvsroot/winscp</repository>
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module>
+  
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk/Plugins -->
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches/Plugins -->
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags/Plugins -->
+  <module>
+    <id>winmerge.Plugins</id>
+    <type>svn</type>
+    <access_mode>https</access_mode>
+    <module>Plugins</module>
+    <server>winmerge.svn.sourceforge.net</server>
+    <repository>/svnroot/winmerge</repository>
+    <trunk_directory>/svnroot/winmerge/trunk</trunk_directory>
+    <branch_directory>/svnroot/winmerge/branches</branch_directory>   
+    <tag_directory>/svnroot/winmerge/tags</tag_directory>     
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module>
+
+  <!-- cvs co :pserver@filezilla.cvs.sourceforge.net/cvsroot/filezilla FileZilla --> 
+  <module>
+    <id>filezilla.FileZilla</id>
+    <type>cvs</type>
+    <access_mode>pserver</access_mode>
+    <module>FileZilla</module>
+    <server>filezilla.cvs.sourceforge.net</server>
+    <repository>/cvsroot/filezilla</repository>
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module>    
+
+  <!-- cvs co :pserver@winscp.cvs.sourceforge.net/cvsroot/winscp . --> 
+  <module>
+    <id>winscp.all</id>
+    <type>cvs</type>
+    <access_mode>pserver</access_mode>
+    <module>*</module>
+    <server>winscp.cvs.sourceforge.net</server>
+    <repository>/cvsroot/winscp</repository>
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module>
+
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk -->
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches -->
+  <!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags -->
+  <module>
+    <id>winmerge.all</id>
+    <type>svn</type>
+    <access_mode>https</access_mode>
+    <module>*</module>
+    <server>winmerge.svn.sourceforge.net</server>
+    <repository>/svnroot/winmerge</repository>
+    <trunk_directory>/svnroot/winmerge/trunk</trunk_directory>
+    <branch_directory>/svnroot/winmerge/branches</branch_directory>   
+    <tag_directory>/svnroot/winmerge/tags</tag_directory>     
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module> 
+  
+  <!-- cvs co :pserver@filezilla.cvs.sourceforge.net/cvsroot/filezilla . --> 
+  <module>
+    <id>FileZilla.All</id>
+    <type>cvs</type>
+    <access_mode>pserver</access_mode>
+    <module>*</module>
+    <server>filezilla.cvs.sourceforge.net</server>
+    <repository>/cvsroot/filezilla</repository>
+    <account_id>anonymous</account_id>
+    <account_pw></account_pw>
+  </module>   
+</configs>

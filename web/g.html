@@ -1,0 +1,297 @@
+<!DOCTYPE html> 
+<HTML>
+<HEAD>
+<TITLE>CodeChangeViewer Graph Report</TITLE>
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.common.core.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.common.tooltips.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.common.context.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.hbar.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.line.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.pie.js"></script>
+
+<style type="text/css">
+body {
+	font-family: Arial, Helvetica, Tahoma, sans-serif;
+	font-size: 13px;
+}
+
+div.title {
+	font-size: 18px;
+	font-weight: bold;
+	margin-bottom: 30px;
+	color: #aa0000;
+}
+
+.footer {
+	color: #aa0000;
+	font-style: italic;
+}
+
+canvas {
+	margin-bottom: 20px;	
+}
+
+canvas#UserLOC,
+canvas#ModuleAccuLOC,
+canvas#ModuleDayLOC,
+canvas#UserDayLOC {
+	display: block;	
+}
+
+canvas#UserFOC,
+canvas#UserRevsCnt {
+	display: inline-block;	
+}
+
+
+body, div, select, button {
+    font-family: Arial, Helvetica, Tahoma, sans-serif;
+}
+</style>
+</HEAD>
+<BODY>
+	<div class="title">User, Module's LOC, accumulative LOC, day LOC<br/>and FOC, revision amount distribution graphs</div>
+	<canvas id="UserLOC" width="700" height="450">[No canvas support]</canvas> 
+	<canvas id="UserFOC" width="350" height="380">[No canvas support]</canvas>
+	<canvas id="UserRevsCnt" width="350" height="380">[No canvas support]</canvas>
+	<canvas id="UserAccuLOC" width="1000" height="450">[No canvas support]</canvas> 
+	<canvas id="ModuleAccuLOC" width="1000" height="450">[No canvas support]</canvas> 
+	<canvas id="ModuleDayLOC" width="1000" height="450">[No canvas support]</canvas> 
+	<canvas id="UserDayLOC" width="1000" height="450">[No canvas support]</canvas> 
+	<a class="footer" href="http://sourceforge.net/projects/cvschangeviewer/" target="blank">CCV (Code Change Viewer)</a>
+</BODY>
+</HTML>
+
+<script type="text/javascript">
+var pms = {};
+var gd = null;
+
+var ccvGD = {
+	COLORS: [
+		'#faebd7', 
+		'#7fffd4', 
+		'#f5f5dc', 
+		'#deb887', 
+		'#5f9ea0', 
+		'#7fff00', 
+		'#a52a2a', 
+		'#d2691e', 
+		'#008b8b', 
+		'#006400', 
+		'#bdb76b', 
+		'#8fbc8b', 
+		'#ffd700', 
+		'#808080', 
+		'#20b2aa'
+	],
+	
+	jqObjs: {
+		UserLOC: null,
+		UserFOC: null,
+		UserRevsCnt: null,
+		ModuleAccuLOC: null,
+		ModuleDayLOC: null,
+		UserDayLOC: null
+	},
+	
+	drawGraph: function() {
+		ccvGD.initGraphObjs();
+		ccvGD.adjustGraphSize();
+		
+		//user LOC
+		var gbarUserLOC = new RGraph.HBar('UserLOC', gd.User.LOC);
+		gbarUserLOC.Set('chart.title', 'User LOC(line of change)');
+		gbarUserLOC.Set('chart.labels', gd.UserNames);
+		gbarUserLOC.Set('chart.tooltips', gd.User.LOC_TOOLTIP);
+		gbarUserLOC.Set('chart.tooltips.event', 'onmousemove');
+		gbarUserLOC.Set('chart.colors', ['#7FFFD4']);
+		gbarUserLOC.Set('chart.text.size', 8);
+		gbarUserLOC.Draw();
+		
+		//user FOC
+		var gbarUserFOC = new RGraph.HBar('UserFOC', gd.User.FOC);
+		gbarUserFOC.Set('chart.title', 'User FOC(file of change)');
+		gbarUserFOC.Set('chart.labels', gd.UserNames);
+		gbarUserFOC.Set('chart.tooltips', gd.User.FOC_TOOLTIP);
+		gbarUserFOC.Set('chart.tooltips.event', 'onmousemove');
+		gbarUserFOC.Set('chart.colors', ['#F0F8FF']);
+		gbarUserFOC.Set('chart.text.size', 8);
+		gbarUserFOC.Draw();	
+		
+		//user RevsCnt
+		var gbarUserRevsCnt = new RGraph.HBar('UserRevsCnt', gd.User.RevsCnt);
+		gbarUserRevsCnt.Set('chart.title', 'User Revisions Amount');
+		gbarUserRevsCnt.Set('chart.labels', gd.UserNames);
+		gbarUserRevsCnt.Set('chart.tooltips', gd.User.RevsCnt_TOOLTIP);
+		gbarUserRevsCnt.Set('chart.tooltips.event', 'onmousemove');
+		gbarUserRevsCnt.Set('chart.colors', ['#FAEBD7']);
+		gbarUserRevsCnt.Set('chart.text.size', 8);
+		gbarUserRevsCnt.Draw();		
+		
+
+		var xaxisDates = this.extractSuitableDates();
+		var yAxisLabelAngel = 60;
+		
+		//user AccuLOC
+		var glineUserAccuLOC = new RGraph.Line('UserAccuLOC', gd.User.AccuLOC);
+		glineUserAccuLOC.Set('chart.title', 'User date by date accumulative LOC');
+		glineUserAccuLOC.Set('chart.labels', xaxisDates);
+		glineUserAccuLOC.Set('chart.tooltips', gd.Dates);
+		glineUserAccuLOC.Set('chart.background.grid', true);
+		glineUserAccuLOC.Set('chart.colors', this.COLORS);
+		glineUserAccuLOC.Set('chart.gutter.left', 100);
+		glineUserAccuLOC.Set('chart.gutter.top', 25);
+		glineUserAccuLOC.Set('chart.gutter.right', 100);
+		glineUserAccuLOC.Set('chart.gutter.bottom', 100);
+		glineUserAccuLOC.Set('chart.text.angle', yAxisLabelAngel);
+		glineUserAccuLOC.Set('chart.key', gd.UserNames);
+        glineUserAccuLOC.Set('chart.key.position.x', 1);
+        glineUserAccuLOC.Set('chart.key.position.y', 1);
+        glineUserAccuLOC.Set('chart.yaxispos', "right");
+		glineUserAccuLOC.Set('chart.text.size', 8);
+		glineUserAccuLOC.Draw();	
+		
+		//module AccuLOC
+		var glineModuleAccuLOC = new RGraph.Line('ModuleAccuLOC', gd.Module.AccuLOC);
+		glineModuleAccuLOC.Set('chart.title', 'Module date by date accumulative LOC');
+		glineModuleAccuLOC.Set('chart.labels', xaxisDates);
+		glineModuleAccuLOC.Set('chart.tooltips', gd.Dates);
+		glineModuleAccuLOC.Set('chart.background.grid', true);
+		glineModuleAccuLOC.Set('chart.colors', ["#aa0000"]);
+		glineModuleAccuLOC.Set('chart.gutter.left', 100);
+		glineModuleAccuLOC.Set('chart.gutter.top', 25);
+		glineModuleAccuLOC.Set('chart.gutter.right', 100);
+		glineModuleAccuLOC.Set('chart.gutter.bottom', 100);
+		glineModuleAccuLOC.Set('chart.text.angle', yAxisLabelAngel);
+		glineModuleAccuLOC.Set('chart.key', ["Whole module accumulative LOC"]);
+        glineModuleAccuLOC.Set('chart.key.position.x', 1);
+        glineModuleAccuLOC.Set('chart.key.position.y', 1);
+        glineModuleAccuLOC.Set('chart.yaxispos', "right");		
+		glineModuleAccuLOC.Set('chart.text.size', 8);
+		glineModuleAccuLOC.Draw();	
+		
+		//module day LOC line
+		var glineModuleDayLOC = new RGraph.Line('ModuleDayLOC', gd.Module.DayLOC);
+		glineModuleDayLOC.Set('chart.title', 'Module every day LOC');
+		glineModuleDayLOC.Set('chart.labels', xaxisDates);
+		glineModuleDayLOC.Set('chart.tooltips', gd.Dates);
+		glineModuleDayLOC.Set('chart.background.grid', true);
+		glineModuleDayLOC.Set('chart.colors', ["#ffa500"]);
+		glineModuleDayLOC.Set('chart.gutter.left', 100);
+		glineModuleDayLOC.Set('chart.gutter.top', 25);
+		glineModuleDayLOC.Set('chart.gutter.right', 100);
+		glineModuleDayLOC.Set('chart.gutter.bottom', 100);
+		glineModuleDayLOC.Set('chart.text.angle', yAxisLabelAngel);
+		glineModuleDayLOC.Set('chart.key', ["Module every day LOC"]);
+        glineModuleDayLOC.Set('chart.key.position.x', 1);
+        glineModuleDayLOC.Set('chart.key.position.y', 1);
+        glineModuleDayLOC.Set('chart.yaxispos', "right");			
+		glineModuleDayLOC.Set('chart.text.size', 8);
+		glineModuleDayLOC.Draw();
+
+		//user day LOC line
+		var glineUserDayLOC = new RGraph.Line('UserDayLOC', gd.User.DayLOC);
+		glineUserDayLOC.Set('chart.title', 'User every day LOC');
+		glineUserDayLOC.Set('chart.labels', xaxisDates);
+		glineUserDayLOC.Set('chart.tooltips', gd.Dates);
+		glineUserDayLOC.Set('chart.background.grid', true);
+		glineUserDayLOC.Set('chart.colors', this.COLORS);
+		glineUserDayLOC.Set('chart.gutter.left', 100);
+		glineUserDayLOC.Set('chart.gutter.top', 25);
+		glineUserDayLOC.Set('chart.gutter.right', 100);
+		glineUserDayLOC.Set('chart.gutter.bottom', 100);
+		glineUserDayLOC.Set('chart.text.angle', yAxisLabelAngel);
+		glineUserDayLOC.Set('chart.key', gd.UserNames);
+        glineUserDayLOC.Set('chart.key.position.x', 1);
+        glineUserDayLOC.Set('chart.key.position.y', 1);
+        glineUserDayLOC.Set('chart.yaxispos', "right");			
+		glineUserDayLOC.Set('chart.text.size', 8);
+		glineUserDayLOC.Draw();		
+				
+	},
+	
+	extractSuitableDates: function () {
+		if (gd.Dates.length <= 30) {
+			return gd.Dates;
+		}
+		
+		var suitableDates = [];
+		var modNum = Math.floor(gd.Dates.length / 20);
+		for (var i = 0; i < gd.Dates.length; i++) {
+			if (i == 0 || i == gd.Dates.length - 1 || i % modNum == 0) {
+				suitableDates.push(gd.Dates[i]);
+			}
+		}
+		
+		return suitableDates;
+	},
+	
+	initUserSelector: function(arrUsers) {
+	    var cnt = arrUsers.length;
+	    for (var i = 0; i < cnt; i++) {
+	        jqUserSelector.append('<option>' + arrUsers[i] + '</option>');
+	    }
+	    
+	    var size = cnt <= 10 ? cnt : 10;
+	    jqUserSelector.attr('size', size);
+	},
+	
+	getParams: function() {
+		var url =  window.location.href;
+		var qString = url.substring(url.indexOf('?', 0) + 1);
+		
+		var getPM = function(name) {
+			var pattern = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var mat = qString.match(pattern);
+			if (mat != null) {
+			    return unescape(mat[2]);
+			}
+			
+			return '';
+		};
+		
+		pms.dataFile = getPM('df');
+		var nodes = pms.dataFile.split('/');
+		pms.date = nodes[2];
+		pms.time = nodes[3];
+		pms.rev = nodes[4];
+		pms.moduleId = nodes[5];
+	},
+	
+	initGraphObjs: function() {
+		for (var key in ccvGD.jqObjs) {
+			ccvGD.jqObjs[key] = jQuery("canvas#" + key);
+		}
+	},
+	
+	adjustGraphSize: function() {
+		var userCnt = gd.UserNames.length;
+		var gH = userCnt * 18 + 60;
+		ccvGD.jqObjs.UserLOC.attr("height", gH);
+		ccvGD.jqObjs.UserFOC.attr("height", gH);
+		ccvGD.jqObjs.UserRevsCnt.attr("height", gH);		
+	}
+};
+
+jQuery(document).ready(function() {
+	ccvGD.getParams();
+	
+	jQuery.ajax({
+		url: pms.dataFile,
+		type: "GET",
+		dataType: "json",
+		
+		success: function(ret){
+			gd = ret;
+			ccvGD.drawGraph();
+		},
+		
+		error: function() {
+            alert('Can not get graph data!');    		    
+		}
+	}); 	
+});
+
+</script>

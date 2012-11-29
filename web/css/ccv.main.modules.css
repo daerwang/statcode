@@ -1,0 +1,245 @@
+.ccv div.main {
+    clear: both;
+}
+
+.ccv div.main div.cfgModules {
+    width: 460px;
+    height: 380px;
+    float: left;
+    border: 4px solid #ddd;
+    border-radius: 6px;
+}
+
+.ccv div.main div.cfgModules .anchor {
+    float: left;
+    width: 25px;
+}
+
+.ccv div.main div.cfgModules .item {
+    float: left;
+    width: 352px;
+}
+
+.ccv div.main div.cfgModules div.cfgs {
+    overflow: none;
+    height: 40px;
+    line-height: 40px;
+    background-color: #ddd;
+    overflow: hidden;
+}
+
+.ccv div.main div.cfgModules div.cfgs .left{
+    width: 30px;
+    float: left; 
+    text-align: left;
+    height: 38px;
+    line-height: 38px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .left .allAnchor{
+    cursor: pointer;
+    margin-left: 4px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle{
+    float: left;
+    position: relative;
+    height: 38px;
+    line-height: 38px;    
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle .itemLable {
+	font-weight: bold;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle select.cfgFiles{
+    width: 180px;
+    height: 22px;
+    line-height: 22px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle select.cfgFiles option{
+    padding: 2px 4px;
+}
+
+.ie .ccv div.main div.cfgModules div.cfgs .middle select.cfgFiles{
+    margin-top: 0px !important;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle .cfgOperatorContainer {
+	display: inline-block;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle .editCfg {
+	margin-left: 6px;
+	margin-right: 4px;
+	background-image: url(../img/edit.png);
+	margin-bottom: -9px;
+}
+
+.ie7 .ccv div.main div.cfgModules div.cfgs .middle .editCfg,
+.ie6 .ccv div.main div.cfgModules div.cfgs .middle .editCfg {
+	margin-bottom: -3px;
+}
+.ie7 .ccv div.main div.cfgModules div.cfgs .middle .deleteCfg,
+.ie6 .ccv div.main div.cfgModules div.cfgs .middle .deleteCfg {
+	margin-bottom: -2px;
+}
+.ie7 .ccv div.main div.cfgModules div.cfgs .middle .newCfg,
+.ie6 .ccv div.main div.cfgModules div.cfgs .middle .newCfg {
+	margin-bottom: -3px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle .editCfg:hover {
+	margin-bottom: -6px;
+}
+.ccv div.main div.cfgModules div.cfgs .middle .deleteCfg {
+	background-image: url(../img/delete.png);
+	margin-bottom: -8px;
+}
+.ccv div.main div.cfgModules div.cfgs .middle .deleteCfg:hover {
+	margin-bottom: -5px;
+}
+.ccv div.main div.cfgModules div.cfgs .middle .newCfg {
+	margin-left: 16px;
+	background-image: url(../img/new.png);
+	margin-bottom: -9px;
+}
+.ccv div.main div.cfgModules div.cfgs .middle .newCfg:hover {
+	margin-bottom: -6px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .middle .editCfg, 
+.ccv div.main div.cfgModules div.cfgs .middle .deleteCfg,
+.ccv div.main div.cfgModules div.cfgs .middle .newCfg {
+	width: 24px;
+	height: 24px;
+	display: inline-block;
+	cursor: pointer;
+}
+
+.ccv input.flatInput {
+    background-color: #fff;
+    border: 1px solid #ccc;	
+}
+
+.ccv div.main div.cfgModules div.cfgs .right {
+    float: right;
+    height: 38px;
+    line-height: 38px;
+    padding-right: 16px;
+}
+
+.ccv div.main div.cfgModules div.cfgs .right .reportOptions {
+	text-decoration: underline;
+}
+
+.ccv div.main div.cfgModules div.modules {
+	width: 100%;
+    height: 336px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    position: relative;
+}
+
+.ccv div.main div.cfgModules div.modules .evenBK {
+    background-color: #ffffff;
+}
+
+.ccv div.main div.cfgModules div.modules .oddBK {
+    background-color: #f5f5f5;
+}
+
+.ccv div.main div.cfgModules div.modules .bkHover {
+    background-color: #e6e6e6 !important;
+}
+
+.ccv div.main div.cfgModules div.modules .bkError {
+    background-color: #FFB6C1 !important;
+}
+
+.ccv div.main div.cfgModules div.modules .bkChecked {
+    background-color: #ebf1de !important;
+}
+
+.ccv div.main div.cfgModules div.modules div.module {
+    border-bottom: 1px solid #e0e0e0;
+    height: 46px;
+    cursor: pointer;
+    padding-top: 3px;
+    position: relative;
+}
+
+.ccv div.main div.cfgModules div.modules div.svn {
+    height: 75px !Important;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .anchor {
+    width: 30px;    
+    text-align: right;
+}
+
+.ccv div.main div.cfgModules div.modules .module input {
+	cursor: pointer;
+	margin-right: 4px;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo {
+    border-left: 1px solid #dfdfdf; 
+	position: absolute;
+	top: 1px;
+	left: 32px;
+	padding-left: 6px;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleId {
+    font-weight: bold;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .errSetting {
+    background-color: #FF0000;
+    color: #FFFFFF;
+    font-style: italic;
+    font-weight: bold;
+    padding: 0 6px;
+    margin-right: 8px;
+    -moz-user-select: none;
+}
+
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleType {
+	font-style: italic;
+	color: #777;	
+	font-size: 11px;
+	-webkit-text-size-adjust: none;
+}
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleIndicator {
+	color: #ff0000;
+	font-style: italic;
+	font-size: 11px;
+	-webkit-text-size-adjust: none;
+}
+
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .typeSVN {
+	color: #00cc00 !important;	
+}
+
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleDetails{
+	overflow: hidden;
+	white-space: nowrap;	
+    color: #999;
+    font-size: 11px;
+    -webkit-text-size-adjust: none;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleDetails .svnRevBase {
+    width: 42px;
+}
+
+.ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleDetails .moduleURI {
+	word-break: break-all;
+	overflow: hidden;
+	white-space: nowrap;
+}

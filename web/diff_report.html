@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+<TITLE>CodeChangeViewer Report From Log</TITLE>
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+<script type="text/javascript" src="/ccv/js/report.js"></script>
+<script type="text/javascript" src="/ccv/wz_tooltip/wz_tooltip.js"></script>
+<link rel="stylesheet" href="/ccv/css/report.css" type="text/css">
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+</HEAD>
+
+<BODY class="#BODY_CLS#">
+<div class="ccvReport">	
+<table class="headSignet">
+<tr>
+  <td class="Abbreviation">Abbreviation: FOC = files of changed, LOC = lines of changed, CIS = check-in times</td>
+  <td align="right"><a target="_blank" href="#PLAIN_REPORT#" class="ftUline">Plain report(csv) of all modules</a></td>
+</tr>
+</table>    
+
+<div class="headInfo">
+  <div class="ccvRunParams">
+    <span class="ftItalic">Module:</span> <span class="ftHighlighted">#MODULE#</span>
+    <span class="ftBlack5 ftItalic">[#MODULE_URI#]</span>
+	<br/>
+    <span class="ftItalic">Revision1:</span> <span class="ftHighlighted">#REVISION1#</span>&nbsp;&nbsp;
+	<span class="ftItalic">Revision2:</span> <span class="ftHighlighted">#REVISION2#</span>&nbsp;&nbsp;
+	<span class="ftItalic">Date1:</span> <span class="ftHighlighted">#DATE1#</span>&nbsp;&nbsp;
+	<span class="ftItalic">Date2:</span> <span class="ftHighlighted">#DATE2#</span>&nbsp;&nbsp;
+  </div>
+  <div class="error">#ERROR#</div>	
+  <div class="phasedInfoTitle">
+	<span class="ftBold" title="files of change">FOC: #FOC#</span>&nbsp;&nbsp;&nbsp;&nbsp;
+	<span class="ftBold" title="lines of change">LOC: #LOC#</span>			
+	<span class="fwspan w1"></span>
+	<a target="_blank" class="ftUline ftItalic ftBlack0" href="#DIFF_FILE#">diff file</a>
+	<!--
+	<span class="fwspan w1"></span>
+	<a target="_blank" class="ftUline ftItalic ftBlack0" href="#MODULE_PLAIN_REPORT#">plain report(csv)</a>
+	<span class="fwspan w1"></span>
+	<a class="graphEntry ftItalic ftUline" target="_blank" href="/ccv/#GRAPH_HTML#?df=#GRPAH_ENTRY_PARAMS#">Graph reports</a>
+	-->
+	<span class="fwspan w1"></span>
+	<span class="viewSwitchEntry">Switch view mode to: <a href='#OTHER_URL#' class="viewModeController">#OTHER_NAME#</a></span>
+  </div>
+</div>
+
+<div class="list df">
+<ul id="dfTree" class="exclUL">
+#NODE#
+</ul>
+</div>
+
+<div class="footerInfo">
+  <a target="_blank" href="http://sourceforge.net/projects/ccv">CodeChangeViewer</a>
+  <br>
+  http://sourceforge.net/projects/ccv	
+</div>
+
+</div>
+</body>
+</html>
+
+
+<script type="text/javascript">
+var GV = #GV#;
+
+jQuery(document).ready(function(){
+	if (/SVN_LOG/.test(GV.ReportType)) {
+		GV.InPathPrefix4CoPathsLen = GV.InPathPrefix4CoPaths.length - 1;	
+	}
+	tt_Init();
+	
+	var jqHeadInfo = jQuery(".ccvReport .headInfo");
+	var jqs = {
+		graphEntry: jqHeadInfo.find("a.graphEntry"),
+		filesInfoEntry: jqHeadInfo.find("a.srcDetailsEntry"),
+		error: jqHeadInfo.find(".error")
+	};
+	
+	GV.Error == "1" ? jqs.error.show() : jqs.error.hide();
+	GV.ShowGraphEntry == "1" ? jqs.graphEntry.show() : jqs.graphEntry.hide();
+	GV.ShowSrcDetails == "1" ? jqs.filesInfoEntry.show() : jqs.filesInfoEntry.hide();
+});
+</script>

@@ -1,0 +1,26 @@
+<HTML>
+<HEAD>
+<TITLE>Code Change Viewer</TITLE>
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+
+<style type="text/css">
+.cas {
+    border: 1px solid #999;
+}
+</style>
+</HEAD>
+<BODY >
+
+
+normal
+<a href='/ccv/ccv.html' onclick="console.log(1);"><strong>strong</strong>aaaaaaaaaaaaa</a><br>
+<a href='#' onclick="console.log(2);">bbbbbbbbbbb</a><br>
+
+</BODY>
+</HTML>
+
+<script type="text/javascript">
+$(window).unload(function() {
+	alert('on before unload');
+});
+</script>

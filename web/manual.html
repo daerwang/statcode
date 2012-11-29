@@ -1,0 +1,2101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"> 
+<html>
+<head>
+  <title>CodeChangeViewer manual</title>
+  <style>
+	body {
+		font-family: verdana, arial, helvetica, sans-serif, Tahoma;	
+		font-size: 14px;
+		margin: 16px;
+	}
+	
+	body, sup, pre {
+		color: #000;
+	}
+	
+	sup.codeSup {
+		font-style: italic;
+		color: #FF8C00;
+	}
+	
+	span.ccvTitleAbbre {
+		font-style: italic;
+		color: #FF8C00;
+	}	
+	
+	div.ccvTitle {
+		font-size: 22px;
+		color: #333;
+		text-align: center;
+		font-weight: bold;
+		margin-bottom: 24px;
+	}
+	
+	span.ccvName {
+		color: #aa0000;	
+	}
+	
+	span.abbre {
+		color: #cc0000;	
+	}
+	
+	div.footer {
+		text-align: right;
+		margin-top: 40px;
+		font-style: italic;
+	}	
+	
+	.starAllPattern {
+		font-weight: bold;
+		font-size: 18px;
+	}
+	
+	.htmlComment {
+		color: #aa5500;
+	}
+	
+	.clrExample {
+		color: #008B8B !important;	
+	}
+	
+	.clrEmphasis {
+		color: #cc0000 !important;	
+	}
+	
+	.bold {
+		font-weight: bold;	
+	}
+	
+	.italic {
+		font-style: italic;	
+	}
+	
+	.clrEmphasis2 {
+		color: #FF00FF !important;	
+	}	
+	
+	.keyWord {
+		font-weight: normal;
+		color: #cc0000;
+		font-style: italic;
+	}
+	
+	.keyWord2nd {
+		font-weight: normal;
+		color: #880000;	
+		font-style: italic;
+	}
+	
+	.jsonData {
+		color: #FF4500;	
+	}
+	
+	.command {
+		color: #FF4500;	
+	}	
+	
+	div.sepLogic {
+		margin: 60px 0 60px 0;	
+		color: #999;
+	}
+	
+	.hiddenElement {
+		display: none;	
+	}
+		
+	
+	/**
+	 * section, subSection
+	 */		
+	div.section {
+		margin-bottom: 48px;
+	}
+	
+	div.lessMarginBot {
+		margin-bottom: 18px;
+	}	
+	
+	div.section .subSection {
+		margin-bottom: 30px;
+	}
+	
+	div.section .subSubSection {
+		margin-bottom: 20px;
+	}	
+		
+	div.section .ccvLink {
+		color: #0066CC;
+	}
+	
+	div.section .sectionTitle {
+		font-size: 15px;
+		font-weight: bold;
+		margin-bottom: 12px;
+		color: #333;
+	}
+	
+	div.section .subSection .subSectionTitle {
+		font-size: 14px;
+		font-weight: bold;
+		margin-bottom: 6px;
+	}
+
+	div.section .subSection .subSubSectionTitle {
+		font-size: 14px;
+		font-weight: normal;
+		margin-bottom: 4px;
+	}		
+	
+	div.section .sectionNumber,
+	div.section .subSection .subSectionNumber {
+		color: #aa0000;
+		font-weight: bold;
+		padding-right: 4px;
+	}
+	
+	div.section div.content {
+		font-size: 14px;
+		margin-left: 24px;
+	}
+	
+	div.section div.content pre {
+		background-color: #FFFFF0;
+		border: 1px solid #ccc;
+		margin: 2px 0 2px 0;
+		line-height: 19px;
+		font-size: 15px;
+		padding: 8px 8px 16px 8px;
+		width: 910px;
+		font-family: verdana, arial, helvetica, sans-serif, Tahoma;	
+		font-size: 14px;		
+	}
+	
+	div.section div.content pre#preInOption {
+		border: 0;
+		width: 650px;
+		font-family: verdana, arial, helvetica, sans-serif, Tahoma;	
+		font-size: 14px;
+	}
+	
+	div.section div.content span.tagOption {
+		color: #cc0000;
+		font-weight: bold;	
+	}
+	
+	div.section div.content .optExample {
+		color: #008B8B;
+		font-style: normal;
+	}	
+	
+	div.section div.content .imgUI,
+	div.section div.content .imgUsage,
+	div.section div.content .imgUpload {
+		border: 1px solid #ddd;
+		width: 926px;
+		margin-bottom: 58px;
+		margin-top: 8px;
+	}
+	
+	div.section div.content .anchorWhyRepositoryMapping	{
+		color: #0066cc;
+		cursor: pointer;	
+	}
+	/**
+	 * end: section, subSection
+	 */		
+	
+	
+	/**
+	 * navigator 
+	 */	
+	
+	div.navigatorCountroller {
+		position: fixed;
+		right: 4px;
+		top: 4px;
+		background-color: #fff;
+		color: #000;
+		cursor: pointer;
+		font-size: 14px;
+		font-style: normal;
+		font-weight: normal;
+		width: 180px;
+		text-align: center;
+		height: 36px;
+		line-height: 36px;
+		text-decoration: none;
+		border: 1px solid #666;
+		z-index: 11;
+		border-radius: 2px;
+	}
+		 
+	div.navigator {
+		width: 280px;
+		position: fixed;
+		right: 4px;
+		top: 22px;
+		font-size: 13px;
+		background-color: #fefefe;
+		border: 1px solid #666;
+		z-index: 10;
+		padding-top: 16px;
+		border-radius: 3px;
+	}
+	
+	div.navigator ul#menu {
+		list-style-type: circle;
+		font-size: 13px;
+	}
+	
+	div.navigator ul#menu li ul {
+		list-style-type: none;
+		margin: 0px;
+		padding-left: 20px;
+	}
+	
+	div.navigator ul#menu li.EmptyLine {
+		list-style-type: none;
+		height: 12px;
+	}	
+	
+	div.navigator li a {
+		color: #333;
+		font-style: normal;
+		text-decoration: underline;	
+	}
+	
+	div.navigator li ul li a {
+		color: #333;
+	}	
+	
+	div.navigator ul#menu li {
+		margin: 1px 0 1px 0;
+	}
+	
+	/**
+	 * end: navigator
+	 */
+
+	
+	/**
+	 * featureCompare table
+	 */	
+	div.featureCompare table.tblFeatureCompare {
+		background-color: #ccc;
+		font-size: 14px;
+		width: 926px;
+	}
+	
+	div.featureCompare table.tblFeatureCompare tr.title {
+		height: 24px;
+		background-color: #eee;
+	}
+	
+	div.featureCompare table.tblFeatureCompare tr.title td.feature {
+		width: 23%;
+	}
+	
+	div.featureCompare table.tblFeatureCompare tr.title td.statCVS,
+	div.featureCompare table.tblFeatureCompare tr.title td.statSVN,
+	div.featureCompare table.tblFeatureCompare tr.title td.sourceCounter {
+		width: 9%;	
+	}
+	
+	div.featureCompare table.tblFeatureCompare tr.title td.ccv {
+	}
+	
+	div.featureCompare table.tblFeatureCompare tr td.tdSeparater {
+		width: 1%;
+		background-color: #ddd;	
+	}
+
+	div.featureCompare table.tblFeatureCompare tr td.ccvLeft,
+	div.featureCompare table.tblFeatureCompare tr td.ccvRight {
+		width: 12%;	
+	}	
+	
+	div.featureCompare table.tblFeatureCompare tr.contentLine1 {
+		height: 28px;
+		background-color: #fff;
+	}	
+	
+	div.featureCompare table.tblFeatureCompare tr.contentLine2 {
+		height: 28px;
+		background-color: #fff;
+	}	
+
+	
+	div.featureCompare table.tblFeatureCompare td.tdTitle {
+		color: #333;
+		font-weight: normal;
+		text-align: center;
+		font-size: 14px;
+	}
+	
+	div.featureCompare table.tblFeatureCompare td.tdFeatureLeft {
+		color: #555;
+		text-align: center;
+	}
+	
+	div.featureCompare table.tblFeatureCompare td.tdFeatureRight {
+		color: #555;
+		text-align: center;
+	}	
+	
+	div.featureCompare table.tblFeatureCompare td.tdValue {
+		text-align: center;
+		color: #00aa00;
+		font-weight: bold;
+		font-size: 14px;
+	}
+	
+	div.featureCompare table.tblFeatureCompare td.star {
+		font-weight: normal;
+		color: #333;
+	}
+	
+	div.featureCompare table.tblFeatureCompare td.yes {
+		color: #00cc00;
+	}	
+	
+	div.featureCompare table.tblFeatureCompare td.no {
+		color: #666;
+	}	
+
+	div.featureCompare table.tblFeatureCompare td .tiny {
+		font-style: italic;
+		font-size: 13px;
+		color: #999;
+		font-weight: normal;
+	}
+	/**
+	 * end: featureCompare table 
+	 */		
+	
+	
+	/**
+	 * ccv module configure options table
+	 */		
+	table.optionList {
+		width: 926px;
+		background-color: #ccc;	
+		font-size: 14px;
+	}
+	
+	table.optionList td {
+		background-color: #FFFFF0;
+		vertical-align: top;
+		padding: 4px;
+	}
+	
+	table.optionList td.id{
+		width: 20%;
+		color: #FF4500;
+		text-align: right;
+		font-weight: normal;
+		padding-right: 16px;
+	}
+	
+	table.optionList td.desc{
+		width: 80%;
+		padding-bottom: 16px;
+	}
+	table.optionList td pre{
+		border: 0;
+		width: 626px;
+	}			
+	/**
+	 * end: ccv module configure options table 
+	 */		
+	div.wapi {
+		
+	}
+	
+	.required {
+		color: #FF00FF;	
+	}
+	
+	.optional {
+		color: #32CD32;	
+	}
+	
+	.comment {
+		color: #20B2AA;	
+	}
+	
+	.wapiFormatPmContainer {
+		color: #666;	
+	}
+	.wapiFormatPm {
+		color: #999;	
+	}
+	
+	.apiPmExmapleSeparator {
+		color: #D2691E;
+		font-weight: normal;
+	}	
+
+  </style>	
+</head>
+
+<body>
+<div class="navigatorCountroller" onclick="showNavigator()">Show/Hide Navigator</div>
+<div id="navigator" class="navigator section">
+  <ul id="menu">
+    <li><a href="#CcvManual">What is CodeChangeViewer?</a></li>
+    <li><a href="#Dependence">Required Environment</a></li>
+    <li><a href="#Maintain">Install/Update/Uninstall</a>
+      <ul>
+        <li><a href="#Install">Install</a></li>
+        <li><a href="#InstallerDo">What Installer Do?</a></li>
+        <li><a href="#Upgrade">Update</a></li>
+        <li><a href="#Remove">Uninstall</a></li>
+      </ul>
+    </li>
+    <li class="EmptyLine"></li>
+    <li><a href="#ConfigXml">Maintain Repository Config</a>
+      <ul>
+        <li><a href="#ConfigXml">Maintain Methods</a></li>
+        <li><a href="#ConfigExample">Examples</a></li>
+        <li><a href="#ConfigOptions">Config Option List</a></li>
+        <li><a href="#UploadConfig">Add Configure XML</a></li>
+        <li><a href="#UseRuntimeAccount">Provide Repository Account at Runtime</a></li>
+      </ul>
+    </li>
+    <li class="EmptyLine"></li>
+    <li><a href="#UI">UI Instruction</a></li>
+    <li><a href="#ExampleReports">Example Reports</a></li>
+    <li><a href="#Usages">Usage Exmaples</a></li>
+    <li class="EmptyLine"></li>
+    <li><a href="#API">API - Generate Report</a>
+      <ul>
+        <li><a href="#WAPI">Web API</a>
+	      <ul>
+	        <li><a href="#WAPI">Report - I</a></li>
+	        <li><a href="#WapiDiff">Report - II</a></li>
+	        <li><a href="#WapiFile">Report - III</a></li>
+	      </ul>        
+	    </li>
+        <li><a href="#CAPI">Command Line API</a>
+	      <ul>
+	        <li><a href="#CAPI">Report - I</a></li>
+	        <li><a href="#CapiDiff">Report - II</a></li>
+	        <li><a href="#CapiFile">Report - III</a></li>
+	      </ul>
+	    </li>
+	    <li><a href="#ApiPmInstruction">Overall API Parameters</a></li>            
+      </ul>
+    </li>
+    <li class="EmptyLine"></li>
+    <li><a href="#FeatureCompare">Feature Compare table</a></li>  
+  </ul>	
+</div>
+
+<div class="ccvTitle"><a name="CcvManual"><span class="ccvName">CodeChangeViewer Manual</span></a></div>
+<div class="section abbreviation lessMarginBot">
+  <div class="sectionTitle">Abbreviation</div>
+  <div class="content">
+    <span class="abbre">CCV</span> = Code Change Viewer&nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="abbre">LOC</span> = Line of Change&nbsp;&nbsp;&nbsp;&nbsp;
+    <span class="abbre">FOC</span> = File of Change
+  </div>
+</div>
+
+<div class="whatsCCV section">
+  <div class="sectionTitle"><a name="WhatIsCCV"><span class="sectionNumber">1.</span> What is <span class="ccvName">CodeChangeViewer</span>?</a></div>
+  <div class="content featureBrief">
+  	  A tool to:<br/>
+	  1). stat. and view cvs/svn repository module line of change, file of change, and so on.<br/>
+	  2). stat. repository module source file composition information.<br/>
+	  3). provide a unify method to stat. cvs/svn repository, behavior as web service or linux command line tool.
+  </div><br/>
+  <div class="content">
+  <div class="sectionTitle">Features</div>  
+<pre>
+. Get cvs/svn modules LOC, FOC on special branch or between two revisions
+. Get user/module summary info of more modules
+. Get module source file details composition info 
+. Can browse code diff from report
+. View check-in comments & check-in times in report
+. Generate HTML/Plian/Graph report
+. Support 3 type reports, one base on cvs/svn log, one base on cvs/svn diff, 
+  and one base on cvs/svn module source files
+. Support file ext-name and path include & exclude filter
+. Can be web service or script utility, and easy to use
+</pre>
+  <br/><br/>Project Home: <a target="blank" href="http://sourceforge.net/projects/ccv/" class="ccvLink">http://sourceforge.net/projects/ccv</a>
+  </div>
+</div>
+
+
+<div class="dependence section">
+  <div class="sectionTitle"><a name="Dependence"><span class="sectionNumber">2.</span> <span class="ccvName">CodeChangeViewer</span> work-environment</a>: <span class="clrEmphasis">linux + apache + perl + cvs + svn</span></div>
+  <div class="content">
+<pre>
+<strong>Server side dependence:</strong>
+- linux/unix-like os	
+  all POSIX (linux/BSD/unix-like OSes)
+  
+- apache
+  it server does not include it, pls install it 
+    
+- perl
+  it is a standard package in almost all linux distributions. 
+  If you can run "perl" commnad, then it is OK,
+  and"perl -v" command will show perl version.
+    
+- cvs
+  almost all linux distributions include it.
+  if you linux server can run "cvs" command, then OK
+  
+- svn
+  almost all linux distributions include it.
+  if you linux server can run "svn" command, then OK. if not, please install it first.
+  <span class="clrEmphasis">Make sure - svn supports https protocol if you need to stat. svn repositories which use https.</span>
+  
+<strong>Supported browser:</strong>
+- Firefox
+- Chrome
+- IE7+
+- Safari
+- Opera
+</pre>
+  </div>
+
+</div>
+
+<div class="install section">
+  <div class="sectionTitle"><a name="Maintain"><span class="sectionNumber">3.</span> <span class="ccvName">CodeChangeViewer</span> Install/Update/Uninstall</a></div>
+  
+  <div class="subSection install">
+    <div class="subSectionTitle"><a name="Install"><span class="subSectionNumber">3.1. </span>Install/Deploy</a></div>
+    <div class="content">
+<pre>
+1. get <span class="ccvName">CodeChangeViewer</span> package "ccv-2.0-%mmddyyyy%.tar.gz" from http://sourceforge.net/projects/ccv/
+2. logon on the linux server which you want to install <span class="ccvName">CodeChangeViewer</span> on it, and switch to root.
+3. tar -xzvf ccv-2.0-%mmddyyyy%.tar.gz
+   following files will be extracted<span class="clrExample">
+   |--INSTALL.pl
+   |--ccv.tar.gz
+   |--README
+   </span>
+4. perl INSTALL.pl --apache-conf=/%apache.configure.file.path%/httpd.conf --prefix=/%install.CCV.in.directory%/
+   prefix default is "/usr/local/"
+   Example:
+   perl INSTALL.pl --apache-conf=/usr/local/apache2/conf/httpd.conf --prefix=/usr/local/
+   In this case, <span class="ccvName">CodeChangeViewer</span> install location is /usr/local/ccv
+
+5. restart apache
+   Example: 
+   /usr/local/apache2/bin/apachectl restart 
+   
+   <span class="ccvName">CodeChangeViewer</span> url will be: http://ip/ccv/ccv.html 
+</pre>
+    </div>
+  </div>
+
+  <div class="whatCCVInstallDo subSection">
+    <div class="subSectionTitle"><a name="InstallerDo"><span class="subSectionNumber">3.2. </span>What <span class="ccvName">CodeChangeViewer</span> Installer Do?</a></div>
+    <div class="content">
+<pre>
+1. extract ccv.tar.gz to "--prefix"
+2. modify httpd.conf to add <span class="ccvName">CodeChangeViewer</span> ScriptAlias include setting.
+   Example: 
+   include /usr/local/ccv/config/ccv.script.alias.httpd
+   
+   file "ccv.script.alias.httpd" generated base on apache's configure and arguments to INSTALL.pl
+   
+3. change files privilege property
+4. ln -s /usr/local/ccv/web /%apache.DocumentRoot%/ccv
+</pre>
+    </div>
+  </div>
+
+  <div class="howToUpgrade subSection">
+    <div class="subSectionTitle"><a name="Upgrade"><span class="subSectionNumber">3.3. </span>Upgrade</a></div>
+    <div class="content">
+<pre>
+Before do upgrade, pls make sure your linux server can access inernet (sourceforge.net)
+1. login on <span class="ccvName">CodeChangeViewer</span> server with root account.
+2. go to <span class="ccvName">CodeChangeViewer</span> installed location (Example: /usr/local/ccv)
+3. run "./UPDATE.sh"
+</pre>
+    </div>
+  </div>   
+
+  <div class="howToUninstall subSection">
+    <div class="subSectionTitle"><a name="Remove"><span class="subSectionNumber">3.4. </span>Remove/Uninstall</a></div>
+    <div class="content">
+<pre>
+1. login on <span class="ccvName">CodeChangeViewer</span> server with root account.
+2. go to <span class="ccvName">CodeChangeViewer</span> installed location
+   Example: cd /usr/local/ccv
+3. run "perl UNINSTALL.pl" or "perl INSTALL.pl -U"
+</pre>
+    </div>
+  </div>   
+</div> <!--section 3-->
+
+<div class="configureModules section">
+  <div class="sectionTitle"><a name="ConfigXml"><span class="sectionNumber">4.</span> Maintain repository module configure xml</a></div>
+
+  <div class="subSection">
+	<div class="subSectionTitle"><span class="subSectionNumber">4.1. </span>Overall Maintain Methods</div> 
+	<div class="content">
+<pre>
+All <span class="ccvName">CodeChangeViewer</span> cvs/svn module configure files locate at "/CodeChangeViewer/InstalledPath/config"
+Example: /usr/local/ccv/config
+
+<span class="clrEmphasis">There are 3 methods to maintain repository modules configure file.</span>
+a). Add/edit/delete repositoy modules configure file online through <span class="ccvName">CodeChangeViewer</span> main UI add/edit/delete button
+b). Manually put/edit/delete repository modules configure file 
+    in <span class="ccvName">CodeChangeViewer</span> server "/CodeChangeViewer/InstalledPath/config" directory
+c). Edit configure file local then upload it to server through <span class="ccvName">CodeChangeViewer</span> main UI
+<i>
+When add, edit, delete or upload a configure file, you need to provide a password to protect your configure file.
+This password can protect your file written by other.
+You can update/delete this configure file with this password.</i>
+</pre>
+	</div>
+  </div>
+	
+  <div class="subSection">
+	<div class="subSectionTitle"><span class="subSectionNumber">4.2. </span><a name="ConfigExample">Example Configure Xml</a></div>
+	<div class="content">
+	  <div class="subSubSectionTitle">A simple configure file</div>
+<pre class="clrExample">
+&lt;configs&gt;
+<span class="htmlComment">&lt;!-- cvs co :pserver@serverAddress/repositoryPath modulePath --&gt;</span>
+&lt;module&gt;
+  &lt;id&gt;moduleId1&lt;/id&gt;
+  &lt;type&gt;cvs&lt;/type&gt;
+  &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+  &lt;module&gt;modulePath&lt;/module&gt;
+  &lt;server&gt;serverAddress&lt;/server&gt;
+  &lt;repository&gt;/repositoryPath&lt;/repository&gt;
+  &lt;account_id&gt;AcountId&lt;/account_id&gt;
+  &lt;account_pw&gt;password&lt;/account_pw&gt;
+&lt;/module&gt;
+
+<span class="htmlComment">&lt;!-- svn co https://serverAddress/repositoryPath/trunk/modulePath --&gt;
+&lt;!-- svn co https://serverAddress/repositoryPath/branches/modulePath --&gt;
+&lt;!-- svn co https://serverAddress/repositoryPath/tags/modulePath --&gt;</span>
+&lt;module&gt;
+  &lt;id&gt;moduleId2&lt;/id&gt;
+  &lt;type&gt;svn&lt;/type&gt;
+  &lt;access_mode&gt;https&lt;/access_mode&gt;
+  &lt;module&gt;modulePath&lt;/module&gt;
+  &lt;server&gt;serverAddress&lt;/server&gt;
+  &lt;repository&gt;/repositoryPath&lt;/repository&gt;
+  &lt;account_id&gt;AcountId&lt;/account_id&gt;
+  &lt;account_pw&gt;password&lt;/account_pw&gt;	
+  &lt;trunk_directory&gt;/repositoryPath/trunk&lt;/trunk_directory&gt;
+  &lt;branch_directory&gt;/repositoryPath/branches&lt;/branch_directory&gt;   
+  &lt;tag_directory&gt;/repositoryPath/tags&lt;/tag_directory&gt;   
+&lt;/module&gt;
+
+<span class="htmlComment">&lt;!-- svn co svn://serverAddress/repositoryPath/trunk/modulePath --&gt;
+&lt;!-- svn co svn://serverAddress/repositoryPath/branches/modulePath --&gt;
+&lt;!-- svn co svn://serverAddress/repositoryPath/tags/modulePath --&gt;</span>
+&lt;module&gt;
+  &lt;id&gt;moduleId3&lt;/id&gt;
+  &lt;type&gt;svn&lt;/type&gt;
+  &lt;access_mode&gt;svn&lt;/access_mode&gt;
+  &lt;module&gt;modulePath&lt;/module&gt;
+  &lt;server&gt;serverAddress&lt;/server&gt;
+  &lt;repository&gt;/repositoryPath&lt;/repository&gt;
+  &lt;account_id&gt;AcountId&lt;/account_id&gt;
+  &lt;account_pw&gt;password&lt;/account_pw&gt;	
+  &lt;trunk_directory&gt;/repositoryPath/trunk&lt;/trunk_directory&gt;
+  &lt;branch_directory&gt;/repositoryPath/branches&lt;/branch_directory&gt;   
+  &lt;tag_directory&gt;/repositoryPath/tags&lt;/tag_directory&gt;   
+&lt;/module&gt;
+&lt;/configs&gt;
+
+</pre>
+    <div style="margin-top: 20px;"/>
+	<div class="subSubSectionTitle">A example with some true modules on sourceforge.net</div>	
+<pre class="clrExample">
+&lt;configs&gt;
+  <span class="htmlComment">&lt;!-- cvs co :pserver@winscp.cvs.sourceforge.net/cvsroot/winscp winscp3 --&gt; </span>
+  &lt;module&gt;
+    &lt;id&gt;winscp.winscp3&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;winscp3&lt;/module&gt;
+    &lt;server&gt;winscp.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/winscp&lt;/repository&gt;
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt;
+  
+  <span class="htmlComment">&lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk/Plugins --&gt;
+  &lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches/Plugins --&gt;
+  &lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags/Plugins --&gt;</span>
+  &lt;module&gt;
+    &lt;id&gt;winmerge.Plugins&lt;/id&gt;
+    &lt;type&gt;svn&lt;/type&gt;
+    &lt;access_mode&gt;https&lt;/access_mode&gt;
+    &lt;module&gt;Plugins&lt;/module&gt;
+    &lt;server&gt;winmerge.svn.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/svnroot/winmerge&lt;/repository&gt;
+    &lt;trunk_directory&gt;/svnroot/winmerge/trunk&lt;/trunk_directory&gt;
+    &lt;branch_directory&gt;/svnroot/winmerge/branches&lt;/branch_directory&gt;   
+    &lt;tag_directory&gt;/svnroot/winmerge/tags&lt;/tag_directory&gt;     
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt;
+
+  <span class="htmlComment">&lt;!-- cvs co :pserver@filezilla.cvs.sourceforge.net/cvsroot/filezilla FileZilla --&gt; </span>
+  &lt;module&gt;
+    &lt;id&gt;filezilla.FileZilla&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;FileZilla&lt;/module&gt;
+    &lt;server&gt;filezilla.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/filezilla&lt;/repository&gt;
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt;    
+
+  <span class="htmlComment">&lt;!-- cvs co :pserver@winscp.cvs.sourceforge.net/cvsroot/winscp . --&gt; </span>
+  &lt;module&gt;
+    &lt;id&gt;winscp.all&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;*&lt;/module&gt;
+    &lt;server&gt;winscp.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/winscp&lt;/repository&gt;
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt;
+
+  <span class="htmlComment">&lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk --&gt;
+  &lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches --&gt;
+  &lt;!-- svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags --&gt;</span>
+  &lt;module&gt;
+    &lt;id&gt;winmerge.all&lt;/id&gt;
+    &lt;type&gt;svn&lt;/type&gt;
+    &lt;access_mode&gt;https&lt;/access_mode&gt;
+    &lt;module&gt;*&lt;/module&gt;
+    &lt;server&gt;winmerge.svn.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/svnroot/winmerge&lt;/repository&gt;
+    &lt;trunk_directory&gt;/svnroot/winmerge/trunk&lt;/trunk_directory&gt;
+    &lt;branch_directory&gt;/svnroot/winmerge/branches&lt;/branch_directory&gt;   
+    &lt;tag_directory&gt;/svnroot/winmerge/tags&lt;/tag_directory&gt;     
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt; 
+  
+  <span class="htmlComment">&lt;!-- cvs co :pserver@filezilla.cvs.sourceforge.net/cvsroot/filezilla . --&gt;</span>
+  &lt;module&gt;
+    &lt;id&gt;FileZilla.All&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;*&lt;/module&gt;
+    &lt;server&gt;filezilla.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/filezilla&lt;/repository&gt;
+    &lt;account_id&gt;anonymous&lt;/account_id&gt;
+    &lt;account_pw&gt;&lt;/account_pw&gt;
+  &lt;/module&gt;   
+&lt;/configs&gt;
+
+</pre>
+	</div>
+  </div>
+
+  <div class="subSection">
+	<div class="subSectionTitle"><span class="subSectionNumber">4.3. </span>Example cvs Module Configure</div>
+	<div class="content">
+<pre>
+<span class="clrEmphasis">cvs -d:pserver:userA:pass@winscp.cvs.sourceforge.net:/cvsroot/winscp co winscp3</span>
+Base above cvs command line, this module inforamtion should be as following:
+<span class="clrExample"> 
+...
+  &lt;module&gt;
+    &lt;id&gt;winscp.winscp3&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;winscp3&lt;/module&gt;
+    &lt;server&gt;winscp.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/winscp&lt;/repository&gt;
+    &lt;account_id&gt;userA&lt;/account_id&gt;
+    &lt;account_pw&gt;pass&lt;/account_pw&gt;
+  &lt;/module&gt;
+...
+</span>
+
+For "id", you can identify it with "winscp.winscp3", or "winscp3", or "anystring" 
+which be consistented with following character [0-9] [a-zA-Z] [-\._]
+
+</pre>
+
+<pre>
+<span class="clrEmphasis">cvs -d:pserver:userA:pass@winscp.cvs.sourceforge.net:/cvsroot/winscp co .</span>
+
+Base above cvs command line, this module inforamtion should be as following:
+<span class="clrExample"> 
+...
+  &lt;module&gt;
+    &lt;id&gt;winscp.all&lt;/id&gt;
+    &lt;type&gt;cvs&lt;/type&gt;
+    &lt;access_mode&gt;pserver&lt;/access_mode&gt;
+    &lt;module&gt;*&lt;/module&gt; <span class="clrEmphasis">// Set module as <span class="starAllPattern">*</span> if want to stat all modules in repository</span>
+    &lt;server&gt;winscp.cvs.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/cvsroot/winscp&lt;/repository&gt;
+    &lt;account_id&gt;userA&lt;/account_id&gt;
+    &lt;account_pw&gt;pass&lt;/account_pw&gt;
+  &lt;/module&gt;
+...
+
+</span>
+</pre>	
+	</div>
+  </div>
+
+  <div class="subSection">
+	<div class="subSectionTitle"><span class="subSectionNumber">4.4. </span>Example svn Module Configure</div>
+	<div class="content">
+<pre>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk/Plugins</span>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches/Plugins</span>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags/Plugins</span>
+
+Base above svn command line, this module inforamtion should be as following:
+<span class="clrExample">
+...
+&lt;module&gt;
+    &lt;id&gt;winmerge.Plugins&lt;/id&gt;
+    &lt;type&gt;svn&lt;/type&gt;
+    &lt;access_mode&gt;https&lt;/access_mode&gt;
+    &lt;module&gt;Plugins&lt;/module&gt;
+    &lt;server&gt;winmerge.svn.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/svnroot/winmerge&lt;/repository&gt;
+    &lt;trunk_directory&gt;/svnroot/winmerge/trunk&lt;/trunk_directory&gt;
+    &lt;branch_directory&gt;/svnroot/winmerge/branches&lt;/branch_directory&gt;  
+    &lt;tag_directory&gt;/svnroot/winmerge/tags&lt;/tag_directory&gt;
+    &lt;account_id&gt;userA&lt;/account_id&gt;
+    &lt;account_pw&gt;pass&lt;/account_pw&gt;
+&lt;/module&gt;
+...
+</span>
+</pre>
+
+		
+<pre>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk</span>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches</span>
+<span class="clrEmphasis">svn --username userA --password pass co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags</span>
+
+Base above svn command line, this module inforamtion should be as following:
+<span class="clrExample">
+...
+&lt;module&gt;
+    &lt;id&gt;winmerge.all&lt;/id&gt;
+    &lt;type&gt;svn&lt;/type&gt;
+    &lt;access_mode&gt;https&lt;/access_mode&gt;
+    &lt;module&gt;*&lt;/module&gt; <span class="clrEmphasis">// Set module as <span class="starAllPattern">*</span> if want to stat all modules in repository</span>
+    &lt;server&gt;winmerge.svn.sourceforge.net&lt;/server&gt;
+    &lt;repository&gt;/svnroot/winmerge&lt;/repository&gt;
+    &lt;trunk_directory&gt;/svnroot/winmerge/trunk&lt;/trunk_directory&gt;
+    &lt;branch_directory&gt;/svnroot/winmerge/branches&lt;/branch_directory&gt;  
+    &lt;tag_directory&gt;/svnroot/winmerge/tags&lt;/tag_directory&gt;
+    &lt;account_id&gt;userA&lt;/account_id&gt;
+    &lt;account_pw&gt;pass&lt;/account_pw&gt;
+&lt;/module&gt;
+...
+</span>
+</pre>
+	</div>
+  </div>
+
+  <div class="subSection">
+	<div class="subSectionTitle"><span class="subSectionNumber">4.5. </span><a name="ConfigOptions">Module Configure Options Description</a></div>
+	<div class="content">
+<table class="optionList" cellspacing="1">
+	<tr>
+		<td class="id">&lt;id/&gt;</td>
+		<td class="desc">
+			<div class="required">required</div>
+			An unique name(in one .xml configure file) which to identify module used by <span class="ccvName">CodeChangeViewer</span>.
+			It should be consistented with following character [0-9] [a-zA-Z] [-_\.]
+			id can not include following character "/", "\", "[", "]", "{", "}", " " and so on.			
+		</td>
+	</tr>
+
+	<tr>
+		<td class="id">&lt;type/&gt;</td>
+		<td class="desc">
+			<div class="required">required</div>
+			
+			Flag to indicate module is cvs or svn repository, can be "cvs" or "svn".
+		</td>
+	</tr>
+		
+	<tr>
+		<td class="id">
+		  &lt;module/&gt;<br/>
+		  &lt;server/&gt;<br/>
+		  &lt;repository/&gt;
+		</td>
+		<td class="desc">
+			<div class="required">required</div>
+			module: module path<br>
+			<span class="clrEmphasis">Set module as <span class="starAllPattern">*</span> if want to stat all modules in repository</span><br/><br/>
+			server: repository server ip or domain name<br/><br/>
+			repository: repository path<br/><br/><br/><br/>
+			<span class="optExample">Example:<br/>
+			<b>cvs module</b><br/>
+			cvs -d:pserver:sun:pass@winscp.cvs.sourceforge.net:/cvsroot/winscp co winscp3<br/><br/>
+			&lt;repository/&gt; is "/cvsroot/winscp"<br/>
+			&lt;module/&gt; is "winscp3"<br/>
+			&lt;server/&gt; is "winscp.cvs.sourceforge.net"<br/><br/>
+			<b>svn module</b><br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk<br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches<br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags<br/><br/>
+			&lt;repository/&gt; is "/svnroot/winmerge"<br/>
+			&lt;module/&gt; is "*"<br/>
+			&lt;server/&gt; is "winmerge.svn.sourceforge.net"<br/>		
+			</span>
+		</td>
+	</tr>	
+	<tr>
+		<td class="id">
+		  &lt;account_id/&gt;<br/>
+		  &lt;account_pw/&gt;
+		</td>
+		<td class="desc">
+			<div class="required">required</div>
+			acount name and password to access this repository module<br/><br/>
+			if access server using anonymous method:<br/>
+			set account_id as "anonymous"<br/>
+			set account_pw as ""<br/>
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="id">
+		  <a name="UseRuntimeAccount">&lt;useRuntimeAccount/&gt;</a><br/>
+		</td>
+		<td class="desc">
+			<div class="optional">optional</div>
+			Flag to indicate if provide repository account name and password at runtime rather than set in configure file.<br/><br/>
+			Available value: true/false<br/>
+			Default: false<br/><br/>
+			If "true", "account_id" and "account_pw" value will be provided by user at runtime.<br/>
+			"account_id" and "account_pw" are needless if "useRuntimeAccount" is true.<br/><br/>
+			If "false", "account_id" and "account_pw" needed to be provided in configure file.
+
+			<br/><br/>This option supports global and module level setting.<br/>
+			Module level priority is higher than global level priority.<br/>
+			Explicit priority is higher than implicit priority.
+		</td>
+	</tr>	
+
+	<tr>
+		<td class="id">
+		  &lt;trunk_directory/&gt;<br/>
+		  &lt;branch_directory/&gt;<br/>
+		  &lt;tag_directory/&gt;
+		</td>
+		<td class="desc">
+			<div class="required">Only required by svn module</div>
+			trunk_directory: svn module trunk location<br/>
+			branch_directory: svn module branches location<br/>
+			tag_directory: svn module tags location<br/><br/>
+			<span class="optExample">Example:<br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk<br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/branches<br/>
+			svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/tags<br/><br/>
+			&lt;trunk_directory/&gt; is "/svnroot/winmerge/trunk"<br/>
+			&lt;branch_directory/&gt; is "/svnroot/winmerge/branches"<br/>
+			&lt;tag_directory/&gt; is "/svnroot/winmerge/tages"<br/>
+			</span>				
+		</td>
+	</tr>
+
+	<tr>
+		<td class="id">&lt;access_mode/&gt;</td>
+		<td class="desc">
+			<div class="required">optional</div>
+			Special server repository access mode/type, you should set it as your repository reality.<br/><br/>
+			cvs repository can be: ("pserver", "ext"), <br/>and default is "pserver".<br/>
+			<span class="ccvName">CodeChangeViewer</span> now supports "pserver", "ext" will be support later.<br/><br/>
+			svn repository can be: ("svn", "http", "https", "svn+ssh"), <br/>and default is "svn".<br/>
+			<span class="ccvName">CodeChangeViewer</span> now supports ("svn", "http", "https"), "svn+ssh" will be support later.<br/><br/>
+			<span class="optExample">Example:<br/>
+			if cmd is "svn co svn://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk"<br/>
+			then access_mode should be svn<br/><br/>			
+			if cmd is "svn co http://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk"<br/>
+			then access_mode should be http<br/><br/>
+			if cmd is "svn co https://winmerge.svn.sourceforge.net/svnroot/winmerge/trunk"<br/>
+			then access_mode should be https<br/><br/>
+			</span>
+		</td>
+	</tr>	
+	
+	<tr>
+		<td class="id">&lt;filter/&gt;</td>
+		<td class="desc">
+			<div class="required">optional</div>
+			Define file extend name filter, default is ".*"<br/><br/>
+			<span class="optExample">
+			Example: <br/>
+			if you want to only stat. jsp, java, js, html files, then customize it as ".jsp;.java;.js;.html".<br/>
+			And you can specify/overwite filter before "Generate Report" by setting them in "ccv options UI".
+			</span>
+		</td>
+	</tr>	
+ 
+	<tr>
+		<td class="id">
+		  &lt;viewvc_entry/&gt;<br/>
+		  &lt;viewvc_repository/&gt;
+		</td>
+		<td class="desc">
+			<div class="optional">optional</div>
+			viewvc_entry:<br/>
+			If this module server has available viewVC service, pls set it here.<br/>
+			Default or empty value will use <span class="ccvName">CodeChangeViewer</span> diff module to browse code diff. <br/>
+			Example: <br/>
+			&lt;viewvc_entry/&gt;http://ccv.cvs.sourceforge.net/viewvc/ccv/&lt;/viewvc_entry/&gt;<br/><br/>
+			viewvc_repository:<br/>
+			For one ViewVC can support to browse module on different repository, ViewVC has a default <br/>
+			repository when you browse module's code, if your module is not in default repository.<br/>
+			Pls set it manually here. <br/><br/>
+			Pls only set &lt;viewvc_repository&gt; if your module is not on default viewvc cvsroot,<br/>
+			otherwise, pls do not use/set it.<br/>
+			
+			Just set these two paramters when you know their usages & meaning, otherwise just not include<be>
+			them or keep them as empty.
+		</td>
+	</tr>
+	
+	<tr>
+		<td class="id">&lt;repository_mapping/&gt;</td>
+		<td class="desc">
+			<div class="optional">optional, only cvs module use it in some corner-special case</div>
+			this is for repository directory mapping in some special env,
+			Normal case, pls do not use/set it.
+			Only set it as the mapping-to path 
+			when you know that you cvs module really uses repository directory mapping.<br/><br/>
+			<a href="javascript: void(0);" class="anchorWhyRepositoryMapping" onclick="showWhyRepositoryMapping()"> Show case which needs this option?</a>
+			<pre id="preInOption" class="hiddenElement">
+
+cvs module definition
+<span class="clrExample">
+..
+&lt;cvs_module&gt;
+    &lt;id&gt;xphone2&lt;/id&gt;
+    &lt;module&gt;xphone&lt;/module&gt; 
+    &lt;server&gt;cvs.example.com&lt;/server&gt; 
+    &lt;repository&gt;<b>/usr/local/cvsrep</b>&lt;/repository&gt;
+    &lt;repository_mapping&gt;<b>/depot/cvsrep</b>&lt;/repository_mapping&gt;
+    &lt;account_pw&gt;pass&lt;/account_pw&gt; 
+    &lt;account_id&gt;userA&lt;/account_id&gt; 
+&lt;/cvs_module&gt;
+...
+</span>
+But its cvs rlog output is as following
+<span class="clrExample">
+...
+RCS file: <b>/depot/cvsrep</b>/xphone/research/java/xphone2/src/Application,v
+head: 1.2
+branch:
+locks: strict
+access list:
+keyword substitution: b
+total revisions: 2;	selected revisions: 2
+description:
+----------------------------
+revision 1.2
+date: 2010/03/15 09:27:52;  author: userA;  state: Exp;  lines: +1 -0
+add new resource to start one click throw PT.
+----------------------------
+revision 1.1
+date: 2010/02/10 09:38:23;  author: userA;  state: Exp;
+First check in for IP phone 2.0
+======================================================
+
+RCS file: <b>/depot/cvsrep</b>/xphone/research/java/xphone2/src/res/.cvsignore,v
+head: 1.1
+branch:
+locks: strict
+access list:
+keyword substitution: kv
+total revisions: 1;	selected revisions: 1
+description:
+----------------------------
+revision 1.1
+date: 2010/03/15 09:27:52;  author: userA;  state: Exp;
+add new resource to start one click throw PT.
+=====================================================
+...
+</span>
+			</pre>		
+		</td>
+	</tr>				
+</table>
+	</div>
+  </div><!--sub section-->
+  
+  
+  <div class="uploadConfig subSection">
+  	<div class="subSectionTitle"><span class="sectionNumber">4.6.</span> <a name="UploadConfig">Create a New Modules Configure File(Click the "Add" button)</a></div>
+    <div class="content">
+  	  <img class="imgUpload" src="img/manual/new.xml.png"/>
+  	</div>
+  </div>
+</div><!--section-->
+
+
+<div class="ui section">
+  <div class="sectionTitle"><a name="UI"><span class="sectionNumber">5.</span> <span class="ccvName">CodeChangeViewer</span> UI and Report UI Instruction</a></div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">5.1. </span>UI - Get Report From Repository Log</div>
+    <div class="content">
+	  <div>Generate report base "cvs/svn log", this mode report will include every developer's details</div>
+  	  <img class="imgUI" src="img/manual/overall.log.png"/>
+    </div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">5.2. </span>UI - Get Report From Repository Diff</div>
+    <div class="content">
+	  <div>Generate report base "cvs/svn diff"</div>
+  	  <img class="imgUI" src="img/manual/overall.diff.png"/>
+  	</div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">5.3. </span>UI - Get Report From Repository Source Files</div>
+    <div class="content">
+	  <div>Generate report base module source file</div>
+  	  <img class="imgUI" src="img/manual/overall.file.png"/>
+  	</div>
+  </div>  
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">5.4. </span>Popuped UI after Click "Generate Report" Button</div>
+    <div class="content">
+  	  <img class="imgUI" src="img/manual/progress.png"/>
+  	</div>  
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">5.5. </span>More Control Options and File/Path Filter</div>
+    <div class="content">
+  	  <img class="imgUI" src="img/manual/options.png"/>
+  	</div>  
+  </div> 
+           
+</div> <!--section-->
+
+<div class="exampleReports section">
+  <div class="sectionTitle"><a name="ExampleReports"><span class="sectionNumber">6.</span> <span class="ccvName">CodeChangeViewer</span> Report Examples</a></div>
+
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">6.1. </span>Report Based on cvs/svn Log</div>
+    <div class="content">
+  	  <img class="imgUI" src="img/manual/log.report.overall.png"/>
+  	</div>  
+  </div>   
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">6.2. </span>Report Based on cvs/svn Diff</div>
+    <div class="content">
+  	  <img class="imgUI" src="img/manual/diff.report.overall.png"/>
+  	</div>  
+  </div>   
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">6.3. </span>Report Cased on Module Source File Stat./Analyse</div>
+    <div class="content">
+  	  <img class="imgUI" src="img/manual/file.report.overall.png"/>
+  	</div>  
+  </div>             
+</div> <!--section-->
+
+<div class="usage section">
+  <div class="sectionTitle"><a name="Usages"><span class="sectionNumber">7.</span> <span class="ccvName">CodeChangeViewer</span> Usage Example</a></div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.1. </span>Usage 1</div>
+    <div class="content">
+	   <div>Get LOC/FOC & othere details of module winscp.winscp3, winmerge.Plugins on trunk</div>
+  	  <img class="imgUsage" src="img/manual/usage1.png"/>
+  	</div>
+  </div>
+
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.2. </span>Usage 2</div>
+    <div class="content">
+	  <div>Get LOC/FOC & othere details of module winscp.winscp3, winmerge.Plugins between 10/1/2010 and 12/31/2010 on head/trunk</div>
+  	  <img class="imgUsage" src="img/manual/usage2.png"/>
+  	</div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.3. </span>Usage 3</div>
+    <div class="content">
+	  <div>Get lilongen, user1, user2 changes in module winscp.winscp3, winmerge.Plugins during 10/1/2010~12/31/2010 on branch B27_3</div>
+  	  <img class="imgUsage" src="img/manual/usage3.png"/>
+  	</div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.4. </span>Usage 4</div>
+    <div class="content">
+	  <div>Get module winscp.winscp3, winmerge.Plugins LOC/FOC between two branches TEST_BRANCH1 and TEST_BRANCH2</div>
+  	  <img class="imgUsage" src="img/manual/usage4.png"/>
+  	</div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.5. </span>Usage 5</div>
+    <div class="content">
+	  <div>Get module winscp.winscp3, winmerge.Plugins LOC/FOC between 1/1/2010 & 6/1/2010 on head/trunk</div>
+  	  <img class="imgUsage" src="img/manual/usage5.png"/>
+  	</div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">7.6. </span>Usage 6</div>
+    <div class="content">
+	  <div>Get module winscp.winscp3, winmerge.Plugins trunk branch source code files composition inforamtion</div>
+  	  <img class="imgUsage" src="img/manual/usage6.png"/>
+  	</div>
+  </div>
+
+</div><!--section-->
+
+<div class="API section">
+  <div class="sectionTitle"><a name="API"><span class="sectionNumber">8.</span> API - <span class="ccvName">CodeChangeViewer</span> Generate Report API</a></div>
+  <div class="subSection">
+    <div class="content">
+  	  <pre>
+<span class="ccvName">CodeChangeViewer</span> API has two kinds:
+1). Web API (Http Request)
+2). Command Line API
+
+You can integrate <span class="ccvName">CodeChangeViewer</span> with your automation tool through invoking CodeChangeViewer API.
+	  </pre>
+    </div>
+  </div>
+  
+  <div class="subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">8.1. </span>API - <a name="WAPI">Web API</a></div>
+    <div class="wapiLog subSubSection">
+      <div class="subSubSectionTitle"><a name="WAPI"><span class="sectionNumber">8.1.1. </span>Web API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Log</span></a></div>
+      <div class="content">
+  	  <pre>
+<span class="ccvName">CodeChangeViewer</span> Web API url is: <span class="clrEmphasis">http://ip/ccv-cgi/wapi.pl</span>
+  	
+You can call <span class="ccvName">CodeChangeViewer</span> Web API to generate report by sending http post request to <span class="clrEmphasis">http://ip/ccv-cgi/wapi.pl</span>.
+
+Exmaple:
+a. Get code change report on special branch, post following paramater:
+
+Simple post data: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "log",
+	mids: "cvsModuleId1,svnModuleId2",
+	cfg: "config.xml",
+	rev: "BRANCH_27_B"
+}
+</span> 
+
+With more options: <span class="jsonData">{
+	cmd: "GENERATE", 
+	mode: "log", 
+	mids: "cvsModuleId1,svnModuleId2", 
+	cfg: "config.xml", 
+	rev: "BRANCH_27_B", 
+	
+	date: "1/5/2010&lt;=12/31/2010", 
+	wids: "user1,user2,user3", 
+	
+	filter: { 
+		includeExts: ".java,.jsp",
+		excludeExts: ".xml,.cpp", 
+		includeDirs: "dir1,dir2", 
+		excludeDirs="dir3,dir4"         
+	},
+	
+	opts: { 
+		OcalcAllRevs: 0,
+		OdfIgnoreEOL: 1,
+		OgenGraph: 0,
+		OnotStatDeleted: 0,
+		OstatBin: 0,
+		OstatBinLines: 0
+	}
+}
+</span>
+
+to <span class="clrEmphasis">http://ip/ccv-cgi/wapi.pl</span>
+
+Paramters instructions
+<span class="keyWord">cmd</span>:
+    <span class="required">required</span>
+    WebAPI command name, generate WebAPI command name is "GENERATE"
+<span class="keyWord">mode</span>: 
+    <span class="required">required</span>
+    indicator generate which type report
+    
+    "log", generate report base on cvs/svn repository module log on specail branch/revison, date range, developer...
+    "diff", generate report base on cvs/svn repository module diff between two branches/revisons
+    "file", generate report base on cvs/svn repository module special branch/revision source files
+    
+<span class="keyWord">mids</span>: 
+    <span class="required">required</span>
+    repository modules id separated by comma, module id defined in the "cfg" file
+<span class="keyWord">cfg</span>: 
+    <span class="required">required</span>
+    repository modules definition xml file
+<span class="keyWord">rev</span>: 
+    <span class="required">required</span>
+    special branch/revison
+<span class="keyWord">date</span>: 
+    <span class="optional">optional</span>
+    special a date range
+    default is empty, meaning stat. all changes
+    if special a date range, then only stat. changes in specified date range 
+<span class="keyWord">wid</span>: 
+    <span class="optional">optional</span>
+    specail developer account, multi account using comma as separator
+    default is to stat. and show all accounts information
+    if special account, then only stat. changes in specified accounts
+    <span class="optExample">example:
+        "user1,user2,user3"</span>
+
+<span class="keyWord">filter</span>:
+    <span class="optional">optional</span>
+    specify "file extend name" and directory include/exclude filter, default is include all files and directories
+    use comma as separator if there are multi "file extend name" or "directory path"
+    
+    <span class="keyWord2nd">includeExts</span>: 
+        if not empty, then only include file extend-name matched, 
+        Multi extend name using comma as separator
+        default is empty, include all files
+        <span class="optExample">example:
+            ".java,.jsp,.html,.js,.css"</span>
+        
+    <span class="keyWord2nd">excludeExts</span>: 
+        if not empty, then exclude file extend-name matched, 
+        Multi extend name using comma as separator
+        default is empty
+        <span class="optExample">example:
+            ".bmp,.jpg,.jpeg,.gif"</span>
+        
+    <span class="keyWord2nd">includeDirs</span>: 
+        if not empty, then only include directory matched, 
+        Multi directories using comma as separator
+        default is empty, include all directory
+        <span class="optExample">example:
+            "include/path1,inlcude2/path2,include/path3" </span>       
+        
+    <span class="keyWord2nd">excludeDirs</span>: 
+        if not empty, then exclude directory matched, 
+        Multi directories using comma as separator
+        default is empty
+        <span class="optExample">example:
+        "exclude/path1,exlcude2/path2,exclude/path3"</span>
+  
+<span class="keyWord">opts</span>:
+    <span class="optional">optional, option to control reporting, default is none</span>
+    
+    <span class="keyWord2nd">OcalcAllRevs</span>: 
+        only used by cvs repository modules
+        option which indicate to stat. cvs modules all change 
+        in a special date range no matter changes in which branch/revison,
+        
+        default is 0
+        
+    <span class="keyWord2nd">OdfIgnoreEOL</span>:
+        option which indicate to ignore EOL change which execute cvs/svn diff command
+        default is 1
+        
+    <span class="keyWord2nd">OgenGraph</span>:
+        option which indicate to generate graph reports
+        default is 0
+        
+    <span class="keyWord2nd">OnotStatDeleted</span>:
+        only used by cvs repository modules
+        option which indicate to DO NOT count file already deleted
+        default is 0 
+             
+    <span class="keyWord2nd">OstatBin</span>:
+        only used by cvs repository modules
+        option which indicate to also stat. binary files
+        default is 0 
+             
+    <span class="keyWord2nd">OstatBinLines</span>:
+        only used by cvs repository modules
+        option which indicate to also count binary file line of change
+        default is 0      
+    
+  	  </pre>
+  	  </div>
+  	</div>
+
+    <div class="wapiDiff subSubSection">
+      <div class="subSubSectionTitle"><a name="WapiDiff"><span class="sectionNumber">8.1.2. </span>Web API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Diff</span></a></div>
+      <div class="content">
+  	  <pre>
+Exmaple:
+b.1 Get cvs module different report between two branches/revisions, post following paramater:
+
+Simple: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "diff",
+	mids: "cvsModule1Id,cvsModule2Id,cvsModule3Id",
+	cfg: "config.xml",
+	dfAgainst: "revs",
+	r1: "BRANCH_26_B",
+	r2: "BRANCH_28_B",
+</span>
+
+b.2 Get svn module different report between two branches/revisions, post following paramater:
+
+Simple: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "diff",
+	mids: "svnModule1Id,svnModule2Id,svnModule3Id",
+	cfg: "config.xml",
+	dfAgainst: "revs",
+	r1: "BRANCH_26_B",
+	r2: "BRANCH_28_B",
+	
+	<span class="comment">// rd1b, rd2b, bb are <span class="required">only required</span> and used by svn module, cvs module will ignore them.</span>
+	rd1b: "branch", <span class="comment">// indicate that "r1" is a branch, available value "branch", "trunk", "OnBranch", "OnTrunk"</span>
+	rd2b: "branch", <span class="comment">// indicate that "r2" is a branch, available value "branch", "trunk", "OnBranch", "OnTrunk"</span>
+	bb: "" <span class="comment">// this only used when "rd1b" and "rd2b" value is "OnBranch"</span>
+}
+</span>
+
+
+b.3 Get cvs module diff report between two dates, post following paramater:
+Simple: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "diff",
+	mids: "cvsModule1Id,cvsModule2Id,cvsModule3Id",
+	cfg: "config.xml",
+	dfAgainst: "dates",
+	d1: "2/10/2011",
+	d2: "9/18/2011"
+}
+</span> 
+
+b.4 Get cvs module diff report between two dates, post following paramater:
+With more options: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "diff",
+	mids: "svnModule1Id,svnModule2Id,svnModule3Id",
+	cfg: "config.xml",
+	dfAgainst: "dates",
+	d1: "2/10/2011",
+	d2: "9/18/2011",
+	
+	<span class="comment">// rd1b, rd2b, bb are <span class="required">only required</span> and used by svn module, cvs module will ignore them.</span>
+	rd1b: "OnBranch", <span class="comment">// which value can be "OnBranch", "OnTrunk"</span>
+	rd2b: "OnBranch", <span class="comment">// which value can be "OnBranch", "OnTrunk"</span>
+	bb: "B28" 	<span class="comment">// if rd1b, rd2b are "OnBranch", then bb value is the branch which d1, d2 are on</span>     
+				<span class="comment">// if rd1b, rd2b are "OnTrunk", bb is useless</span>
+}</span>
+
+to <span class="clrEmphasis">http://ip/ccv-cgi/wapi.pl</span> 
+
+
+Paramters instructions
+<span class="keyWord">mode</span>:
+    <span class="required">required</span>
+    "diff" indicate to generate report base two revisions/branches diff
+<span class="keyWord">dfAgainst</span>:
+    <span class="required">required</span>
+    dfAgainst value can be "revs" or "dates"
+    "revs"  means that generate report between two branches/revisons, this case needs r1, r2 
+    "dates" means that generate report between two dates, this case needs d1, d2    
+<span class="keyWord">r1</span>: 
+    branch/revison 1, <span class="required">required when</span> dfAgainst is "revs"
+<span class="keyWord">r2</span>: 
+    branch/revison 2, <span class="required">required when</span> dfAgainst is "revs"
+<span class="keyWord">d1</span>: 
+    date 1, <span class="required">required when</span> dfAgainst is "dates"
+<span class="keyWord">d2</span>: 
+    date 2, <span class="required">required when</span> dfAgainst is "dates"
+    
+<span class="keyWord">rd1b</span>:
+    <span class="required">Only required</span> by svn modules
+    parameter indicate that "r1" is "branch" or "trunk" or "OnBranch" or "OnTrunk"
+    available value: "branch", "trunk", "OnBranch", "OnTrunk"
+<span class="keyWord">rd1b</span>:
+    <span class="required">Only required</span> by svn modules
+    parameter indicate that "r1" is "branch" or "trunk" or "OnBranch" or "OnTrunk"
+    available value: "branch", "trunk", "OnBranch", "OnTrunk"
+<span class="keyWord">bb</span>: 
+    <span class="required">Only required</span> by svn modules
+    this parameter only used when "rd1b" and "rd2b" value are "OnBranch"
+    bb value is the branch which rd1b and rd2b are on.
+  	  </pre>
+  	  </div>
+  	</div>
+  
+    <div class="wapiFile subSubSection">
+      <div class="subSubSectionTitle"><a name="WapiFile"><span class="sectionNumber">8.1.3. </span>Web API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Source File</span></a></div>
+      <div class="content">
+  	  <pre>
+Exmaple:
+Post following paramater: <span class="jsonData">{
+	cmd: "GENERATE",
+	mode: "file",
+	mids: "cvsModuleId1,cvsModuleId2,svnModuleId1,svnModuleId2",
+	cfg: "config.xml",
+	rev: "B28_B"
+}   	    
+</span>
+to <span class="clrEmphasis">http://ip/ccv-cgi/wapi.pl</span> 
+
+Paramters instructions
+<span class="keyWord">mode</span>
+    "file" indicate to generate report base source files stat./analysing
+  	  </pre>
+  	  </div>
+  	</div>
+  	
+  </div> <!--wapi sub section-->
+  
+  <div class="CAPI subSection"> <!--capi sub section-->
+    <div class="subSectionTitle"><span class="sectionNumber">8.2. </span>API - <a name="CAPI">Command Line API</a></div>
+    <div class="capiLog subSubSection">
+      <div class="subSubSectionTitle"><a name="CAPi"><span class="sectionNumber">8.2.1. </span>Command Line API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Log</span></a></div>
+      <div class="content">
+  	  <pre>
+Simple API command:
+<span class="command">perl capi.pl --mode="log" --cfg="config.xml" --mids="cvsModuleId1,svnModuleId1" --rev="B28"</span>
+
+API Command with more options
+<span class="command">perl capi.pl \
+	--T_SNAP="2011-01-01+123456 " \
+	--mode="log" \
+	--cfg="config.xml" \
+	--mids="cvsModuleId1,svnModuleId1" \
+	--rev="B28" \
+	--date="1/1/2011<=12/31/2011" \
+	--wids="user1,user2,user3" 
+	</span>
+  	  </pre>
+      </div>
+    </div>
+    
+    <div class="capiDiff subSubSection">
+      <div class="subSubSectionTitle"><a name="CapiDiff"><span class="sectionNumber">8.2.2. </span>Command Line API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Diff</span></a></div>
+      <div class="content">
+  	  <pre>
+Simple API command:
+cvs modules diff between two branches
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="revs" --r1="BRANCH" --r2="B28"</span>
+
+cvs modules diff between two dates
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="dates" --d1="02/08/2011" --d2="08/18/2011"</span>
+
+
+svn modules diff between two branches
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="revs" --r1="BRANCH" --r2="B28" --rd1b="branch" --rd2b="branch" --bb=""</span>
+	
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="revs" --r1="BRANCH" --r2="" --rd1b="branch" --rd2b="trunk" --bb=""</span>	
+	
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="revs" --r1="" --r2="B28" --rd1b="trunk" --rd2b="branch" --bb=""</span>	
+
+svn modules diff between two dates
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="dates" --d1="02/08/2011" --d2="08/18/2011" --rd1b="OnBranch" --rd2b="OnBranch" --bb="B28"</span>
+	
+<span class="command">perl capi.pl --mode="diff" --cfg="config.xml" --mids="cvsModuleId1,cvsModuleId1" \
+	--dfAgainst="dates" --d1="02/08/2011" --d2="08/18/2011" --rd1b="OnTrunk" --rd2b="OnTrunk" --bb=""</span>
+  	  </pre>
+      </div>
+    </div> 
+    
+    <div class="capiFile subSubSection">
+      <div class="subSubSectionTitle"><a name="CapiFile"><span class="sectionNumber">8.2.3. </span>Command Line API to Generate Report Base on cvs/svn Repository Module <span class="clrEmphasis">Source Files</span></a></div>
+      <div class="content">
+  	  <pre>
+<span class="command">perl capi.pl --mode="file" --cfg="config.xml" --mids="cvsModuleId1,svnModuleId1" --rev="B28"</span>
+  	  </pre>
+      </div>
+    </div>
+  </div> <!--capi sub section-->     
+
+
+  <div class="apiPmInstruction subSection">
+    <div class="subSectionTitle"><span class="sectionNumber">8.3. </span><a name="ApiPmInstruction">Overall API(Command Line/Web) Parameters Instruction</a></div>
+    <div class="content">
+  	  <pre>
+"Command Line API format"  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">"Web API format"</span>
+
+<span class="wapiFormatPm">jsonData["cmd"]</span>
+  <span class="required">Only required</span> by Web API, Command Line API does not need it.
+  It should always be "GENERATE".
+  jsonData["cmd"]="GENERATE"
+  
+--T_SNAP  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["T_SNAP"]</span>
+  <span class="optional">optional</span>
+  time snap string
+  If not specified, system will automatically generate it, and set it as current snap time.
+  ccv will make a dir named as "T_SNAP", and it will be ccv work space directory,
+  all cvs/svn and ccv commands output file will be store in this directory.
+  
+  example:
+    --T_SNAP="2012-02-20+071214"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["T_SNAP"]="2012-02-20+071214"
+    --T_SNAP="2010-10-01+834568"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["T_SNAP"]="2010-10-01+834568"
+    
+--cfg  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["cfg"]</span>
+  <span class="required">required</span>
+  specify modules configure definition xml file
+  
+  example:
+    --cfg="config.xml"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["cfg"]="config.xml"
+    
+--mode  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["mode"]</span>
+  <span class="required">required</span>
+  specify generated report type, available value: "log", "diff", "file"
+
+  "log", generate report base on cvs/svn repository module log on specail branch/revison, date range, developer...
+  "diff", generate report base on cvs/svn repository module diff between two branches/revisons
+  "file", generate report base on cvs/svn repository module special branch/revision source files  
+  
+  example:
+    --mode="log"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mode"]="log"
+    --mode="diff"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mode"]="diff"
+    --mode="file"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mode"]="file"
+
+--mids  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["mids"]</span>
+  <span class="required">required</span>
+  specify module ids which want to stat.(module id defined in the "cfg" file)
+  If there are multi module id, using comma as separator
+  if its value is "*" means that get all modules report
+  
+  example:
+    --mids="mid1"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mids"]="mid1"
+    --mids="mid1,mid2,mid3"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mids"]="mid1,mid2,mid3"
+    --mids="*"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["mids"]="*"
+
+--rev  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["rev"]</span>
+  <span class="required">required</span> when mode is "log" or "file"
+  specify revsion/branch which you want to get.
+  Use "MAIN" as trunk branch
+  
+  example:
+    --rev="branch1"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["rev"]="branch1"
+    --rev="MAIN"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["rev"]="MAIN"
+
+--date  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["date"]</span>
+  <span class="optional">optional when</span> mode is "log" or "file"
+  not needed in "diff" mode
+  special a date range
+  default is empty, meaning stat. all changes
+  if special a date range, then only stat. changes in specified date range 
+  
+  example:
+    --date="2/1/2011<=5/1/2011"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["date"]="2/1/2011<=5/1/2011"
+    --date="2/1/2011<5/1/2011"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["date"]="2/1/2011<5/1/2011"
+    --date=">=2/1/2011"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["date"]=">=2/1/2011"
+    --date="<10/1/2011"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["date"]="<10/1/2011"
+
+--wids  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["wids"]</span>
+  <span class="optional">optional when</span> mode is "log" or "file"
+  not needed in "diff" mode
+  specify repository account which you want to get.
+  If there are multi account, using comma as separator.
+  default is to stat. and show all accounts information.
+  Empty value means to get all account info
+
+  example:
+    --wids=""  <span class="apiPmExmapleSeparator">vs</span>  jsonData["wids"]=""
+    --wids="user1"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["wids"]="user1"
+    --wids="user1,user2,user3"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["wids"]="user1,user2,user3"
+
+--dfAgainst  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["dfAgainst"]</span>
+  <span class="required">Only required</span> when mode is "diff"
+  not needed in "log" or "file" mode
+  specify diff operation is compare two resvison/branchs or dates
+  Available value: "revisions", "dates"
+  
+  example:
+    --dfAgainst="revisions"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["dfAgainst"]="revisions"
+    --dfAgainst="dates"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["dfAgainst"]="dates"
+    
+--rd1b  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["rd1b"]</span>
+  <span class="required">Only required</span> when mode is "diff"
+  not needed in "log" or "file" mode
+  available value: "trunk", "OnTrunk", "branch", "OnBranch"
+  
+--rd2b  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["rd2b"]</span>
+  <span class="required">Only required</span> when mode is "diff"
+  not needed in "log" or "file" mode
+  available value: "trunk", "OnTrunk", "branch", "OnBranch"
+  
+--bb  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["bb"]</span>
+  <span class="required">Only required</span> when mode is "diff"
+  not needed in "log" or "file" mode
+  if --rd1b and --rd1b are "OnBranch", --bb means --r1 and --r2 or --d1 and --d2 are on -bb branch
+    
+--r1  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["r1"]</span>
+  <span class="required">Only required</span> when mode is "diff" and parameter --dfAgainst is "revisons"
+  not needed in "log" or "file" mode
+  specify revison1 which will be compare to another revison(--r2)
+  Use "MAIN" as trunk branch
+  
+  example:
+    --r1="MAIN"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["r1"]="MAIN"
+    --r1="branch1"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["r1"]="branch1"
+
+--r2  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["r2"]</span>
+  <span class="required">Only required</span> when mode is "diff" and parameter --dfAgainst is "revisons"
+  not needed in "log" or "file" mode
+  specify revison2 which will be compare to another revison(--r1)
+  Use "MAIN" as trunk branch
+  
+  example:
+    --r2="MAIN"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["r2"]="MAIN"
+    --r2="branch2"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["r2"]="branch2"
+
+--d1  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["d1"]</span>
+  <span class="required">Only required</span> when mode is "diff" and parameter --dfAgainst is "dates"
+  not needed in "log" or "file" mode
+  specify date1 which will be compare to another date(--d2)
+  date format should be "YYYY-MM-DD"
+  
+  example:
+    --d1="2011-01-01"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["d1"]="2011-01-01"
+    --d1="2011-10-10"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["d1"]="2011-10-10"
+
+--d2  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["d2"]</span>
+  <span class="required">Only required</span> when mode is "diff" and parameter --dfAgainst is "dates"
+  not needed in "log" or "file" mode
+  specify date2 which will be compare to another date(--d1)
+  date format should be "YYYY-MM-DD"
+  
+  example:
+    --d2="2011-01-01"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["d2"]="2011-01-01"
+    --d2="2011-10-10"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["d2"]="2011-10-10"
+
+filter[includeExts]
+filter[excludeExts]
+filter[includeDirs]
+filter[excludeExts]
+  <span class="optional">Optional</span>
+  specify "file extend name" and directory include/exclude filter, default is include all files and directories
+  use comma as separator if there are multi "file extend name" or "directory path"    
+    
+--filter[includeExts]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["filter[includeExts]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify included file extend name
+  Using comma as multi file extend name separator
+  if is not specified, means include all file
+  
+  example:
+    --filter[includeExts]=".txt,.java,.cpp,.hpp"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["filter[includeExts]"]=".txt,.java,.cpp,.hpp"
+  
+--filter[excludeExts]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["filter[excludeExts]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify excluded file extend name
+  Using comma as multi file extend name separator
+  if is not specified, means include all file
+  example:
+    --filter[excludeExts]=".txt,.java,.cpp,.hpp"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["filter[excludeExts]"]=".txt,.java,.cpp,.hpp"
+
+--filter[includeDirs]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["filter[includeDirs]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify included directory(s)
+  Using comma as multi directories
+  if is not specified, means include all directories
+  
+  example:
+    --filter[includeExts]="a/b,c/d,e/f/g"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["filter[includeExts]"]="a/b,c/d,e/f/g"  
+  
+--filter[excludeDirs]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["filter[excludeDirs]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify excluded directory(s)
+  Using comma as multi directories
+  if is not specified, means include all directories
+  
+  example:
+    --filter[excludeDirs]="a/b,c/d,e/f/g"  <span class="apiPmExmapleSeparator">vs</span>  jsonData["filter[excludeDirs]"]="a/b,c/d,e/f/g"  
+
+
+opts[OgenGraph]
+opts[OcalcAllRevs]
+opts[OstatBin]
+opts[OstatBinLines]
+opts[OnotStatDeleted]
+opts[OdfIgnoreEOL]
+  <span class="optional">Optional</span>
+  opitions to control reporting, default is none
+  
+--opts[OgenGraph]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OgenGraph]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify if generate graph report
+  available value: 0, 1
+  
+  example:
+    --opts[OgenGraph]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OgenGraph]"]=0
+    --opts[OgenGraph]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OgenGraph]"]=1
+    
+--opts[OcalcAllRevs]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OcalcAllRevs]"]</span>
+  <span class="optional">Optional, only work for</span> cvs module when do "log" mode report and --rev is "MAIN"
+  option which indicate to stat. cvs modules all change 
+  in a special date range no matter changes in which branch/revison,
+  available value: 0, 1
+  
+  example:
+    --opts[OcalcAllRevs]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OcalcAllRevs]"]=0
+    --opts[OcalcAllRevs]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OcalcAllRevs]"]=1
+    
+--opts[OstatBin]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OstatBin]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify if stat. binary files
+  available value: 0, 1
+  
+  example:
+    --opts[OstatBin]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OstatBin]"]=0
+    --opts[OstatBin]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OstatBin]"]=1
+    
+--opts[OstatBinLines]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OstatBinLines]"]</span>
+  <span class="optional">Optional, only work</span> for cvs module when do "log" mode 
+  available value: 0, 1
+  
+  example:
+    --opts[OstatBinLines]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OstatBinLines]"]=0
+    --opts[OstatBinLines]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OstatBinLines]"]=1
+    
+--opts[OnotStatDeleted]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OnotStatDeleted]"]</span>
+  <span class="optional">Optional, only</span> using when --mode=="log"
+  option which indicate to DO NOT count file already deleted
+  available value: 0, 1
+  
+  example:
+    --opts[OnotStatDeleted]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OnotStatDeleted]"]=0
+    --opts[OnotStatDeleted]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OnotStatDeleted]"]=1
+    
+--opts[OdfIgnoreEOL]  <span class="apiPmExmapleSeparator">vs</span>  <span class="wapiFormatPm">jsonData["opts[OdfIgnoreEOL]"]</span>
+  <span class="optional">Optional</span>
+  Use to specify if ignore EOL when execute diff command
+  available value: 0, 1
+  
+  example:
+    --opts[OdfIgnoreEOL]=0  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OdfIgnoreEOL]"]=0
+    --opts[OdfIgnoreEOL]=1  <span class="apiPmExmapleSeparator">vs</span>  jsonData["opts[OdfIgnoreEOL]"]=1  	  	
+  	  </pre>
+    </div>
+  </div> <!--apiPmInstruction sub section-->    
+
+</div><!--section-->
+
+<div class="sectionSeparator section">
+	<br/><br/>------------------------------------------------------------------------------------------------------------------------------------------<br/><br/>
+</div>
+
+<div class="featureCompare section">
+  <div class="sectionTitle"><a name="FeatureCompare">Feature compare between <span class="ccvName">CodeChangeViewer</span> and others</a></div>
+  <div class="content">
+	<table class="tblFeatureCompare" cellspacing="1">
+		<tr class="title">
+			<td class="tdTitle feature">Feature</td>
+			<td class="tdTitle statCVS">statCVS</td>
+			<td class="tdTitle statSVN">statSVN</td>
+			<td class="tdTitle ccv" colspan="3">CodeChangeViewer</td>
+			<td class="tdTitle sourceCounter">Source Counter</td>
+			<td class="tdTitle feature">Feature</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Module onfig file maintain</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">Module onfig file maintain</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">Multi modules one time</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">Multi modules one time</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">As web service</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">As web service</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">As application/utility</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdFeatureRight">As application/utility</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Easy using/convenience</td>
+			<td class="tdValue star">&#9734;&#9734;</td>
+			<td class="tdValue star">&#9734;&#9734;</td>
+			<td class="tdValue star">&#9734;&#9734;&#9734;&#9734;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue star">&#9734;&#9734;&#9734;&#9734;</td>
+			<td class="tdValue star">&#9734;&#9734;</td>
+			<td class="tdFeatureRight">Easy using/convenience</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Report base on cvs/svn log</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue"></td>
+			<td class="tdValue"></td>
+			<td class="tdFeatureRight"></td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft"></td>
+			<td class="tdValue"></td>
+			<td class="tdValue"></td>
+			<td class="tdValue"></td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">File/directory amount</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Report base on cvs/svn diff</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">File size/line information</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">Graph report</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">File size distribution</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Graph types</td>
+			<td class="tdValue star">&#9734;&#9734;&#9734;&#9734;</td>
+			<td class="tdValue star">&#9734;&#9734;</td>
+			<td class="tdValue star">&#9734;&#9734;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdFeatureRight">Line distribution</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">HTML report</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue"></td>
+			<td class="tdValue"></td>
+			<td class="tdFeatureRight"></td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Multi-modules summary</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdFeatureRight">Test unit analysis</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">File/Path filter</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdFeatureRight">File/Path filter</td>
+		</tr>
+		<tr class="contentLine2">
+			<td class="tdFeatureLeft">Browse code diff</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdFeatureRight">Multi-lanaguage</td>
+		</tr>
+		<tr class="contentLine1">
+			<td class="tdFeatureLeft">Source code files stat.</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdSeparater"></td>
+			<td class="tdValue no">&times;</td>
+			<td class="tdValue">&radic;</td>
+			<td class="tdFeatureRight">Files amount in dir</td>
+		</tr>
+	</table>
+  </div>
+</div>
+
+<div class="where section">
+  <div class="sectionTitle">CodeChangeViewer Relative URLs</div>
+  <div class="content">
+    Project Home: <a target="blank" href="http://sourceforge.net/projects/ccv/" class="ccvLink">http://sourceforge.net/projects/ccv</a><br/><br/>
+    Online Manual: <a target="blank" href="http://ccv.sourceforge.net/" class="ccvLink">http://ccv.sourceforge.net/</a>
+  </div>
+</div>
+
+<div class="footer section>">
+  by: lilongen(lilongen@163.com)
+</div>
+
+</body>
+</html>
+
+<script language="javascript">
+var domNavigator = document.getElementById("navigator");
+var domWhyRepositoryMapping = document.getElementById("preInOption");
+var navigatorShown = true;
+
+function showNavigator(show) {
+	navigatorShown = show || !navigatorShown;
+	domNavigator.style.display = navigatorShown ? "block" : "none"; 
+}
+
+function showWhyRepositoryMapping() {
+	domWhyRepositoryMapping.style.display = (!domWhyRepositoryMapping.style.display || domWhyRepositoryMapping.style.display == "none") ? "block" : "none";
+}
+</script>

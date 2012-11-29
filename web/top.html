@@ -1,0 +1,27 @@
+<html>
+<head>
+<title>CodeChangeViewer Report Top</title>
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+<script type="text/javascript" src="/ccv/jquery/ui/js/jquery-ui.js"></script>
+<link rel="stylesheet" type="text/css" href="/ccv/jquery/ui/css/blitzer/jquery-ui.css" />
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+</head>
+<body style="font-size: 8pt; margin-top: 2px;">
+<div id="tabs" style="border: 0;">
+<ul>
+<li><a id="#URL#" href="#tab-c">#TITLE#</a></li>
+</ul>
+<div id="tab-c" style="display: none;"></div>
+</div>
+
+</body>
+</html>
+
+<script type="text/javascript">
+$("#tabs").tabs({
+	select: function(event, ui) {
+		url = ui.tab.id;
+		parent.main.location.href = url;
+	}
+});
+</script>

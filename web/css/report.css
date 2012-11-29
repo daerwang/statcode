@@ -1,0 +1,488 @@
+body, table, td {
+	font-family: Arial, Helvetica, sans-serif;
+	font-size: 13px;
+}
+
+.ccvReport {
+    text-align: center;
+    color: #333;  
+}
+
+.ccvReport .headSignet,
+.ccvReport .headInfo,
+.ccvReport .list,
+.ccvReport .footerInfo {
+    width: 98%;    
+}
+
+.ccvReport div.headInfo {
+	margin: 8px 0 2px 0;
+	text-align: left;
+	color: #666;
+}
+
+.ccvReport .footerInfo {
+	text-align: center;
+	margin-top: 30px;
+	font-style: italic;
+}
+
+.ccvReport a {
+	color: #0066cc;
+}
+.ccvReport a:link,
+.ccvReport a:visited,
+.ccvReport a:active {
+	text-decoration: none
+}
+.ccvReport a:hover {
+	text-decoration: underline;
+	color: #0000ff;
+}
+
+.ccvReport div.list {
+    padding: 4px 0 16px 0;
+    border: 1px solid #aaa;
+    background-color: #fcfcfc;
+}
+
+.ccvReport .abbreviation {
+    color: #0066CC;
+    font-size: 14px;
+}
+
+.ccvReport .ftUline {
+    text-decoration: underline !Important;
+}
+
+.ccvReport .ftBlack0{
+    color: #000000;
+}
+
+.ccvReport .ftItalic {
+    font-style: italic;
+}
+
+.ccvReport .ftHighlighted {
+    color: #ff0000;
+    font-weight: bold;
+}
+
+.ccvReport .ftBlack5 {
+    color: #555555;
+}
+
+.ccvReport .ftBold {
+    font-weight: bold;
+}
+
+.ccvReport .w1 {
+    width: 30px;    
+}
+
+.ccvReport .ftFlagDir,
+.ccvReport .ftFlagBin {
+	color: #888;
+	font-style: italic;
+	font-size: 10px;
+}
+
+.ccvReport .headInfo .error {
+    border: 1px solid #ccc;
+    background-color: #fbf594;
+	color: #ff0000;
+	font-size: 36px;
+	font-weight: bold;
+	display: none;
+	padding: 12px;
+	margin: 24px 0;
+}
+
+.ccvReport .headInfo .phasedInfoTitle {
+	position: relative;
+	margin-top: 12px;
+	color: #333;  
+}
+
+.cvsLogReport .ccvReport .headInfo .phasedInfoTitle .showBDConatiner,
+.cvsDiffReport .ccvReport .headInfo .phasedInfoTitle .showBDConatiner {
+	display: none;
+}
+
+.ccvReport .headInfo .phasedInfoTitle .viewSwitchEntry {
+	font-weight: normal;
+	/**
+	 * not using float: right, for IE bug, so use abolute position
+	 */
+	position: absolute;
+	right: 0px;
+}
+
+.ccvReport .headInfo .phasedInfoTitle .showBDEntry {
+	font-weight: normal;
+	cursor: pointer;
+}
+
+
+/**
+ *CSS for expand/collapse UI dom for log mode report
+ */
+.ccvReport .exclUL {
+	color: #777;
+	text-align:left;
+	margin:0;  /* Removes browser default margins applied to the lists. */
+	margin:0 0 0 0px;  /* A left margin to indent the list items and give the menu a sense of structure. */
+	padding:0; /* Removes browser default padding applied to the lists. */
+}
+
+.ccvReport .exclUL ul {
+	text-align:left;
+	margin:0;  /* Removes browser default margins applied to the lists. */
+	margin:0 0 0 0px;  /* A left margin to indent the list items and give the menu a sense of structure. */
+	padding:0; /* Removes browser default padding applied to the lists. */
+	display: none;
+}
+
+.ccvReport .exclUL li {
+	margin:0 0 0 22px;  /* A left margin to indent the list items and give the menu a sense of structure. */
+	padding:0;  /* Removes browser default padding applied to the list items. */
+	list-style-type:none;  /* Removes the bullet point that usually goes next to each item in a list. */
+}
+
+.ccvReport .exclUL .minus{
+	float:left;
+	width:12px;
+	height:1em;
+	background-position:0 50%;
+	background-repeat:no-repeat;
+	background-image: url('../img/minus.png');
+}
+
+.ccvReport .exclUL .Plus{
+	float:left;
+	width:12px;
+	height:1em;
+	background-position:0 50%;
+	background-repeat:no-repeat;
+	background-image: url('../img/plus.png');
+}
+
+.ccvReport .exclUL .ci{
+	float:left;
+	width:12px;
+	height:1em;
+	background-position:0 50%;
+	background-repeat:no-repeat;
+	background-image: url('../img/page.png');
+}
+
+.ccvReport .fwspan {
+	display:-moz-inline-box;
+	display:inline-block;
+}
+
+.ccvReport .log .exclUL li.B,
+.ccvReport .log .exclUL li.D {
+	display: none;
+}
+
+.showBD .ccvReport .log .exclUL li.B,
+.showBD .ccvReport .log .exclUL li.D {
+	display: block;
+}
+
+.ccvReport .log .exclUL li .locInfo {
+	color: #999;
+	text-decoration: underline;
+}
+
+.ccvReport .log .exclUL li.T .locInfo {
+	color: #999;
+	text-decoration: underline;
+}
+
+.ccvReport .log .exclUL li.B .locInfo, 
+.ccvReport .log .exclUL li.D .locInfo{
+	color: #fff;
+	text-decoration: none;
+}
+
+.ccvReport .log .exclUL li .userChangeinfo {
+	color: #666;	
+}
+
+.ccvReport .log .exclUL li .fromPath {
+	color: #999;
+	font-style: italic;
+	text-decoration: none;
+}
+
+.ccvReport .log .exclUL li .userName {
+	color: #0000ff;
+	font-weight: bold;	
+}
+
+.ccvReport .log .exclUL li.revTime {
+	color: #999;
+}
+
+.ccvReport .log .exclUL li .ciRevUser {
+	font-style: italic;
+	color: #666;
+}
+
+.ccvReport .log .exclUL li .userFileRev,
+.ccvReport .log .exclUL li .fileRev {
+	font-style: italic;
+}
+
+/**
+ * styles for diff mode report
+ */
+.ccvReport .df {
+	text-align: left;
+} 
+
+.ccvReport .df .treeOperator {
+	font-size: 11px;
+	font-weight: bold;
+	color: #0066cc;
+}
+
+.ccvReport .df li {
+}
+
+.ccvReport .df li.shown {
+	display: block;	
+}
+
+.ccvReport .df li.hidden {
+	display: none;	
+}
+
+.ccvReport .df .fileLoc {
+	text-decoration: underline;
+	color: #888888;
+	font-size: 11px;
+}
+
+.ccvReport .df .dirLOC {
+	font-size: 11px;
+	color: #0066cc;
+	font-weight: normal;
+	font-style: normal;
+	text-decoration: none;	
+}
+
+.ccvReport .df .directory {
+	font-size: 13px;
+	color: #000000;
+	font-weight: normal;
+	text-decoration: none;
+	font-style: normal;
+}
+
+.ccvReport .df .file {
+	font-size: 13px;
+	font-weight: normal;
+	text-decoration: none;
+	font-style: normal;
+	color: #0000ff;
+}
+
+
+.ccvReport .fileNormal {
+	color: #0066CC;	
+}
+
+.ccvReport .fileUnExistAtL,
+.ccvReport .fileAdd,
+.ccvReport .revStyleAdd{
+	color: #00aa00;	
+}
+
+.ccvReport .fileUnExistAtR,
+.ccvReport .fileDelete,
+.ccvReport .revStyleDelete {
+	color: #aa0000;
+	text-decoration: line-through;
+}
+
+.ccvReport .fileBinary {
+	color: #999999;	
+}
+
+.ccvReport .revStyleNormal {
+    color: #555;
+}
+
+.ccvReport .df .binLocTxt {
+	text-decoration: none;
+}
+
+.ccvReport .df .txtLocTxt {
+	text-decoration: underline;
+}
+
+.ccvReport .df .dirFileCnt {
+	text-decoration: none;
+	color: #666666;
+	font-style: italic;
+	font-size: 11px;
+}
+
+/**
+ * ccv unify differ 
+ */
+.ccvDfView {
+	 font-family: Helvetica,Arial; 
+	 font-size: 10px; 
+}
+
+.ccvDfView table {
+	font-family: Helvetica,Arial; 
+	border: 0;
+	margin: 0;
+	border-collapse: collapse;
+	width: 99%;
+	table-layout:fixed;
+}
+
+.ccvDfView table td {
+	padding: 1px 4px;
+	vertical-align: top;
+}
+
+.ccvDfView table.dfLines {
+	padding-left: 5px; 
+	border-bottom: 1px solid #cccccc;
+}
+
+.ccvDfView table.dfLegend {
+	margin-top: 20px;
+	border-bottom: 1px solid #cccccc;
+}
+
+.ccvDfView table.powerBy {
+	margin-top: 20px;
+}
+
+.ccvDfView table.powerBy .copyright {
+	font-size: 13px;
+	font-style: italic; 
+	text-align: right;
+}
+
+.ccvDfView .footer {
+	text-align: right;
+	margin-top: 20px;
+}
+
+.ccvDfView .labelLegend {
+	margin-top: 16px;
+	font-size: 13pt;
+	font-weight: bold;
+}
+
+.ccvDfView .dfLegend .alignCenter{
+	text-align: center;
+}
+
+.ccvDfView .fileNameTitle{
+	text-align: center;
+	vertical-align: top;
+	font-size: 19pt; 
+	font-weight: bold;
+}
+
+.ccvDfView .fileNameTitle .name{
+	color: #ff0000;
+}
+
+.ccvDfView table td.leftTd,
+.ccvDfView table td.rightTd {
+	width: 50%;
+}
+
+.ccvDfView .version {
+	font-size: 13pt;
+	color: #000000;
+	font-weight: bold;
+	text-align: center;
+}
+
+.ccvDfView .version .versionValue {
+	color: #333;
+}
+
+.ccvDfView .version .versionTime {
+	color: #aa0000;
+}
+ 
+.ccvDfView table td.leftLineInfoTitle {
+	color: #333;	
+	border: 1px solid #666666; 
+	font-size: 13pt;
+	background-color: #99cccc;
+	font-weight: bold;
+}
+
+.ccvDfView table td.rightLineInfoTitle {
+	color: #333;	
+	border: 1px solid #666666; 
+	border-left: 0px; 
+	font-size: 13pt;
+	background-color: #99cccc;
+	font-weight: bold;
+}
+
+.ccvDfView table td.bgClrNormal {
+	background-color: #eeeeee;	
+}
+
+.ccvDfView table td.bgClrModified {
+	background-color: #ffff77;	
+}
+
+.ccvDfView table td.bgClrAdded {
+	background-color: #aaffaa;	
+}
+
+.ccvDfView table td.bgClrRemoved {
+	background-color: #ffaaaa;	
+}
+
+.ccvDfView table td.bgClrAddedRemovedEmpty {
+	background-color: #cccccc;	
+}
+
+.ccvDfView table td.bgClrModifiedEmpty {
+	background-color: #eeee77;	
+}
+
+
+.ccvDfView a {
+	color: #0066cc; 
+	text-decoration: none;
+}
+
+.ccvDfView a:hover {
+	color: #0066cc; 
+	text-decoration: underline; 
+	font-weight: normal;
+}
+.ccvDfView .fwspan {
+  display:-moz-inline-box;
+  display:inline-block;
+}
+
+.ccvDfView .diff_td_l {
+	border-right: 1px solid #cccccc;
+	border-left: 1px solid #cccccc;
+	overflow: hidden;
+}
+
+.ccvDfView .diff_td_r {
+	border-right: 1px solid #cccccc;
+	overflow: hidden;
+}	

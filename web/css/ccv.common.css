@@ -1,0 +1,50 @@
+body, table, input, button, select {
+	font-family: Arial, Helvetica, Tahoma, sans-serif;
+	font-size: 12px;
+}
+
+body, table {
+    background-color: #fff;
+}
+
+.ccv {
+	margin: 12px;	
+	background-color: #fff;
+	color: #333;
+}
+
+.ccv a {
+	text-decoration:none;
+	color: #aa0000;
+	cursor: pointer;
+}
+
+.ccv input {
+	padding: 0 4px;
+}
+
+.ccv input:checkbox {
+    cursor: pointer;
+}
+
+.ccv span.fixwidth {
+    display: -moz-inline-box;
+    display: inline-block; 
+}
+
+
+/**
+ * ccv combox
+ */
+
+.ccv input.combobox {
+	position: relative;	
+}
+
+.ccv .comboboxDownAnchor {
+	position: absolute;
+	display: inline-block;
+	width: 24px;
+	height: 24px;
+	background-image: url(../img/comboAnchor.png);
+}

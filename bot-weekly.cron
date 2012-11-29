@@ -1,0 +1,7 @@
+#!/bin/bash
+# by: lilong'en(lilongen@163.com)
+#
+
+cd "#CCV_HOME#"
+perl bot.pl
+perl post.bot.pl

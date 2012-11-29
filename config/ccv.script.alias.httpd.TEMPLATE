@@ -1,0 +1,9 @@
+ScriptAlias #CGI_WEB# "#CGI_LOCAL#"
+
+<Directory "#CGI_LOCAL#">
+    AllowOverride None
+    Options FollowSymLinks
+    Order allow,deny
+    Allow from all
+</Directory>
+

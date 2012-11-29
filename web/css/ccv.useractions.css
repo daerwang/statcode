@@ -1,0 +1,196 @@
+.ccv div.main div.userActions {
+    height: 380px;
+    border: 4px solid #ddd;
+    float: right;
+    position: relative;
+    border-radius: 6px;
+}
+
+.ccv div.main div.userActions .section {
+    margin-bottom: 10px;
+}
+
+.ie .ccv div.main div.userActions .section {
+    margin-bottom: 2px !important;     
+}
+
+.ccv div.main div.userActions div.modeSelector {
+    border-bottom: 1px solid #aa0000;
+    padding: 4px 2px 4px 8px;
+    background-color: #ddd;
+}
+
+.ccv div.main div.userActions div.modeSelector .spanReportModeTitle {
+    font-weight: bold;
+    margin-bottom: 6px;  
+}
+
+.ccv div.main div.userActions div.modeSelector .modeName {
+    color: #aa0000; 
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.ccv div.main div.userActions div.modeSelector input {
+    cursor: pointer;
+}
+
+.ccv div.main div.userActions div.modeList {
+    margin-left: 24px;
+}
+
+.ccv div.main div.userActions div.diff,
+.ccv div.main div.userActions div.file {
+	display: none;	
+}
+
+.ccv div.main div.userActions div.diff table.dfRevsDates{
+	border: 0;
+	border-collapse: collapse;
+	width: 200px;
+}
+
+.ccv div.main div.userActions div.diff table.dfRevsDates td{
+    padding: 0px;
+}
+
+
+.ccv div.main div.userActions div.diff .instruction1 {
+    font-size: 11px;
+    margin-bottom: 8px;     
+}
+
+.ccv div.main div.userActions div.diff .instruction2 {
+    font-size: 11px;
+    color: #aa0000;
+}
+
+.ccv div.main div.userActions div.diff table td {
+    vertical-align: middle;
+}
+
+.ccv div.main div.userActions div.diff table td.tdInput {
+    padding: 0 4px 0 0;
+}
+
+.ccv div.main div.userActions div.diff table td.only4SvnPrompt {
+    font-weight: bold;
+    text-align: left !Important;
+}
+
+.ccv div.main div.userActions div.diff table td.tdJust4SVN {
+    background-color: #ccc;
+    text-align: right;
+    padding: 0 6px;
+}
+
+.ccv div.main div.userActions div.diff .emphasize {
+    font-weight: bold;
+    font-style: italic;
+}
+
+.ccv div.main div.userActions div.log,
+.ccv div.main div.userActions div.diff,
+.ccv div.main div.userActions div.file {
+	position: relative;
+    width: 224px;
+    height: 248px;
+    padding: 12px 0 2px 20px;
+}
+
+.ccv div.main div.userActions div.log .moreRevsUsage {
+    font-style: italic;
+}
+
+.ccv div.main div.userActions div.log .label {
+    width: 65Px;
+}
+
+
+.ccv div.main div.userActions div.log .example,
+.ccv div.main div.userActions div.file .example {
+    font-size: 11px;
+    color: #999;
+    padding-left: 3px;
+    -webkit-text-size-adjust: none;
+}
+.ie .ccv div.main div.userActions div.log .example,
+.ie .ccv div.main div.userActions div.file .example {
+    padding-left: 1px;
+}
+
+.ccv div.main div.userActions div.log .example .title,
+.ccv div.main div.userActions div.file .example .title {
+}
+
+.ccv div.main div.userActions div.log .example .content,
+.ccv div.main div.userActions div.file .example .content {
+}
+
+.ccv div.main div.userActions div.diff .label {
+    width: 18Px;
+}
+
+.ccv div.main div.userActions div.diff select.svnRevBase {
+    width: 80px !important;
+	border: 1px solid #999 !important;
+	background: #ffffff;    
+}
+
+.ccv div.main div.userActions div.log input.flat,
+.ccv div.main div.userActions div.file input.flat {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 24px;
+    line-height: 24px;
+    width: 171px;
+    padding-right: 28px;
+    border-radius: 6px;
+}
+
+.ccv div.main div.userActions div.diff input.flat {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    height: 24px;
+    line-height: 24px;
+    width: 82px;
+    border-radius: 6px;
+}
+
+.ccv div.main div.userActions div.diff input.rev1,
+.ccv div.main div.userActions div.diff input.rev2 {
+    width: 58px;
+    padding-right: 28px;	
+}
+
+.ccv div.main div.userActions div.diff input.branchRevsBasedOn,
+.ccv div.main div.userActions div.diff input.branchDatesBasedOn {
+	width: 70px;
+	border-radius: 6px;
+}
+
+.ccv input.gray, .ccv select.gray {
+    background-color: #eee !important;    
+}
+
+.ccv div.main div.userActions div.diff .Wdate{
+	background: url("../img/datePicker.gif") no-repeat right;
+}
+
+.ccv div.main div.userActions div.action {
+	position: absolute;
+    bottom: 4px;
+    left: 10px;
+}
+
+.ccv div.main div.userActions button.btnGenerate {
+    width: 226px;
+    height: 55px;
+    color: #fff;
+    font-size: 25px;
+    font-weight: bold;
+    border: 1px solid #999;
+    background-color: #aa0000;
+    cursor: pointer;
+    border-radius: 8px;
+}

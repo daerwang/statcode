@@ -1,0 +1,27 @@
+.ui-autocomplete {
+	overflow-y: auto;
+	overflow-x: hidden;
+	border: 1px solid #fcaf17;
+}
+
+.ui-widget-content a {
+	color: #333;	
+}
+
+.ui-autocomplete .acHighlight {
+	background-color: #ffff00;
+}
+
+.ccv .log .ui-autocomplete,
+.ccv .file .ui-autocomplete {
+	max-height: 210px;
+	max-width: 280px;
+	width: 280px;
+}
+
+.ccv .diff .ui-autocomplete {
+	max-height: 140px;
+	max-width: 160px;
+	width: 160px;
+	font-size: 11px;
+}

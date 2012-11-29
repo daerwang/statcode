@@ -1,0 +1,123 @@
+.ccv .header .manual {
+	font-style: italic;
+	text-decoration: underline;
+}
+
+.ccv .header .cfgExample {
+	text-decoration: underline;
+}
+
+.ccv .header {
+    overflow-x: hidden;
+    overflow-y: hidden;
+    position: relative;
+    padding-bottom: 3px;
+}
+
+.ccv .header .left {
+	float: left;
+	width: 410px;
+	padding-left: 1px;
+}
+
+.ccv .header .left .ccvSupport {
+	color: #555;
+	font-size: 12px;
+	font-weight: normal;
+	font-style: italic;	
+}
+
+.ccv .header .title {
+	color: #AA0000;
+	font-size: 20px;
+	font-style: italic;
+	font-weight: bold;
+}
+
+.ccv .header .ccvComment {
+    font-style: normal; 
+    padding-left: 2px;
+    color: #888;
+}
+
+.ccv .header .right {
+	float: right;
+	text-align: right;
+	position: relative;
+}
+.ccv .header .right .firstLine{
+	margin-bottom: 4px;
+}
+
+.ccv .header .msg {
+    border: 1px solid #ccc;
+    background-color: #fbf594;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    visibility: hidden;
+    color:#dd0000;
+    text-align: center;
+    font-size: 18px;
+    border-radius: 6px;
+}
+
+.ccv .header .msg .msgCloseAnchor{
+    position: absolute;
+    top: -8px;
+    right: 2px;
+    font-size: 20px;
+    color: #555;
+    cursor: pointer;
+    width: 16px;
+    height: 16px;
+}
+
+.ccv .header .msg .content{
+	width: 100%;
+	height: 100%;
+}
+
+.ccv .header .btnBrowse,
+.ccv .header .btnUpload {
+	height: 20px;
+	padding: 0 16px 0px 16px;
+	background-color: #eee;
+    border: 1px solid #999;	
+    cursor: pointer;
+    color: #aa0000;
+    border-radius: 6px;
+}
+
+.firefox .ccv .header .btnBrowse,
+.firefox .ccv .header .btnUpload {
+	padding-bottom: 2px;	
+}
+
+.ccv .header .btnBrowse {
+	margin-right: 4px;
+	margin-left: 8px;
+}
+
+.ccv .header .disabledBtn {
+	color: #ccc;	
+}
+
+.ccv .header .btnUpload {
+	margin-left: 2px;
+}
+
+.ccv .header .upPasswd {
+	height: 18px;
+	line-height: 18px;
+	width: 60px;
+	background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+.ccv .header .xmlName {
+    color: #ff0000;
+    font-style: italic;
+    padding-right: 12px;   
+}

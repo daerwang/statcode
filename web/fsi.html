@@ -1,0 +1,670 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<title>CodeChangeViewer Files Details</title>
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.common.core.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.hbar.js"></script>
+<script type="text/javascript" src="/ccv/RGraph/RGraph.pie.js"></script>
+
+<style type="text/css">
+body, div, table {
+	font-family: Arial, Helvetica, Tahoma, sans-serif;
+	font-size: 14px;
+}
+table.fsi {
+	border: 0px solid #ccc;	
+	width: 25%;
+	height: 100%;
+	float: left;
+}
+
+table.fsi_1 .ld,
+table.fsi_1 .vd,
+table.fsi_3 .ld,
+table.fsi_3 .vd {
+	background-color: #f6f6f6;
+}
+table.fsi_2 .ld,
+table.fsi_2 .vd,
+table.fsi_4 .ld,
+table.fsi_4 .vd {
+	background-color: #fcfcfc;
+}
+
+table.distribute {
+	background-color: #ccc;
+	width: 100%;
+	float: none;
+	margin-bottom: 40px;
+}
+
+span.unit {
+	color: #cc0000;	
+}
+
+table td.ld {
+	color: #555;
+	padding-left: 2px;
+}
+
+table td.vd {
+	color: #cc0000;
+}
+
+table.fsi td.sect {
+	padding-left: 24px;
+	color: #555;
+}
+
+table.fsi td.ld {
+	padding: 2px 0 2px 24px;
+	text-align: left;
+}
+
+table.fsi td.vd {
+	padding-right: 24px;
+	text-align: right;
+}
+
+span.keyWord {
+	color: #cc0000;
+}
+
+table.distribute td.vd {
+	vertical-align: top;
+	background-color: #fff;
+	padding: 0 24px 0 24px;
+}
+
+table.distribute td.gd {
+	vertical-align: center;
+	background-color: #fff;
+}
+
+table.distribute td.ld {
+	background-color: #eee;
+	font-weight: bold;
+	height: 26px;
+}
+
+table td.sect {
+	height: 26px;
+	background-color: #eee;
+	font-weight: bold;
+	padding-left: 2px;
+}
+
+table.distributeInfo {
+	width: 100%;
+	color: #333;
+	background-color: #ccc;
+}
+
+table.distributeInfo td {
+	background-color: #fff;	
+	padding-left: 2px;
+	border-bottom: 1px solid #ccc;
+}
+
+table.distributeInfo td.infoValue {
+	color: #cc0000;
+	padding-right: 2px;
+	text-align: right;
+}
+
+table.distributeInfo td.infoLabel {
+	font-style: normal;
+	padding-left: 2px;
+	color: #555;
+}
+
+canvas.distributeGraph{
+	margin-bottom: 30px;
+}
+
+.noCanvasPrompt {
+	color: #333;	
+}
+
+div.title {
+	font-weight: bold;
+	color: #555;
+	padding: 5px 0 15px 0;
+	text-align: left;
+}
+
+table.txtTypeInfo {
+	width: 100%;
+	font-size: 13px;
+	border: 1px solid #ccc;
+	background-color: #FAFAD2;
+	display: none;
+	clear: both;
+}
+
+div.moduleInfo .infoLable,
+table.txtTypeInfo .infoLable {
+	font-weight: normal;
+	color: #999;
+}
+
+div.moduleInfo .moduleURI,
+div.moduleInfo .rev {
+	font-weight: normal;
+	color: #333;
+}
+
+table.txtTypeInfo .txtCode,
+table.txtTypeInfo .txtHtml,
+table.txtTypeInfo .txtConfigure {
+	color: #555;
+	font-style: italic;
+	
+	/**
+	 * for IE
+	 */
+	word-wrap: break-word;
+	word-break: break-all;
+}
+
+table.txtTypeInfo .infoLable {
+	vertical-align: top;
+	font-weight: normal;
+	white-space: nowrap;
+}
+
+div.extsAnchor {
+	border: 1px solid #ccc;
+	background-color: #eee;
+	width: 240px;
+	height: 20px;
+	padding: 4px 0 0 4px;
+	float: right;
+}
+
+div.extsAnchor a{
+	text-decoration: underline;
+	color: #333;
+	cursor: pointer;
+}
+
+div.extsAnchor a:hover{
+	font-weight: bold;
+}
+
+</style>
+</head>
+
+
+<body>
+<div class="title">Source code text & binary file size/line/type/extend-name amount and distribution information</div>
+<div class="moduleInfo">
+  <span class="infoLable">Module URI</span>: <span class="moduleURI"></span><br>
+  <span class="infoLable">Revision/Branch</span>: <span class="rev"></span>
+</div>
+
+<div class="extsAnchor"><a>File Extend Name Catalog Info ...</a></div>
+<table class="txtTypeInfo">
+  <tr><td class="infoLable">Source Code File Extend</td><td class="txtCode"></td></tr>
+  <tr><td class="infoLable">Html Files Extend</td><td class="txtHtml"></td></tr>
+  <tr><td class="infoLable">Configure Files Extend</td><td class="txtConfigure"></td></tr>
+</table>
+<div style="clear: both;">&nbsp;</div>
+<table class="fsi fsi_1" cellspacing="0">
+	<!-- overall -->
+	<tr><td colspan="2" class="sect">Overall size/lines</td></tr>
+	<tr>
+		<td class="ld" width="70%">all files total size(<span class="unit">MB</span>)</td>
+		<td class="vd all_file_total_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">binary file size(<span class="unit">MB</span>)</td>
+		<td class="vd binary_file_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">text file size(<span class="unit">MB</span>)</td>
+		<td class="vd text_file_size"></td>
+	</tr>		
+	<tr>
+		<td class="ld">text file total lines</td>
+		<td class="vd all_text_file_total_lines"></td>
+	</tr>
+	<tr>
+		<td class="ld">&nbsp;</td>
+		<td class="vd">&nbsp;</td>
+	</tr>	
+</table>
+<table class="fsi fsi_2" cellspacing="0">	
+	<!-- amount -->
+	<tr><td colspan="2" class="sect">File/directory <span class="keyWord">amount</span></td></tr>
+	<tr>
+		<td class="ld">directory</td>
+		<td class="vd dir"></td>
+	</tr>
+	<tr>
+		<td class="ld">file</td>
+		<td class="vd file"></td>
+	</tr>	
+	<tr>
+		<td class="ld">binary file</td>
+		<td class="vd binary_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">text file</td>
+		<td class="vd text_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">image file</td>
+		<td class="vd image_file"></td>
+	</tr>			
+	<tr>
+		<td class="ld">no extend-name file</td>
+		<td class="vd no_ext_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">source code file</td>
+		<td class="vd text_sourcecode_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">html file</td>
+		<td class="vd text_html_file"></td>
+	</tr>	
+	<tr>
+		<td class="ld">configure file</td>
+		<td class="vd text_configure_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">other text file</td>
+		<td class="vd text_other_file"></td>
+	</tr>
+	<tr>
+		<td class="ld">&nbsp;</td>
+		<td class="vd">&nbsp;</td>
+	</tr>			
+</table>
+<table class="fsi fsi_3" cellspacing="0">		
+	<!-- overall -->
+	<tr><td colspan="2" class="sect">File <span class="keyWord">size</span> details</td></tr>
+	<tr>
+		<td class="ld">all files total(<span class="unit">MB</span>)</td>
+		<td class="vd all_file_total_size"></td>
+	</tr>	
+	<tr>
+		<td class="ld">binary file(<span class="unit">MB</span>)</td>
+		<td class="vd binary_file_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">text file(<span class="unit">MB</span>)</td>
+		<td class="vd text_file_size"></td>
+	</tr>	
+	<tr>
+		<td class="ld">source code file(<span class="unit">MB</span>)</td>
+		<td class="vd text_sourcecode_file_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">html file(<span class="unit">MB</span>)</td>
+		<td class="vd text_html_file_size"></td>
+	</tr>	
+	<tr>
+		<td class="ld">configure file(<span class="unit">MB</span>)</td>
+		<td class="vd text_configure_file_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">other type text file(<span class="unit">MB</span>)</td>
+		<td class="vd text_other_file_size"></td>
+	</tr>
+	<tr>
+		<td class="ld">&nbsp;</td>
+		<td class="vd">&nbsp;</td>
+	</tr>	
+</table>
+<table class="fsi fsi_4" cellspacing="0">		
+	<!-- overall -->
+	<tr><td colspan="2" class="sect">Text file <span class="keyWord">lines</span> details</td></tr>
+	<tr>
+		<td class="ld">text file total</td>
+		<td class="vd all_text_file_total_lines"></td>
+	</tr>
+	<tr>
+		<td class="ld">source code file</td>
+		<td class="vd text_sourcecode_file_lines"></td>
+	</tr>
+	<tr>
+		<td class="ld">html file</td>
+		<td class="vd text_html_file_lines"></td>
+	</tr>			
+	<tr>
+		<td class="ld">configure file</td>
+		<td class="vd text_configure_file_lines"></td>
+	</tr>	
+	<tr>
+		<td class="ld">other text type</td>
+		<td class="vd text_other_file_lines"></td>
+	</tr>
+	<tr>
+		<td class="ld">&nbsp;</td>
+		<td class="vd">&nbsp;</td>
+	</tr>	
+</table>
+<table class="distribute" cellspacing="1">
+	<tr>
+		<td class="ld" width="20%">File group by extend-name amount distribution</td>
+		<td class="ld" width="20%">Text file lines distribution</td>
+		<td class="ld" width="20%">Text file size distribution(<span class="unit">KB</span>)</td>
+		<td class="ld" width="20%">Binary file size distribution(<span class="unit">KB</span>)</td>
+		<td class="ld" width="20%">File(binary + text) Size distribution(<span class="unit">KB</span>)</td>
+		
+	</tr>
+	<tr>
+		<td class="gd"><canvas class="distributeGraph" width="240" height="300" id="file_ext_distribute_canvas">[<span class="noCanvasPrompt">No canvas support, use <i>Chrome/Safari/Firefox/IE9+</i> to view graph</span>]</canvas></td>
+		<td class="gd"><canvas class="distributeGraph" width="240" height="300" id="text_file_lines_distribute_canvas">[<span class="noCanvasPrompt">No canvas support, use <i>Chrome/Safari/Firefox/IE9+</i> to view graph</span>]</canvas></td>
+		<td class="gd"><canvas class="distributeGraph" width="240" height="300" id="text_file_size_distribute_canvas">[<span class="noCanvasPrompt">No canvas support, use <i>Chrome/Safari/Firefox/IE9+</i> to view graph</span>]</canvas></td>
+		<td class="gd"><canvas class="distributeGraph" width="240" height="300" id="binary_file_size_distribute_canvas">[<span class="noCanvasPrompt">No canvas support, use <i>Chrome/Safari/Firefox/IE9+</i> to view graph</span>]</canvas></td>
+		<td class="gd"><canvas class="distributeGraph" width="240" height="300" id="file_size_distribute_canvas">[<span class="noCanvasPrompt">No canvas support, use <i>Chrome/Safari/Firefox/IE9+</i> to view graph</span>]</canvas></td>
+	</tr>	
+	<tr>
+		<td class="vd file_ext_distribute"></td>
+		<td class="vd text_file_lines_distribute"></td>
+		<td class="vd text_file_size_distribute"></td>
+		<td class="vd binary_file_size_distribute"></td>
+		<td class="vd file_size_distribute"></td>
+	</tr>
+</table>
+</body>
+</html>
+	 
+
+<script type="text/javascript">
+var pms = {};
+var fsi = {
+	data: null,
+	
+	getParams: function() {
+		var url =  window.location.href;
+		var qString = url.substring(url.indexOf('?', 0) + 1);
+		
+		var getPM = function(name) {
+			var pattern = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+			var mat = qString.match(pattern);
+			if (mat != null) {
+			    return unescape(mat[2]);
+			}
+			
+			return '';
+		};
+		
+		pms.moduleURI = getPM('moduleURI');
+
+		pms.dataFile = getPM('df');
+		var nodes = pms.dataFile.split('/');
+		pms.rev = nodes[5];
+		pms.moduleId = nodes[6];
+	},
+
+	_DistributeDataAraySortFun: {
+		file_ext_distribute			: null,
+		text_file_lines_distribute	: null,
+		file_size_distribute		: null,
+		text_file_size_distribute	: null,
+		binary_file_size_distribute	: null
+	},
+	
+	fillModuleInfo: function() {
+		var jqModuleInfo = jQuery("div.moduleInfo");
+		jqModuleInfo.find(".moduleURI").html(pms.moduleURI || "");
+		jqModuleInfo.find(".rev").html(pms.rev || "");		
+	},
+	
+	fillTxtTypeInfo: function() {
+		var jqTxtTypeInfo = jQuery("table.txtTypeInfo");
+		var txtTypeInfo = fsi.data.txt_type_info;
+		
+		fsi.data.txt_type_exts = {};
+		for (var key in txtTypeInfo) {
+			fsi.data.txt_type_exts[key] = jQuery.trim(txtTypeInfo[key]).split(" ");
+			txtTypeInfo[key] = fsi.data.txt_type_exts[key].sort().join(" ");
+		}
+		
+		jqTxtTypeInfo.find(".txtCode").html(this._addDotBeforeExt(txtTypeInfo.code || ""));
+		jqTxtTypeInfo.find(".txtHtml").html(this._addDotBeforeExt(txtTypeInfo.html || ""));			
+		jqTxtTypeInfo.find(".txtConfigure").html(this._addDotBeforeExt(txtTypeInfo.configure || ""));
+		
+		jQuery("div.extsAnchor").click(function() {
+			if (jqTxtTypeInfo.css("display") == "none") {
+				jqTxtTypeInfo.show();
+			} else {
+				jqTxtTypeInfo.hide();	
+			}
+		});						
+	},
+	
+	_addDotBeforeExt: function(exts) {
+		return exts.replace(/(\w+)/g, function(match){
+            return "." + match;
+        });
+	},
+	
+	fillReport: function() {
+		var data = fsi.data;
+		var jqVds = jQuery("table td.vd");
+
+		fsi._DistributeDataAraySortFun.file_ext_distribute 			= fsi._sortFuns.ext;
+		fsi._DistributeDataAraySortFun.text_file_lines_distribute 	= fsi._sortFuns.distribute;
+		fsi._DistributeDataAraySortFun.file_size_distribute 		= fsi._sortFuns.distribute;
+		fsi._DistributeDataAraySortFun.text_file_size_distribute 	= fsi._sortFuns.distribute;
+		fsi._DistributeDataAraySortFun.binary_file_size_distribute 	= fsi._sortFuns.distribute;
+		
+		var outHtml = "";
+		for (var key in data) {
+			var outHtml = data[key];
+			
+			var sortFun = fsi._DistributeDataAraySortFun[key];
+			if (sortFun) {
+				outHtml = fsi._outDistributeInfo(key, sortFun);
+			} else {
+				outHtml = data[key];
+				var idx = key.indexOf("size");
+				if (idx != -1 && (idx + "size".length == key.length)) {
+					outHtml /= 1000;
+					outHtml = outHtml.toString();
+					idx = outHtml.indexOf(".");
+					if (idx != -1) {
+						outHtml = outHtml.substring(0, idx + 3);
+					}
+				}
+			}
+			jqVds.filter("." + key).html(outHtml);
+		}
+		
+		if (!(jQuery.browser.msie && jQuery.browser.version < 9)) {
+			this._drawDistributeGraphs();
+		}
+	},
+	
+	_sortFuns: {
+		ext: function(a, b) {
+			return b[1] - a[1];
+		},
+		
+		distribute: function(a, b) {
+			var regu = /\[(\d+),(\d*)/;
+			var range1 = regu.exec(a[0]);
+			var range2 = regu.exec(b[0]);
+			
+			range1[2] = range1[2] || 9999999999;
+			range2[2] = range2[2] || 9999999999;
+			
+			if (range1[1] == 0 && range2[1] == 0) {
+				return range1[2] - range2[2];
+			} else {
+				if (range1[1] == 0) {
+					return 1;
+				}
+				
+				if (range2[1] == 0) {
+					return -1;
+				}
+				
+				return range1[1] - range2[1];
+			}		
+		}
+		
+	},
+	
+	_outDistributeInfo: function(key, sortFun) {
+		var distributeInfo = fsi.data[key];
+		
+		var sortArr = [];
+		for (var k in distributeInfo) {
+			sortArr.push([k, distributeInfo[k]]);
+		}
+		
+		sortArr.sort(sortFun);
+		
+		fsi.data[key + "_sorted"] = [];
+		fsi.data[key + "_graph"] = [];
+		jQuery.extend(fsi.data[key + "_sorted"], sortArr);
+		jQuery.extend(fsi.data[key + "_graph"], sortArr);
+		
+		if (key != "file_ext_distribute") {
+			this._removeMore02XItems(sortArr);	
+		}
+		
+		var extDistributeInfo = "<table class='distributeInfo' cellspacing='0'>";
+		for (var i = 0; i < sortArr.length; i++) {
+			extDistributeInfo += "<tr><td class='infoLabel'>" + sortArr[i][0] + "</td><td class='infoValue'>" + sortArr[i][1] + "</td><tr>";
+		}
+		extDistributeInfo += "</table>";
+
+		return extDistributeInfo;
+	},
+	
+	_mergeTinys: function(distributeInfo) {
+		var total = 0;
+		for (var i = 0; i < distributeInfo.length; i++) {
+			total += distributeInfo[i][1];
+		}
+		
+		var other = ["Others", 0];
+		var cnt = distributeInfo.length; 
+		for (var i = 0; i < cnt; i++) {
+			if (distributeInfo[i][1] / total < 0.02) {
+				other[1] += distributeInfo[i][1];
+				distributeInfo.splice(i, 1);
+				cnt--;
+				i--;
+			}
+		}
+		
+		if (other[1] > 0) {
+			distributeInfo.push(other);
+		}
+	},
+	
+	_firendData4LineSizePieGraph: function(key) {
+		var distributeInfo = fsi.data[key + "_graph"];
+		
+		this._removeMore02XItems(distributeInfo);
+		this._mergeTinys(distributeInfo);
+	},
+	
+	_removeMore02XItems: function(distributeInfo) {
+		var first02X = 0;
+		for (var i = 0; i < distributeInfo.length; i++) {
+			if (!first02X) {
+				if (distributeInfo[i][0].indexOf("[0,") != -1) {
+					first02X = i;
+					break;
+				}				
+			}
+		}
+		
+		distributeInfo.unshift(distributeInfo[first02X]);
+		distributeInfo.splice(first02X + 1);		
+	},
+	
+	_constructGraphData: function() {
+		for (var key in fsi._DistributeDataAraySortFun) {
+			if (key == "file_ext_distribute") {
+				this._mergeTinys(fsi.data.file_ext_distribute_graph);
+			} else {
+				this._firendData4LineSizePieGraph(key);
+			}	
+		}
+	},
+	
+	_constructPieData: function() {
+		fsi.data.pie = {};
+
+		for (var key in fsi._DistributeDataAraySortFun) {
+			fsi.data.pie[key] = {
+				l: [], 
+				v: [],
+				k: []
+			};
+			
+			var total = 0;			
+			var keyGraphData = fsi.data[key + "_graph"];
+			for (var i = 0; i < keyGraphData.length; i++) {
+				total += keyGraphData[i][1];
+			}
+			
+			for (var i = 0; i < keyGraphData.length; i++) {
+				fsi.data.pie[key].l.push(keyGraphData[i][0]);
+				fsi.data.pie[key].v.push(keyGraphData[i][1]);
+				fsi.data.pie[key].k.push(keyGraphData[i][0] + ": " + keyGraphData[i][1] + " (" + Math.round(100 * keyGraphData[i][1] / total) + "%)");
+			}
+
+		}
+	},
+	
+	_drawDistributeGraphs: function() {
+		this._constructGraphData();
+		this._constructPieData();
+		
+		for (var key in fsi._DistributeDataAraySortFun) {
+			var pieData = fsi.data.pie[key];
+			var isChrome = window.navigator.userAgent.indexOf("Chrome") != -1;
+			var rgraphObj = new RGraph.Pie(key + "_canvas", pieData.v);
+			rgraphObj.Set('chart.variant', "donut");
+			rgraphObj.Set('chart.labels', pieData.l);
+			rgraphObj.Set('chart.colors', ['#DEB887', '#5F9EA0', '#7FFF00', '#D2691E', '#FF7F50', '#6495ED', '#FFF8DC', '#DC143C', '#F0F8FF', '#8A2BE2', '#A52A2A', '#FAEBD7', '#00FFFF', '#7FFFD4', '#F0FFFF', '#F5F5DC', '#00FFFF', '#00008B', '#008B8B', '#B8860B', '#A9A9A9', '#006400', '#BDB76B', '#8B008B', '#556B2F', '#FF8C00', '#9932CC', '#8B0000', '#E9967A', '#8FBC8B', '#483D8B', '#2F4F4F', '#00CED1', '#9400D3', '#FF1493', '#00BFFF', '#696969', '#1E90FF', '#B22222', '#FFFAF0', '#228B22', '#FF00FF', '#DCDCDC', '#F8F8FF', '#FFD700', '#DAA520', '#808080', '#008000', '#ADFF2F', '#F0FFF0', '#FF69B4', '#CD5C5C', '#4B0082', '#FFFFF0', '#F0E68C', '#E6E6FA', '#FFF0F5', '#7CFC00', '#FFFACD', '#ADD8E6', '#F08080', '#E0FFFF', '#FAFAD2', '#90EE90', '#D3D3D3', '#FFB6C1', '#FFA07A', '#20B2AA', '#87CEFA', '#778899', '#B0C4DE', '#FFFFE0', '#00FF00', '#32CD32', '#FAF0E6', '#FF00FF', '#800000', '#66CDAA', '#0000CD', '#BA55D3', '#9370DB', '#3CB371', '#7B68EE', '#00FA9A', '#48D1CC', '#C71585', '#191970', '#F5FFFA', '#FFE4E1', '#FFE4B5', '#FFDEAD', '#000080', '#FDF5E6', '#808000', '#6B8E23', '#FFA500', '#FF4500', '#DA70D6', '#EEE8AA', '#98FB98', '#AFEEEE', '#DB7093', '#FFEFD5', '#FFDAB9', '#CD853F', '#FFC0CB', '#DDA0DD', '#B0E0E6', '#800080', '#FF0000', '#BC8F8F', '#4169E1', '#8B4513', '#FA8072', '#F4A460', '#2E8B57', '#FFF5EE', '#A0522D', '#C0C0C0', '#87CEEB', '#6A5ACD', '#708090', '#FFFAFA', '#00FF7F', '#4682B4', '#D2B48C', '#008080', '#D8BFD8', '#FF6347', '#40E0D0', '#EE82EE', '#F5DEB3', '#FFFFFF', '#F5F5F5', '#FFFF00', '#FFE4C4', '#FFEBCD', '#9ACD32']);
+			rgraphObj.Set('chart.text.size', 7);
+			rgraphObj.Set('chart.gutter.left', 60);
+			rgraphObj.Set('chart.gutter.right', 60);
+			rgraphObj.Set('chart.gutter.top', 60);
+			rgraphObj.Set('chart.gutter.bottom', 10);
+			rgraphObj.Set('chart.key', pieData.k);
+	        rgraphObj.Set('chart.key.position.x', 1);
+	        rgraphObj.Set('chart.key.position.y', 1);
+	        rgraphObj.Set('chart.key.background', "#f9f9f9");
+			rgraphObj.Draw();	
+		}		
+	}
+};
+
+jQuery(document).ready(function() {
+	fsi.getParams();
+	
+	jQuery.ajax({
+		url: pms.dataFile,
+		type: "GET",
+		dataType: "json",
+		
+		success: function(ret){
+			fsi.data = ret;
+			
+			fsi.fillModuleInfo();
+			fsi.fillTxtTypeInfo();
+			fsi.fillReport();
+		},
+		
+		error: function() {
+            alert('Can not get files info data!');    		    
+		}
+	});
+});
+
+</script>

@@ -1,0 +1,6 @@
+#!/bin/bash
+# by: lilong'en(lilongen@163.com)
+#
+
+cd "#CCV_HOME#"
+perl structuralizeLogInfo2Json.pl

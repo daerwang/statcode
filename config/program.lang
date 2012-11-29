@@ -1,0 +1,52 @@
+<langs>
+  <lang name="normal" type="txt" ext="txt"/>
+  <lang name="actionscript" type="code" ext="as mx"/>
+  <lang name="ada" type="code" ext="ada ads adb"/>
+  <lang name="asm" type="code" ext="asm s"/>
+  <lang name="asp" type="code" ext="asp"/>
+  <lang name="autoit" type="code" ext="au3"/>
+  <lang name="bash" type="code" ext="sh bsh"/>
+  <lang name="batch" type="code" ext="bat cmd nt"/>
+  <lang name="c" type="code" ext="c"/>
+  <lang name="caml" type="code" ext="ml mli sml thy"/>
+  <lang name="cmake" type="code" ext="cmake"/>
+  <lang name="cpp" type="code" ext="h hpp hxx cpp cxx cc"/>
+  <lang name="cs" type="code" ext="cs"/>
+  <lang name="css" type="code" ext="css"/>
+  <lang name="diff" type="code" ext="diff patch"/>
+  <lang name="fortran" type="code" ext="f for f90 f95 f2k"/>
+  <lang name="haskell" type="code" ext="hs lhs as las"/>
+  <lang name="html" type="html" ext="html htm shtml shtm xhtml"/>
+  <lang name="ini" type="code" ext="ini inf reg url"/>
+  <lang name="inno" type="code" ext="iss"/>
+  <lang name="java" type="code" ext="java"/>
+  <lang name="jsp" type="code" ext="jsp"/>
+  <lang name="javascript" type="code" ext="js"/>
+  <lang name="json" type="code" ext="json"/>
+  <lang name="kix" type="code" ext="kix"/>
+  <lang name="lisp" type="code" ext="lsp lisp"/>
+  <lang name="lua" type="code" ext="lua"/>
+  <lang name="makefile" type="code" ext="mak make"/>
+  <lang name="matlab" type="code" ext="m"/>
+  <lang name="nfo" type="code" ext="nfo"/>
+  <lang name="nsis" type="code" ext="nsi nsh"/>
+  <lang name="objc" type="code" ext="h m mm"/>
+  <lang name="pascal" type="code" ext="pas inc"/>
+  <lang name="perl" type="code" ext="pl pm plx"/>
+  <lang name="php" type="code" ext="php php3 phtml"/>
+  <lang name="postscript" type="code" ext="ps"/>
+  <lang name="props" type="configure" ext="properties"/>
+  <lang name="python" type="code" ext="py pyw"/>
+  <lang name="rc" type="code" ext="rc"/>
+  <lang name="ruby" type="code" ext="rb rbw"/>
+  <lang name="scheme" type="code" ext="scm smd ss"/>
+  <lang name="smalltalk" type="code" ext="st"/>
+  <lang name="sql" type="code" ext="sql"/>
+  <lang name="tcl" type="code" ext="tcl"/>
+  <lang name="tex" type="code" ext="tex"/>
+  <lang name="vb" type="code" ext="vb vbs"/>
+  <lang name="verilog" type="code" ext="v"/>
+  <lang name="vhdl" type="code" ext="vhd vhdl"/>
+  <lang name="xml" type="configure" ext="xml xsml xsl xsd kml wsdl"/>
+  <lang name="yaml" type="configure" ext="yml"/>
+</langs>

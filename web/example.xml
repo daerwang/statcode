@@ -1,0 +1,41 @@
+<configs>
+
+<module>
+    <id>scs</id>
+    <type>cvs</type>
+    <module>scscenter</module>
+    <server>ipaddress</server>
+    <repository>/cvs/webapps</repository>
+	<account_id>AcountId</account_id>
+	<account_pw>password</account_pw>
+</module>
+	
+<module>
+    <id>pwidget</id>
+    <type>svn</type>
+    <module>client/vendors/common/abcbank/widget</module>
+    <server>ipaddress</server>
+    <repository>/CXXtricon</repository>
+    <trunk_directory>/CXXtricon/trunk</trunk_directory>
+	<branch_directory>/CXXtricon/branches</branch_directory>   
+	<tag_directory>/CXXtricon/tags</tag_directory>   
+	<account_id>AcountId</account_id>
+	<account_pw>password</account_pw>
+	<access_mode>svn</access_mode>
+</module>
+
+<module>
+    <id>ma</id>
+    <type>svn</type>
+    <module>src/java/ma</module>
+    <server>ipaddress</server>
+    <repository>/029</repository>
+    <trunk_directory>/029/trunk</trunk_directory>
+    <branch_directory>/029/branches</branch_directory>  
+    <tag_directory>/029/tags</tag_directory>
+    <account_id>AcountId</account_id>
+    <account_pw>password</account_pw>
+    <access_mode>svn</access_mode>
+</module>
+
+</configs>

@@ -1,0 +1,47 @@
+<configs>
+<!-- cvs co :pserver@serverAddress/repositoryPath modulePath --> 	
+<module>
+  <id>moduleId1</id>
+  <type>cvs</type>
+  <access_mode>pserver</access_mode>
+  <module>modulePath</module>
+  <server>serverAddress</server>
+  <repository>/repositoryPath</repository>
+  <account_id>AcountId</account_id>
+  <account_pw>password</account_pw>
+</module>
+
+<!-- svn co https://serverAddress/repositoryPath/trunk/modulePath -->
+<!-- svn co https://serverAddress/repositoryPath/branches/modulePath -->
+<!-- svn co https://serverAddress/repositoryPath/tags/modulePath -->
+<module>
+  <id>moduleId2</id>
+  <type>svn</type>
+  <access_mode>https</access_mode>
+  <module>modulePath</module>
+  <server>serverAddress</server>
+  <repository>/repositoryPath</repository>
+  <account_id>AcountId</account_id>
+  <account_pw>password</account_pw>	
+  <trunk_directory>/repositoryPath/trunk</trunk_directory>
+  <branch_directory>/repositoryPath/branches</branch_directory>   
+  <tag_directory>/repositoryPath/tags</tag_directory>   
+</module>
+
+<!-- svn co svn://serverAddress/repositoryPath/trunk/modulePath -->
+<!-- svn co svn://serverAddress/repositoryPath/branches/modulePath -->
+<!-- svn co svn://serverAddress/repositoryPath/tags/modulePath -->
+<module>
+  <id>moduleId3</id>
+  <type>svn</type>
+  <access_mode>svn</access_mode>
+  <module>modulePath</module>
+  <server>serverAddress</server>
+  <repository>/repositoryPath</repository>
+  <account_id>AcountId</account_id>
+  <account_pw>password</account_pw>	
+  <trunk_directory>/repositoryPath/trunk</trunk_directory>
+  <branch_directory>/repositoryPath/branches</branch_directory>   
+  <tag_directory>/repositoryPath/tags</tag_directory>   
+</module>
+</configs>

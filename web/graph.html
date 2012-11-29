@@ -1,0 +1,192 @@
+<HTML>
+<HEAD>
+<TITLE>CodeChangeViewer Graph entry</TITLE>
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+<script type="text/javascript" src="/ccv/jquery/jquery.js"></script>
+
+<style type="text/css">
+div.graph {
+	padding-bottom: 30px;	
+}
+
+select.userSelector {
+    width: 160px;
+    padding-left: 2px;
+    border: 1px solid #999;
+    background-color: #fdfdfd;
+}
+
+button.draw {
+    width: 160px;  
+    height: 30px;
+    color: #333;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+button.draw::-moz-focus-inner {
+	border: none;
+}
+
+button.draw:hover {
+    background-color: #cc0000;
+    color: #fff;
+}
+
+div.cust {
+    position: absolute;
+    display: none; 
+    padding: 3px;
+    background-color: #aa0000;
+}
+
+body, div, select, button {
+    font-family: Arial, Helvetica, Tahoma, sans-serif;
+}
+</style>
+</HEAD>
+<BODY>
+	<div class="graph userLOC"><img class="userLOC"/></div>
+	<div class="graph userAverLOC"><img class="userAverLOC"/></div>	
+	<div class="graph moduleDateAccuLOC"><img class="moduleDateAccuLOC"/></div>
+	<div class="graph moduleDateLOC"><img class="moduleDateLOC"/></div>
+	<div class="graph userDateAccuLOC"><img class="userDateAccuLOC" title="You can click to choose & draw you wanted for more clear view!"/></div>
+	<div class="graph userDateLOC"><img class="userDateLOC" title="You can click to choose & draw you wanted for more clear view!"/></div>
+	
+	<div class="cust">
+	    <select class="userSelector" multiple="true" size="10"></select><br/>
+	    <button class="draw" hidefocus="true">Only draw selected</button>
+    </div>
+</BODY>
+</HTML>
+
+<script type="text/javascript">
+var pms = {};
+
+function getParameter(params, name) {
+	var pattern = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+	var mat = params.match(pattern);
+	if (mat != null) {
+	    return unescape(mat[2]);
+	}
+	
+	return '';
+}
+
+function getImageURLs() {
+	var imgPath = '/ccv/' + pms.G_PATH;
+	
+	pms.userLOC             = imgPath + 'user_loc.png';	
+	pms.userAverLOC         = imgPath + 'user_aver_loc.png';
+	pms.userDateLOC         = imgPath + 'user_date_loc.png';
+	pms.userDateAccuLOC     = imgPath + 'user_date_accu_loc.png';
+	pms.moduleDateLOC       = imgPath + 'module_date_loc.png';
+	pms.moduleDateAccuLOC   = imgPath + 'module_date_accu_loc.png';
+}
+
+function setImages() {
+	getImageURLs();
+	
+	jQuery('img.userLOC').attr('src', pms.userLOC);
+	jQuery('img.userAverLOC').attr('src', pms.userAverLOC);
+	jQuery('img.userDateLOC').attr('src', pms.userDateLOC);
+	jQuery('img.userDateAccuLOC').attr('src', pms.userDateAccuLOC);
+	jQuery('img.moduleDateLOC').attr('src', pms.moduleDateLOC);
+	jQuery('img.moduleDateAccuLOC').attr('src', pms.moduleDateAccuLOC);
+}
+
+function initUserSelector(arrUsers) {
+    var cnt = arrUsers.length;
+    for (var i = 0; i < cnt; i++) {
+        jqUserSelector.append('<option>' + arrUsers[i] + '</option>');
+    }
+    
+    var size = cnt <= 10 ? cnt : 10;
+    jqUserSelector.attr('size', size);
+}
+
+var jqUserSelector = null;
+jQuery(document).ready(function() {
+	var url =  window.location.href;
+	var qString = url.substring(url.indexOf('?', 0) + 1);
+
+	pms.cgi_uri = getParameter(qString, 'cgi_uri');
+	pms.G_PATH = getParameter(qString, 'G_PATH');
+	pms.cfg = getParameter(qString, 'cfg');
+	pms.users = getParameter(qString, 'users');
+	
+	var arrPathNode = pms.G_PATH.split('/');
+	pms.date = arrPathNode[1];
+	pms.time = arrPathNode[2];
+	pms.branch = arrPathNode[3];
+	pms.module_id = arrPathNode[4];
+	
+	setImages();
+	
+	jqUserSelector = jQuery('select.userSelector');
+	jqCust = jQuery('div.cust');
+	
+	var arrUsers = pms.users.split(',');
+    
+    if (arrUsers.length > 2) {
+    	initUserSelector(arrUsers);
+    	
+    	var lastDomClass = '';
+    	jQuery('img.userDateAccuLOC, img.userDateLOC').click(function() {
+            if (!lastDomClass || lastDomClass == this.className) {
+                if (jqCust.css('display') == 'none') {
+        	        jqCust.show();
+        	    } else {
+        	        jqCust.hide();
+        	    }
+        	} else {
+        	    jqCust.show();
+        	}
+    	    
+    	    var left = this.offsetLeft + this.offsetWidth - jqCust.attr('offsetWidth');
+    	    var top = this.offsetTop + 20;    	    
+    	    
+    	    jqCust.css({
+    	        'left': left,
+    	        'top': top 
+    	    });
+    	    
+    	    lastDomClass = this.className;
+    	});        
+    }
+    
+    jQuery('button.draw').click(function() {
+        var users = jqUserSelector.val().join(',');
+        
+        if (!users) {
+            return false;
+        }  
+              
+    	jQuery.ajax({
+    		url: pms.cgi_uri + 'draw.graph.pl',
+    		type: "GET",
+    		
+    		dataType: "json",
+    		
+    		data: {
+    		    G_PATH: pms.G_PATH,
+    		    users:  users
+    		},
+    		
+    		success: function(ret){
+            	jQuery('img.userDateLOC').attr('src', '/ccv/' + ret.userDateLOCImage);
+            	jQuery('img.userDateAccuLOC').attr('src', '/ccv/' + ret.userDateAccuLOCImage);    			
+            	
+            	jqCust.hide();
+    		},
+    		
+    		error: function() {
+                alert('Draw graph failed!');    		    
+    		}
+    	});        
+        
+    });
+});
+
+</script>

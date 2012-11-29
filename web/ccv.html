@@ -1,0 +1,390 @@
+<!DOCTYPE html> 
+<html>
+<head>
+<title>Code Change Viewer</title>
+<link rel="shortcut icon" href="/ccv/img/logo.ico">
+<link rel="stylesheet" type="text/css" href="codemirror/lib/codemirror.css">
+<link rel="stylesheet" type="text/css" href="codemirror/theme/default.css">
+<link rel="stylesheet" type="text/css" href="jquery/ui/css/blitzer/jquery-ui.css" />
+<link rel="stylesheet" type="text/css" href="css/ccv.css" />
+
+<script type="text/javascript" src="codemirror/lib/codemirror.js"></script>
+<script type="text/javascript" src="codemirror/mode/xmlpure/xmlpure.js"></script>
+<script type="text/javascript" src="jquery/jquery.js"></script>
+<script type="text/javascript" src="jquery/ui/js/jquery-ui.js"></script>
+<script type="text/javascript" src="jquery/plugins/jquery.cookie.js"></script>
+<script type="text/javascript" src="wz_tooltip/wz_tooltip.js"></script>
+
+<script type="text/javascript" src="js/ccv.base.js"></script>
+<script type="text/javascript" src="js/ccv.hack.js"></script>
+<script type="text/javascript" src="js/ccv.util.js"></script>
+<script type="text/javascript" src="js/ccv.fn.js"></script>
+<script type="text/javascript" src="js/ccv.ajaxupload.js"></script>
+<script type="text/javascript" src="js/ccv.wapicallback.js"></script>
+<script type="text/javascript" src="js/ccv.autocomplete.js"></script>
+<script type="text/javascript" src="js/ccv.validator.js"></script>
+<script type="text/javascript" src="js/ccv.dlgs.js"></script>
+<script type="text/javascript" src="js/ccv.uifn.js"></script>
+<script type="text/javascript" src="js/ccv.xpv.js"></script>
+<script type="text/javascript" src="js/ccv.bot.js"></script>
+
+<script type="text/javascript" src="js/base64.js"></script>
+<script type="text/javascript" src="js/AjaxUpload.js"></script>
+</head>
+<body>
+<div class="ccv">
+<div class="header">
+  <div class="left">
+  	<a class="title" href="http://sourceforge.net/projects/ccv" target="_blank">CodeChangeViewer - CCV </a><sup class="ccvSupport">2.0 - cvs/svn supported</sup><br>
+    <span class="ccvComment">Unify solution to stat. & view cvs/svn repository module change - </span><a class="manual" href="manual.html" target="blank">manual</a>
+  </div>
+  <div class="right">
+  	<div class="firstLine">
+      You can add,edit respositoy module configure xml online, or upload local file. <a href="/ccv/example.xml" class="cfgExample" target="_blank">example </a>
+	</div>
+	<div class="secondLine">
+      <span class="xmlName"></span>
+      <button class="btnBrowse">Browse...</button>
+      <span class="writeProtectPwdInstruction">Write-protect Password:</span> <input class="upPasswd" size="8" value="" type="text">
+      <button class="btnUpload disabledBtn" disabled>Upload</button>
+    </div>
+  </div>
+  <div class="msg"><div class="msgCloseAnchor">&times;</div><div class="content"></div></div>
+</div><!-- <div class="header">-->
+
+<div class="main">
+  <div class="cfgModules">
+    <div class="cfgs">
+      <div class="left"><input class="allAnchor" type="checkbox" title="select/unselect all modules"/></div>
+      <div class="middle">
+      	<span class="itemLable">Modules in: </span> <select class="cfgFiles"></select>
+      	<a href="javascript:void(0);" class="editCfg" title="View or Edit current config file"></a>
+      	<a href="javascript:void(0);" class="deleteCfg" title="Delete current config file"></a>
+      	<a href="javascript:void(0);" class="newCfg" title="Create a new config file"></a>
+      </div>
+      <div class="right"><a class="reportOptions">Options</a>...</div>
+    </div>
+    <div class="modules">
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+        <div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>
+                                               
+    </div>
+    <div class="xmlPwdVerifyContainer">
+      <input type="text" class="xmlPwd" value="input config write-protect password"/>
+      <a class="toDelete">Delete</a>
+      <a class="toEdit">View or Edit...</a>
+      
+      <div class="close" title="Close">&times;</div>
+	</div>
+  </div><!-- <div class="cfgModules">-->
+  
+  <div class="history">
+  	<div class="historyTitle">History Reports</div>
+  	<iframe class="iframeHistory" frameborder="0" src="/ccv-cgi/show.history.pl">no history item</iframe>
+  </div><!-- <div class="history">-->
+  
+  <!-- user input/report mode -->
+  <div class="userActions">
+    <div class="modeSelector">
+      <div class="spanReportModeTitle">Generate Report Base:</div>
+      <div class="modeList">
+        <input name="radioMode" class="radioMode" type="radio" value="log" checked="checked" > <span class="modeName fixwidth" style="width: 48px;">LOG</span>
+        <input name="radioMode" class="radioMode" type="radio" value="diff"> <span class="modeName fixwidth" style="width: 48px;">DIFF</span>
+        <input name="radioMode" class="radioMode" type="radio" value="file"> <span class="modeName">FILE</span>
+      </div>
+    </div>
+    <div class="log">
+      <div class="revs section">
+        <input autocomplete="off" class="revs flat combobox validate[required,funcCall[ccv.validator.vdrRevs]]" id="branchs" type="text" value="Input branch name here"/>
+	    <div class="example">
+	      <div class="title">Example:</div>
+	      <div class="content">
+	        1. BranchNameX<br>
+	        2. MAIN or TRUNK<br>
+	      </div>
+	    </div>
+      </div>
+
+      <div class="dateRange section">
+        <span class="dateRangeLabel label">Date range:</span><input class="dates flat validate[funcCall[ccv.validator.vdrDates]]" id="dates" value="" type="text"/>
+	    <div class="example">
+	      <div class="title">Example:</div>
+	      <div class="content">
+            1. 4/1/2007<4/28/2007<br>
+            2. >=4/10/2007
+          </div>
+	    </div>
+      </div>
+      
+      <div class="wid section">
+        <span class="byAccountLabel label">By account:</span><input autocomplete="off" class="wids flat validate[funcCall[ccv.validator.vdrWids]]" id="wids" value="" onclick="this.select();" type="text"/>
+	    <div class="example">
+	      <div class="title">Example:</div>
+	      <div class="content">
+            1. microl <i>(cvs account name)</i><br>
+            2. user1,user2,user3,user4
+          </div>
+	    </div>
+	  </div>
+    </div>
+    <div class="diff">
+      <!--
+      <div class="instruction section">
+        <div class="instruction1">
+          Specify two <span class="emphasize">revisions</span>, or two <span class="emphasize">dates</span>. It will get changes between two specified.
+        </div>
+        <div class="instruction2">
+          If <span class="emphasize">only one</span> revision/date is specified, will get code changes between spcified and head(main)/current date .
+        </div>
+      </div>
+      -->
+      <table class="dfRevsDates">
+        <tr>
+          <td colspan="2" style="vertical-align: bottom;"><input class="diffAgainst" name="diffAgainst" value="revisions" checked type="radio"> <b>Revisions</b></td>
+          <td class="tdJust4SVN only4SvnPrompt">Only needed by SVN</td>
+        </tr>
+        <tr>
+          <td class="tdLabel">r1:</td>
+          <td class="tdInput"><input autocomplete="off" class="rev1 revision flat combobox" type="text"/></td>
+          <td class="tdJust4SVN"><select class="svnRevBase svnRev1Base"></select></td>
+        </tr>
+        <tr class="branchRevsBasedOnContainer">
+          <td colspan=2" align="right"></td>
+          <td class="tdJust4SVN"><input autocomplete="off" class="branchRevsBasedOn flat" type="text"/></select></td>
+        </tr>
+        <tr>
+          <td class="tdLabel">r2:</td>
+          <td class="tdInput"><input autocomplete="off" class="rev2 revision flat combobox" type="text"/></td>
+          <td class="tdJust4SVN"><select class="svnRevBase svnRev2Base"></select></td>
+        </tr>                
+        <tr height="40">
+          <td colspan="2" style="vertical-align: bottom;"><input class="diffAgainst" name="diffAgainst" value="dates" type="radio"> <b>Dates</b></td>
+          <td class="tdJust4SVN"></td>
+        </tr>
+        <tr>
+          <td class="tdLabel">d1:</td>
+          <td class="tdInput"><input disabled="disabled" readOnly class="date1 Wdate flat gray" type="text"/></td>
+          <td class="tdJust4SVN"><select class="svnRevBase svnDate1Base"></select></td>
+        </tr>
+        <tr class="branchDatesBasedOnContainer">
+          <td colspan="2" align="right"></td>
+          <td class="tdJust4SVN"><input autocomplete="off" class="branchDatesBasedOn flat" type="text"/></td>
+        </tr>
+        <tr>
+          <td class="tdLabel">d2:</td>
+          <td class="tdInput"><input disabled="disabled" readOnly class="date2 Wdate flat gray" type="text"/></td>
+          <td class="tdJust4SVN"><select class="svnRevBase svnDate2Base"></select></td>
+        </tr>
+        <!--
+        <tr>
+          <td colspan="2" align="right">&nbsp;</td>
+          <td class="tdJust4SVN only4SvnPrompt">Only needed by SVN</td>
+        </tr>
+        -->
+      </table>          
+    </div>
+    <div class="file">
+      <div class="rev section">
+        <input autocomplete="off" class="action_file_revs flat combobox validate[funcCall[ccv.validator.vdrRevs]]" id="action_file_revs" type="text" value="Input branch name here"/>
+	    <div class="example">
+	      <div class="title">Example:</div>
+	      <div class="content">
+	        1. BranchNameX<br>
+	        2. MAIN or TRUNK</i><br>
+	      </div>
+	    </div>
+      </div>
+    </div>
+    <div class="action">
+      <button class="btnGenerate">Generate report</button>
+    </div>
+  </div><!-- <div class="userActions">-->
+</div><!-- <div class="main">-->
+
+<div class="divOptions">
+<div class="closeAnchor">&times;</div>
+<div class="title">More Options</div>
+<div class="options">
+  <div class="opt4Common">
+  	<div class="opt4CommonTitle">Common</div>
+    <table cellspacing="1" cellpadding="4" width="100%">
+      <tr>
+      	<td class="optionHead">Filter</td>
+      	<td class="optionContent">
+          	<table cellspacing="1" cellpadding="4" class="tbFilter" width="100%">
+          	  <tr>
+          	  	<td class="commOptLeft">file ext</td>
+          	  	<td class="commOptMid"><span class="inFilterLabel fileIncludeLabel">include: </span> <input class="filterIn fileInclude"/></td>
+          	  	<td class="commOptRight"><span class="exFilterLabel fileExcludeLabel">exclude: </span> <input class="filterIn fileExclude"/></td>
+          	  </tr>
+          	  <tr>
+          	  	<td class="commOptLeft">directory</td>
+          	  	<td class="commOptMid"><span class="inFilterLabel dirIncludeLabel">include: </span> <input class="filterIn dirInclude"/></td>
+          	  	<td class="commOptRight"><span class="exFilterLabel dirExcludeLabel">exclude: </span> <input class="filterIn dirExclude"/></td>
+          	  </tr>
+          	</table>              		
+        </td>
+      </tr>
+      <tr><td class="optionAnchor"><input type="checkbox" class="OgenGraph"/></td><td class="optionDesc">Generate graph report - module/user LOC, FOC, and so on</td></tr>
+      <tr><td class="optionAnchor"><input type="checkbox" checked class="OdfIgnoreEOL"/></td><td class="optionDesc">Ignore EOL change when diff</td></tr>
+    </table>          	
+  </div>        	
+  <div class="opt4cvs" style="margin-top: 8px;">
+  	<div class="opt4cvsTitle">For cvs module repository</div>
+    <table cellspacing="1" cellpadding="4">
+      <tr><td class="optionAnchor"><input type="checkbox" class="OstatBin"/></td><td class="optionDesc">Also get binary files change status</td></tr>
+      <tr><td class="optionAnchor"><input type="checkbox" class="OnotStatDeleted"/></td><td class="optionDesc">Do not STAT deleted files</td></tr>
+      <tr><td class="optionAnchor"><input type="checkbox" class="OcalcAllRevs"/></td><td class="optionDesc">Calculate all revisions(only efficient on head)</td></tr>
+      <tr><td class="optionAnchor"><input type="checkbox" class="OstatBinLines"/></td><td class="optionDesc">Stat. those marked as binary file in cvs log, but actually it is text file (Incorrect checkin - text file checked-in as binary file)</td></tr>
+    </table>
+  </div>
+  <div class="opt4svn">
+	<div class="opt4svnTitle">svn module options</div>
+    <table cellspacing="1" cellpadding="4">
+      <tr>
+      	<td class="optionAnchor">
+      	  <input type="checkbox" checked class="OSvnWithLoc"/>
+      	</td>
+      	<td class="optionDesc">
+      	  Get LOC information(<span class="prompt4OSvnWithLoc">It will make ccv to execute many 'svn diff' commands; If <span class="emphasis">NOT</span> check-on it, will be very fast.</span>
+      	</td>
+      </tr>
+    </table>
+  </div>      	
+</div>
+</div> 
+
+<div class="runtimeAccount">
+  <div class="linker2Modules"></div>
+  <div class="runtimeAccountInfoWrapper"><!-- add this wrapper to set padding, table padding does not affect in IE -->
+    <table class="runtimeAccountInfo">
+      <tr><td colspan="2" class="title">Some repository modules configured to use Runtime Account.<br/><br/>Fill repository account here.</td></tr>
+      <tr><td class="tdLeft"><label for="accountId">Name:</label></td><td class="tdRight"><input type="text" id="accountId" class="accountId"/></td></tr>
+      <tr><td class="tdLeft"><label for="accountPw">Password:</label></td><td class="tdRight"><input type="password" id="accountPw" class="accountPw"/></td></tr>
+      <tr><td class="tdLeft" style="padding-top: 8px;"><input type="checkbox" id="rememberAccount" class="rememberAccount" checked/></td><td class="tdRight" style="text-align: left; padding-top: 8px;"><label class="lbRememberFlag" for="rememberFlag">Remember me!</label></td></tr>
+    </table>
+  </div>
+</div>
+<div class="linkerRuntimeAccount2Generate"></div>
+
+<div class="dlgs">
+  <div class="dlgEdit">
+    <textarea class="editor">errmsg</textarea>
+    <div class="errMsg"></div>
+    <div class="elements4New">
+      <div style="margin-bottom: 4px;"><input type="text" class="xmlFileName" id="dlgEdit_xmlFileName" size="20"/><div class="itemLabel">File name <span class="hint">(Extend name must be xml)</span>:  </div></div>
+      <div style="clear: both; padding-top: 3px;"><input type="text" class="xmlFilePwd" id="dlgEdit_xmlFilePwd" size="20"/><div class="itemLabel">Write-Protect Password: </div></div>
+    </div>
+  </div>  
+  <div class="dlgProgress">
+    <div class="progress"></div>
+  </div>    
+</div><!-- <div class="dlgs">-->
+
+<div class="footer">
+  <a class="author" href="mailto: lilongen@gmail.com">by: micro li <span class="mail">(lilongen@gmail.com)</span></a>
+</div>
+</div><!-- <div class="ccv">-->
+<img class="__COUNTER__" style="display: none;"/>
+</body>
+</html>
+
+<script type="text/javascript">
+ccv.ModuleItemHtml = '<div class="module"><div class="anchor"><input type="checkbox" class="chkAnchor"/></div><div class="moduleInfo"><span class="moduleId"></span> <span class="moduleType"></span> <span class="moduleIndicator"></span><br><span class="moduleDetails"></span></div></div>';
+
+jQuery(document).ready(function() {
+	(function overallInit() {
+		tt_Init();
+		ccv.util.addClassInfo2Body();
+		ccv.uifn.initDomJQ();
+	    
+	    ccv.ajaxupload.executor = new ccv.AjaxUpload(ccv.domJQ.BTN_BROWSE, ccv.ajaxupload.opts);
+	    ccv.dlgs.init();
+	    ccv.ac.init();
+	    
+	    ccv.uifn.initComboboxes();
+	    ccv.uifn.htmlSvnRevBaseDoms();
+	    
+		ccv.domJQ.DATE1.datepicker({showButtonPanel: false, dateFormat: 'mm/dd/yy', changeMonth: true, changeYear: true, duration: 'fast'});
+		ccv.domJQ.DATE2.datepicker({showButtonPanel: false, dateFormat: 'mm/dd/yy', changeMonth: true, changeYear: true, duration: 'fast'});
+	}());
+	
+	(function overallLayout() {
+	    ccv.uifn.layoutCCV();
+	    ccv.uifn.layoutComboBoxAnchor('log');
+    }());	
+
+	(function overallBehavior() {
+	    ccv.uifn.behaviorDiffDoms();
+	    ccv.uifn.behaviorSvnDateRevBaseDomsRestriction();
+	    		
+	    ccv.domJQ.BTN_UPLOAD.attr("disabled", true);
+	    ccv.domJQ.RADIO_MODE[0].checked = true;	
+	    ccv.domJQ.CFG_MODULES.find("div.modules div.module:odd").addClass("oddBK");
+	    ccv.domJQ.CFG_MODULES.find("div.modules div.module:even").addClass("evenBK");
+	    ccv.domJQ.MODULES.hide();
+	    ccv.uifn.behaviorModuleItmes();   
+    }());	    
+	
+	ccv.uifn.bindEvent();
+
+    ccv.fn.wapi({
+    		cmd: "GET_OVERALL", 
+    		cfg: (jQuery.cookie(ccv.def.CK_CFG) || "")
+    	},ccv.cb.successGetOverall,ccv.cb.errorGetOverall
+    );
+});
+
+</script>
