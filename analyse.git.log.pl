@@ -62,6 +62,8 @@ sub main() {
 		commit => /^commit ([\d\w]+)$/,
 		author => /^Author (.+) <(.*)>$/,
 		date => /^Date: (.+)$/,
+		
+		
 	
 	};
 	
