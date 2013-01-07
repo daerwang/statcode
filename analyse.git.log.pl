@@ -58,6 +58,14 @@ sub main() {
 		return 1;
 	}
 	
+	my $RE = {
+		commit => /^commit ([\d\w]+)$/,
+		author => /^Author (.+) <(.*)>$/,
+		date => /^Date: (.+)$/,
+	
+	};
+	
+	
 #git log -v format
 #
 #commit 9a32f12bdfcc9b7d27cd5907d838c638e5c735f7
@@ -136,7 +144,7 @@ sub main() {
 #-
 # 	// Support: Firefox 17+
 # 	// Beware of CSP restrictions (https://developer.mozilla.org/en/Security/CSP), test/csp.php
- 	div.setAttribute( "onfocusin", "t" );
+# 	div.setAttribute( "onfocusin", "t" );
     my $lineCnter = 0;
     my $flags = {}; resetFlags($flags);
     my $revInfo;
