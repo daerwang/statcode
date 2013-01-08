@@ -57,16 +57,34 @@ sub main() {
 		
 		return 1;
 	}
-	
+
 	my $RE = {
+		#It is followed by one or more extended header lines:
+		
+		#old mode <mode>
+		#new mode <mode>
+		#deleted file mode <mode>
+		#new file mode <mode>
+		#copy from <path>
+		#copy to <path>
+		#rename from <path>
+		#rename to <path>
+		#similarity index <number>
+		#dissimilarity index <number>
+		#index <hash>..<hash> <mode>	
+	
 		commit => /^commit ([\d\w]+)$/,
 		author => /^Author (.+) <(.*)>$/,
 		date => /^Date: (.+)$/,
-		
-		
-		
-		
-	
+		comment => /^(\s){4}(.+)$/,
+		fileLOC => /^(\d)+ (\d) (.+)$/,
+		fileDiffHeader => /^diff --git a\/(.+) b\/(.+)$/,
+		changeMode => /^(old mode|new mode|deleted file mode|new file mode|copy from|copy to|rename from|rename to) (.+)$/,
+		similarity => /^(similarity index) (.+)$/,
+		dissimilarity => /^(dissimilarity index) (.+)$/,
+		changeIndexAndMode => /^index (\w+)\.\.(\w+) (.+)$/,
+		oldMode => /^old mode(.+)$/,
+		newMode => /^new mode(.+)$/
 	};
 	
 	
