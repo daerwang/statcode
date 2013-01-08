@@ -72,6 +72,8 @@ sub main() {
 		#similarity index <number>
 		#dissimilarity index <number>
 		#index <hash>..<hash> <mode>	
+		
+		
 	
 		commit => /^commit ([\d\w]+)$/,
 		author => /^Author (.+) <(.*)>$/,
