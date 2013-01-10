@@ -14,8 +14,6 @@ sub setGV();
 sub main();
 sub parse_command_line();
 sub setUserPathsChangeInfo($$);
-sub getMoreFromParsedInfo();
-sub setMustBeDirPathsFileType();
 sub statIt($);
 
 my $T_SNAP		= "";
@@ -37,17 +35,16 @@ sub setGV() {
     $GV->{AllExts} 		=~ s/(^|\s)/ \./g;
     $GV->{FileFilter}   = $GV->{ModuleInfo}->{file_filter};
     $GV->{ModuleName}   = $GV->{ModuleInfo}->{module};
-    $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{rev}, $GV->{ModuleInfo}->{log});
+    $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{cmt}, $GV->{ModuleInfo}->{log});
 	
     $GV->{OverallInfo}  = {
-        'usersCnt' => 0,
+        'authorsCnt' => 0,
         'filesCnt' => 0,
-        'revsCnt'  => 0   
+        'cmtsCnt'  => 0   
     };
-    $GV->{RevsInfo}     = {}; 
-    $GV->{UsersInfo}    = {};
-    $GV->{PathsInfo}    = {};
-    $GV->{PathPaths}    = {};
+    $GV->{CmtsInfo}     = {}; 
+    $GV->{AuthorsInfo}    = {};
+    $GV->{FilesInfo}    = {};
     $GV->{Error}		= "";
 }
 
@@ -74,32 +71,69 @@ sub main() {
 		#index <hash>..<hash> <mode>	
 		
 		
-	
-		commit => /^commit ([\d\w]+)$/,
-		author => /^Author (.+) <(.*)>$/,
-		date => /^Date: (.+)$/,
-		comment => /^(\s){4}(.+)$/,
-		fileLOC => /^(\d)+ (\d) (.+)$/,
-		fileDiffHeader => /^diff --git a\/(.+) b\/(.+)$/,
-		changeMode => /^(old mode|new mode|deleted file mode|new file mode|copy from|copy to|rename from|rename to) (.+)$/,
-		similarity => /^(similarity index) (.+)$/,
-		dissimilarity => /^(dissimilarity index) (.+)$/,
-		changeIndexAndMode => /^index (\w+)\.\.(\w+) (.+)$/,
-		oldMode => /^old mode(.+)$/,
-		newMode => /^new mode(.+)$/
+		#commit 9a32f12bdfcc9b7d27cd5907d838c638e5c735f7
+		#Author: Dave Methvin <dave.methvin@gmail.com>
+		#Date:   2013-01-08 01:14:01 -0800
+		#
+		#    Remove oldIE styleFloat detect.
+		#
+		#1	1	src/css.js
+		#0	4	src/support.js
+		#
+		#diff --git a/src/css.js b/src/css.js
+		#index a29356e..6b800d6 100644
+		#--- a/src/css.js
+		#+++ b/src/css.js	
+		commit => m/^commit ([\d\w]+)$/,
+		author => m/^Author (.+) <(.*)>$/,
+		date => m/^Date:\s+([\d\-]+) ([\d:]+) \-(\d+))$/,
+		comment => m/^(\s){4}(.+)$/,
+		fileLOC => m/^([\d\-]+) ([\d\-]+) (.+)$/,
+		fileDiffHeader => m/^diff --git a\/(.+) b\/(.+)$/,
+		changeMode => m/^(old mode|new mode|deleted file mode|new file mode|copy from|copy to|rename from|rename to) (.+)$/,
+		similarity => m/^(similarity index) (.+)$/,
+		dissimilarity => m/^(dissimilarity index) (.+)$/,
+		changeIndexAndMode => m/^index (\w+)\.\.(\w+) (.+)$/,
+		oldMode => m/^old mode(.+)$/,
+		newMode => m/^new mode(.+)$/
 	};
+
+    my $lineCnter = 0;
+	my $doCmtTest = 1;
+	my $cmtCnter = 0;
+    my $flags = {}; resetFlags($flags);
 	
+    my $cmtInfo;
+	my $fileInfo;
+	my $authorInfo;
 	
-#git log -v format
+    my $line;
+    my $prevLine;
+	my $diffingFile;
+	while (1) {
+		$line = <LOG>;
+		if (!defined($line)) {
+			if ($lineCnter == 1) {
+				$GV->{Error} = $prevLine;
+			}
+			
+			last;
+		}
+		
+		$lineCnter++;
+		$prevLine = $line;
+		#print $line;
+#git log -u --date=iso --numstat
 #
 #commit 9a32f12bdfcc9b7d27cd5907d838c638e5c735f7
 #Author: Dave Methvin <dave.methvin@gmail.com>
-#Date:   Wed Jan 2 21:32:43 2013 -0500
+#Date:   2013-01-08 01:14:01 -0800
 #
 #    Remove oldIE styleFloat detect.
 #
 #1	1	src/css.js
 #0	4	src/support.js
+#-	-	docs/ins.vsd
 #
 #diff --git a/src/css.js b/src/css.js
 #index a29356e..6b800d6 100644
@@ -128,202 +162,98 @@ sub main() {
 #-
 # 		// Check the default checkbox/radio value ("" on WebKit; "on" elsewhere)
 # 		checkOn: !!input.value,
-# 
-#
-#commit cef3450228f53a1facfbed2be77050e61ee6a178
-#Author: Dave Methvin <dave.methvin@gmail.com>
-#Date:   Wed Jan 2 21:25:49 2013 -0500
-#
-#    Remove noCloneEvent detects and white-box unit test.
-#
-#0	12	src/support.js
-#0	42	test/unit/manipulation.js
-#
-#diff --git a/src/support.js b/src/support.js
-#index 36b91b5..3c76309 100644
-#--- a/src/support.js
-#+++ b/src/support.js
-#@@ -36,7 +36,6 @@ jQuery.support = (function() {
-# 		boxModel: document.compatMode === "CSS1Compat",
-# 
-# 		// Will be defined later
-#-		noCloneEvent: true,
-# 		reliableMarginRight: true,
-# 		boxSizingReliable: true,
-# 		pixelPosition: false
-#@@ -71,17 +70,6 @@ jQuery.support = (function() {
-# 	// WebKit doesn't clone checked state correctly in fragments
-# 	support.checkClone = fragment.cloneNode( true ).cloneNode( true ).lastChild.checked;
-# 
-#-	// Support: IE<9
-#-	// Opera does not clone events (and typeof div.attachEvent === undefined).
-#-	// IE9-10 clones events bound via attachEvent, but they don't trigger with .click()
-#-	if ( div.attachEvent ) {
-#-		div.attachEvent( "onclick", function() {
-#-			support.noCloneEvent = false;
-#-		});
-#-
-#-		div.cloneNode( true ).click();
-#-	}
-#-
-# 	// Support: Firefox 17+
-# 	// Beware of CSP restrictions (https://developer.mozilla.org/en/Security/CSP), test/csp.php
-# 	div.setAttribute( "onfocusin", "t" );
-    my $lineCnter = 0;
-    my $flags = {}; resetFlags($flags);
-    my $revInfo;
-    my $line;
-    my $prevLine;
-	while (1) {
-		$line = <LOG>;
-		if (!defined($line)) {
-			if ($lineCnter == 1) {
-				$GV->{Error} = $prevLine;
-			}
-			
-			last;
-		}
-		
-		$lineCnter++;
-		$prevLine = $line;
-		#print $line;
+#diff --git a/docs/ins.vsd b/docs/ins.vsd
+#new file mode 100755
+#index 0000000..b68ad1d
+#Binary files /dev/null and b/docs/ins.vsd differ
+#diff --git a/draw.graph.pl b/draw.graph.pl
+#new file mode 100755
+#index 0000000..756ea35
+#--- /dev/null
+#+++ b/draw.graph.pl
+#@@ -0,0 +1,57 @@
+#+#!/usr/bin/perl -I ./thirds -w
+#+# author: lilong'en(lilongen@163.com)
+#+# date:   04/05/2010
 
-		if ($lineCnter < 2) {
+		if ($flags->{doCmtReTest}) {
+			if ($line =~ $RE->{commit}) {
+				$flags->{cmtFound} = 1;
+
+				$cmtCnter++;
+				$cmtInfo = {};
+				$cmtInfo->{cmt} = $1;
+			}
 			next;
 		}
 		
-		#r13 | lilongen | 2010-10-11 22:01:14 +0000 (Mon, 11 Oct 2010) | 1 line
-		#r23 | lilongen | 2010-10-11 22:01:14 +0000 (Mon, 11 Oct 2010) | 2 lines
-		#r35 | lilongen | 2010-10-11 22:01:14 +0000 (Mon, 11 Oct 2010) | 12 lines
-		if (!$flags->{revFound} && $line =~ m/^r(\d+) \| ([\w\.\-_\d]+) \| ([\d\-\s:]+) .* \| (\d+) lines?$/) {
-			if (!statIt($2)) {
-				next;
-			}
-			
-			$flags->{revFound} = 1;
-			$revInfo = {};
-			$revInfo->{rev} = $1;
-			$revInfo->{author} = $2;
-			$revInfo->{date} = $3;
-			$revInfo->{commentLinesCnt} = $4;
-			$revInfo->{paths} = [];
-			$revInfo->{hashPaths} = {};
-			$revInfo->{comment} = "";
-	
-			$flags->{revPathsCnter} = 0;
-			$flags->{revCommentLinesCnter} = 0;
-			
-			if (!defined($GV->{UsersInfo}->{$revInfo->{author}})) {
-				$GV->{UsersInfo}->{$revInfo->{author}} = {};
-				
-				$GV->{UsersInfo}->{$revInfo->{author}}->{paths} = {};
-				$GV->{UsersInfo}->{$revInfo->{author}}->{info} = {'filesCnt' => 0, 'revsCnt' => 0, 'addLines' => 0, 'delLines' => 0};
-			}
-			
+		if ($line =~ $RE->{author}) {
+			$flags->{doCmtReTest} = 0;
+			$flags->{authorFound} = 1;
+			$cmtInfo->{authorName} = $1;
+			$cmtInfo->{authorEmail} = $2;
 			next;
 		}
 		
-		#  M /trunk/ccv/ccv1.pl
-		if ($flags->{revFound} && $flags->{startComment} == 0 && $line =~ m/^\s+(\w) (.*)$/) {
-			my $action 	= $1;
-			my $path 	= $2;
-			
-			if (!defined($GV->{InPathPrefix})) {
-				if ($path !~ m|^$GV->{RevFullPathWithoutRepos}| && $path !~ m|^$GV->{RevFullPath}|) {
-					next;
-				} else {
-					if ($path =~ m|^$GV->{RevFullPathWithoutRepos}|) {
-						$GV->{InPathPrefix} = $GV->{RevFullPathWithoutRepos};
-					} else {
-						$GV->{InPathPrefix} = $GV->{RevFullPath};
-					}
-				}
+		if ($flags->{authorFound} && $line =~ $RE->{date}) {
+			$flags->{dateFound} = 1;
+			$cmtInfo->{date} = $1;
+			$cmtInfo->{time} = $2;
+			$cmtInfo->{timeZone} = $3;
+			next;
+		}
+		
+		if ($flags->{dateFound} && $line =~ m/^$/) {
+			$flags->{commentBeginFound} = 1;
+			$cmtInfo->{comment} = '';
+			next;
+		}
+		
+		if ($cmtInfo->{commentBeginFound}) {
+			if ($line =~ m/^$/) {
+				$flags->{cmtFilesBeginFound} = 1;
+				$flags->{commentBeginFound} = 0;
+				$cmtInfo->{arrayFiles} = [];
+				$cmtInfo->{hashFiles} = {};
 			} else {
-				if ($path !~ m|^$GV->{InPathPrefix}|) {
-					next;
-				}				
+				$cmtInfo->{comment} .= $line;
 			}
-			# A /EIM/src/com/webex/eim/bbui/ui/screen/EmotionDialog.java (from /EIM/src/com/webex/eim/bbui/ui/field/EmotionDialog.java:224)
-			#logic for above case
-			if ($path =~ m/^(.+) \(from (.+):(\d+)\)/) {
-				$path = $1;
-				
-				$revInfo->{fromPath} = $2;
-				$revInfo->{fromPathRev} = $3;						
-			}
-			#
-			
-			my $lastBackslashPos = rindex($path, '/'); 
-			if ($lastBackslashPos > 0) {
-				$GV->{PathPaths}->{substr($path, 0, $lastBackslashPos)} = 1;
-			}
-			
-			my $unexactFileType = 'B';
-			if ($path =~ m/(\.[\w\d]+)$/) {
-				if ($ccvUtil->isTxtFile(\$GV->{AllExts}, $1)) {
-					$unexactFileType = 'T';
-				}
-			}
-			
-			if ($pms->{OFilter}->{filterNeeded}) {
-				my $isIn = $ccvUtil->filter($path, $pms->{OFilter});
-				
-				if (!$isIn) {
-					next;	
-				}				
-			}
-			
-			$flags->{revPathsCnter} ++;
-			push(@{$revInfo->{paths}}, {'path' => $path, 'action' => $action});
-		    $revInfo->{hashPaths}->{$path} = {'action' => $action, 'type' => $unexactFileType};
-			
-			next;
-		}
-
-		#                    empty line after changed path & before comments
-		if ($flags->{revPathsCnter} > 0 && $flags->{startComment} == 0 && $line =~ m/^$/) {
-			$flags->{startComment} = 1;
-			
-			next;
-		}
-
-		#check in comments.......
-		if ($flags->{startComment} && $flags->{revCommentLinesCnter} < $revInfo->{commentLinesCnt} && $line =~ m/^(.*)$/) {
-			$flags->{revCommentLinesCnter}++;
-			$revInfo->{comment} .= $1;
-			
 			next;
 		}
 		
-		#------------------------------------------------------------------------
-		if ($flags->{revFound} && $flags->{revCommentLinesCnter} >= $revInfo->{commentLinesCnt} || ($flags->{revPathsCnter} == 0 && $line =~ m/^-+$/)) {
-			if ($flags->{revPathsCnter} > 0) {
-				$GV->{RevsInfo}->{$revInfo->{rev}} = $revInfo;
-				push(@{$GV->{RevsInfo}->{descRevs}}, $revInfo->{rev});
-				setUserPathsChangeInfo($flags, $revInfo);
+		if ($flags->{cmtFilesBeginFound}) {
+			if ($line =~ $RE->{fileLOC}) {
+				$cmtFileInfo = {};
+				$cmtFileInfo->{file} = $3;
+				$cmtFileInfo->{addLines} = $1;
+				$cmtFileInfo->{delLines} = $2;
+				$cmtFileInfo->{cmt} = $cmtInfo->{cmt};
+				push(@{$cmtInfo->{arrayFiles}}, $cmtFileInfo->{file});
+				$cmtInfo->{hashFiles}->{$cmtFileInfo->{file}} = $cmtFileInfo;
+			} else {
+				$flags->{filesDiffBegin} = 1;
+				$flags->{cmtFilesBeginFound} = 0;
 			}
-			resetFlags($flags);
-			$revInfo = undef;
-			
 			next;
 		}
+		
+		if ($flags->{filesDiffBegin}) {
+			if ($line =~ $RE->{fileDiffHeader}) {
+				my $aFile = $1;
+				my $bFile = $2;
+				my $changeInfo = getCmtFileChangeInfo($aFile, $bFile);
+				$cmtInfo->{hashFiles}->{$changeInfo->{file}}->{mode} = $changeInfo->{mode};
+				$flags->{doCmtReTest} = 1;
+			}
+		}
 	}
+	
 	close(LOG);
-	
-	getMoreFromParsedInfo();
-	
-	if (!defined($GV->{InPathPrefix})) {
-		$GV->{OverallInfo}->{InPathPrefix} = $GV->{RevFullPathWithoutRepos};
-	} else {
-		$GV->{OverallInfo}->{InPathPrefix} = $GV->{InPathPrefix};	
-	}
-	$GV->{OverallInfo}->{RevFullPathWithoutRepos} = $GV->{RevFullPathWithoutRepos};
-	$GV->{OverallInfo}->{RevFullPath} = $GV->{RevFullPath};
-	
+
 	$ccvUtil->dumpFile($assistor->getSvnModuleLogParsedInfoFile($pms, $MID), {
 	    'OverallInfo' => $GV->{OverallInfo},
-		'UsersInfo' => $GV->{UsersInfo},
-		'RevsInfo'  => $GV->{RevsInfo},
+		'AuthorsInfo' => $GV->{AuthorsInfo},
+		'CmtsInfo'  => $GV->{CmtsInfo},
 		'PathsInfo' => $GV->{PathsInfo},
 		'PathPaths' => $GV->{PathPaths},
 		'Error' 	=> $GV->{Error}
@@ -332,12 +262,20 @@ sub main() {
 	return 0;
 }
 
-sub setMustBeDirPathsFileType() {
-	for my $key (keys %{$GV->{PathPaths}}) {
-		if (defined($GV->{PathsInfo}->{$key})) {
-			$GV->{PathsInfo}->{$key}->{info}->{type} = 'D';
-		}
-	}	
+sub getCmtFileChangeInfo(my $aFile, $bFile) {
+	my $mode = 'normal';
+	my $file = $aFile;
+	if ($aFile eq '/dev/null') {
+		$mode = 'new';
+		$file = $bFile;
+	}
+	if ($bFile eq '/dev/null') {
+		$mode = 'deleted';
+	}
+	return {
+		mode: $mode,
+		file: $file
+	};
 }
 
 sub statIt($) {
@@ -349,62 +287,15 @@ sub statIt($) {
 	}
 }
 
-sub setUserPathsChangeInfo($$) {
-	my $flags = $_[0];
-	my $revInfo = $_[1];
-	
-	for (my $i = 0; $i < $flags->{revPathsCnter}; $i++) {
-		my $path = $revInfo->{paths}->[$i]->{path};
-		
-		if (!defined($GV->{UsersInfo}->{$revInfo->{author}}->{paths}->{$path})) {
-			$GV->{UsersInfo}->{$revInfo->{author}}->{paths}->{$path} = {
-			    'revs' => [], 
-			    'info' => {'revsCnt' => 0, 'addLines' => 0, 'delLines' => 0}
-		    };
-		    
-		    $GV->{UsersInfo}->{$revInfo->{author}}->{info}->{filesCnt}++;
-		}
-		push(@{$GV->{UsersInfo}->{$revInfo->{author}}->{paths}->{$path}->{revs}}, $revInfo->{rev});
-		$GV->{UsersInfo}->{$revInfo->{author}}->{paths}->{$path}->{info}->{revsCnt}++;
-		
-		if (!defined($GV->{PathsInfo}->{$path})) {
-			$GV->{PathsInfo}->{$path} = {
-			    'revs' => [], 
-			    'info' => {'revsCnt' => 0, 'addLines' => 0, 'delLines' => 0}
-			};
-			
-			if ($revInfo->{fromPath}) {
-				$GV->{PathsInfo}->{$path}->{info}->{fromPath} = $revInfo->{fromPath};
-				$GV->{PathsInfo}->{$path}->{info}->{fromPathRev} = $revInfo->{fromPathRev};
-			}
-			
-			$GV->{OverallInfo}->{filesCnt}++;
-		}
-		push(@{$GV->{PathsInfo}->{$path}->{revs}}, $revInfo->{rev});
-		$GV->{PathsInfo}->{$path}->{info}->{revsCnt}++;
-	}
-}
-
-sub getMoreFromParsedInfo() {
-    $GV->{OverallInfo}->{usersCnt} = keys(%{$GV->{UsersInfo}});
-    $GV->{OverallInfo}->{revsCnt} = $#{$GV->{RevsInfo}->{descRevs}} + 1;
-    
-    for (my $i = 0; $i < $GV->{OverallInfo}->{revsCnt}; $i++) {
-        my $rev = $GV->{RevsInfo}->{descRevs}->[$i];
-        my $revAuthor = $GV->{RevsInfo}->{$rev}->{author};
-        $GV->{UsersInfo}->{$revAuthor}->{info}->{revsCnt}++;
-    }
-    
-    setMustBeDirPathsFileType();
-}
-
 sub resetFlags($) {
 	my $flags = $_[0];
-	$flags->{revFound} = 0;
-	$flags->{startComment} = 0;
-	$flags->{revEnd} = 0;
-	$flags->{revPathsCnter} = 0;
-	$flags->{revCommentLinesCnter} = 0;	
+	$flags->{doCmtReTest} = 1;
+	$flags->{cmtFound} = 0;
+	$flags->{authorFound} = 0;
+	$flags->{dateFound} = 0;
+	$flags->{commentBeginFound} = 0;
+	$flags->{cmtFilesBeginFound} = 0;
+	$flags->{filesDiffBegin} = 0;	
 }
 
 sub parse_command_line() {
