@@ -15,8 +15,8 @@ sub main();
 sub parse_command_line();
 sub statIt($);
 sub storeCmtInfo($);
-sub richCmtFileInfoAndRetFile($);
-sub getCmtFileChangeInfo($$);
+sub setCmtFileDiffOffset($);
+sub generateMoreInfos($);
 
 my $T_SNAP		= "";
 my $CFG			= "example.sf.xml";
@@ -46,6 +46,7 @@ sub setGV() {
         'filesCnt' => 0,
         'cmtsCnt'  => 0   
     };
+	$GV->{Cmts} = [];
     $GV->{CmtsInfo}     = {}; 
     $GV->{AuthorsInfo}    = {};
     $GV->{FilesInfo}    = {};
@@ -146,7 +147,7 @@ sub main() {
 print "cmtFound: $1 \n";
 				$cmtCnter++;
 				if ($cmtCnter > 1) {
-					richCmtFileInfoAndRetFile({
+					setCmtFileDiffOffset({
 						flags => $flags,
 						LOG => $LOG,
 						line => $line,
@@ -230,23 +231,32 @@ print "filesDiffBegin:  \n";
 		if ($flags->{filesDiffBegin}) {
 			if ($line =~ m/^diff --git a\/(.+) b\/(.+)$/) {
 print "diff --git:  \n";			
-				$flags->{prevDiffFile} = richCmtFileInfoAndRetFile({
-					aFile => $1,
-					bFile => $2,
+				 setCmtFileDiffOffset({
+					file => $1,
 					flags => $flags,
 					LOG => $LOG,
 					line => $line,
 					cmtInfo => $cmtInfo
 				});
-				
+				$flags->{prevDiffFile} = $1;
 				$flags->{doCmtReTest} = 1;
+				$flags->{doFileChangeModeTest} = 1;
+			} else {
+				if ($flags->{doFileChangeModeTest}) {
+					my $changeMode = 'normal';
+					if ($line =~ m/^(deleted|new) file mode \d+$/) { #this will closely follow "$line =~ m/^diff --git a\/(.+) b\/(.+)$/"
+						$changeMode = $1;
+					}
+					$cmtInfo->{hashFiles}->{$flags->{prevDiffFile}}->{changeMode} = $changeMode;
+					$flags->{doFileChangeModeTest} = 0;
+				}
 			}
 			next;
 		}
 	}
 	
 	if ($flags->{prevDiffFile}) {
-		richCmtFileInfoAndRetFile({
+		setCmtFileDiffOffset({
 			flags => $flags,
 			LOG => $LOG,
 			line => undef,
@@ -270,7 +280,7 @@ print "diff --git:  \n";
 	#	'Error' 	=> $GV->{Error}
 	#});
 	
-	$assistor->write_file('git.log.ccv', Dumper($GV->{CmtsInfo}));
+	$assistor->write_file('git.log.ccv', Dumper($GV));
 
 	return 0;
 }
@@ -278,12 +288,41 @@ print "diff --git:  \n";
 sub storeCmtInfo($) {
 	my $cmtInfo = $_[0];
 	$GV->{CmtsInfo}->{$cmtInfo->{cmt}} = $cmtInfo;
+	
+	generateMoreInfos($cmtInfo);
 }
 
-sub richCmtFileInfoAndRetFile($) {
+sub generateMoreInfos($) {
+	my $cmtInfo = $_[0];
+	
+	push(@{$GV->{Cmts}}, $cmtInfo->{cmt});
+	
+	if (!defined($GV->{AuthorsInfo}->{$cmtInfo->{author}})) {
+		$GV->{AuthorsInfo}->{$cmtInfo->{author}} = {
+			cmtsArray => [],
+			files => {}
+		};		
+	}
+	
+	my $authorInfo = $GV->{AuthorsInfo}->{$cmtInfo->{author}};
+	push(@{$authorInfo->{cmtsArray}}, $cmtInfo->{cmt});
+	
+	for my $file (keys %{$cmtInfo->{hashFiles}}) {
+		if (!defined($authorInfo->{files}->{$file})) {
+			$authorInfo->{files}->{$file} = [];
+		}
+		push(@{$authorInfo->{files}->{$file}}, $cmtInfo->{cmt});
+
+		if (!defined($GV->{FilesInfo}->{$file})) {
+			$GV->{FilesInfo}->{$file} = [];
+		}
+		push(@{$GV->{FilesInfo}->{$file}}, $cmtInfo->{cmt});
+	}
+}
+
+sub setCmtFileDiffOffset($) {
 	my $po = $_[0];
-	my $aFile 	= $po->{aFile};
-	my $bFile 	= $po->{bFile};
+	my $file 	= $po->{file};
 	my $flags 	= $po->{flags};
 	my $LOG 	= $po->{LOG};
 	my $line 	= $po->{line};
@@ -297,33 +336,9 @@ sub richCmtFileInfoAndRetFile($) {
 		}
 	}
 
-	if (defined($aFile)) {
-		my $changeInfo = getCmtFileChangeInfo($aFile, $bFile);
-		$cmtInfo->{hashFiles}->{$changeInfo->{file}}->{changeMode} = $changeInfo->{mode};	
-		$cmtInfo->{hashFiles}->{$changeInfo->{file}}->{offsetB} = tell($LOG) - length($line);
-		return $changeInfo->{file};
-	} else {
-		return undef;
+	if (defined($file)) {
+		$cmtInfo->{hashFiles}->{$file}->{offsetB} = tell($LOG) - length($line);
 	}
-}
-
-sub getCmtFileChangeInfo($$) {
-	my $aFile = $_[0];
-	my $bFile = $_[1];
-	my $mode = 'normal';
-	my $file = $aFile;
-	if ($aFile eq '/dev/null') {
-		$mode = 'new';
-		$file = $bFile;
-	}
-	if ($bFile eq '/dev/null') {
-		$mode = 'deleted';
-	}
-	
-	return {
-		mode => $mode,
-		file => $file
-	};
 }
 
 sub statIt($) {
