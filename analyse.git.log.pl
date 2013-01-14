@@ -171,8 +171,8 @@ print "cmtFound: $1 \n";
 print "authorFound: $1 \n";		
 			$flags->{authorFound} = 1;
 			$flags->{cmtFound} = 0;
-			$cmtInfo->{authorName} = $1;
-			$cmtInfo->{authorEmail} = $2;
+			$cmtInfo->{author} = $1;
+			$cmtInfo->{email} = $2;
 			next;
 		}
 		
