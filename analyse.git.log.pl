@@ -360,6 +360,7 @@ sub resetFlags($) {
 	$flags->{cmtFilesBeginFound} = 0;
 	$flags->{filesDiffBegin} = 0;
 	$flags->{prevDiffFile} = undef;
+	$flags->{doFileChangeModeTest} = 0;
 }
 
 sub parse_command_line() {
