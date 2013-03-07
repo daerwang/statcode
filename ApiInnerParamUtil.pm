@@ -78,9 +78,9 @@ sub new() {
 			innerCmdPmName	=> "uid"
 		},  
 		"upw"                   => {
-			fromApi			=> 6,
+			fromApi			=> 1,
 			presenceInDef 	=> "0|1|2",
-			positionNo		=> 1,
+			positionNo		=> 6,
 			outerVal		=> undef,
 			innerVal		=> undef,
 			innerCmdPmName	=> "upw"
