@@ -1292,7 +1292,7 @@ sub debug() {
     if (!open($DEBUG, ">>", "/tmp/CCV-DEBUG")) {
        return 1;
     }
-    print $DEBUG Dumper($info) . "\n";
+    print $DEBUG (ref($info) eq "" ? $info : Dumper($info)) . "\n";
     close($DEBUG);     
     umask($old);
     return 0;

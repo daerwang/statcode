@@ -195,6 +195,7 @@ HTML_BEGIN
 for (my $i = 0; $i <= $lines_cnt; $i++) {
 	$lines[$i] = substr($lines[$i], 1);
 	
+	$lines[$i] =~ s|&|&amp;|g;
 	if ($lines[$i] eq "") {
 		$lines[$i] = "&nbsp;";
 		next;
