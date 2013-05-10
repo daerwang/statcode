@@ -44,4 +44,5 @@
   <branch_directory>/repositoryPath/branches</branch_directory>   
   <tag_directory>/repositoryPath/tags</tag_directory>   
 </module>
+
 </configs>

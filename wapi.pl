@@ -111,24 +111,24 @@ sub GET_PROGRESS() {
 }
 
 sub GET_OVERALL() {
-	my $modules = $assistor->getModules();
+	my $modules = $assistor->getModules4UI();
 	if (!defined($modules)) {
 		$ret->{error} = 1;
 		return;
 	}
-	$ret->{MODULES} = $assistor->{modules4UI};
+	$ret->{MODULES} = $modules;
 	
 	$ret->{CFG_FILE} = substr($assistor->{CONFIG_FILE}, length("config/"));
 	$ret->{CFG_FILES} = $assistor->{CFG_FILES};
 }
 
 sub GET_MODULES() {
-	my $modules = $assistor->getModules();
+	my $modules = $assistor->getModules4UI();
 	if (!defined($modules)) {
 		$ret->{error} = 1;
 		return;
 	}
-	$ret->{MODULES} = $assistor->{modules4UI};	
+	$ret->{MODULES} = $modules;	
 }
 
 sub GET_XML_FILES() {

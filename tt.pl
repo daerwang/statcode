@@ -9,16 +9,8 @@ use XML::TreePP;
 use Assistor;
 use PerlBase64;
 
-my $a = 1;
-print "$a\n";
-$a = !$a;
-if ($a) {
-	print "$a\n";
-} else {
-	print "false\n"
-}
+my $ass = new Assistor("example.xml");
 
-$a = !$a;
-if ($a) {
-	print "$a\n";
-}
+my $ms = $ass->getModules4UI();
+
+print Dumper($ms);
