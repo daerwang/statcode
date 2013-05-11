@@ -210,65 +210,105 @@ sub escape4Bash() {
 	return $str;
 }
 
-sub getRepositories() {
-    my $self = shift;
-    my $cfgFile = shift;
-
-	my $treePP = XML::TreePP->new();
-	
-	my $tmp;
-	eval {
-		$tmp = $treePP->parsefile($cfgFile || $self->{CONFIG_FILE});
-	} or do {
-		return undef;	
-	};
-	
-	my $G_CFG = {};
-    $G_CFG->{file_filter} = $self->_get_value($config->{file_filter}, ".*");
-    $G_CFG->{useRuntimeAccount} = $self->_get_value($config->{useRuntimeAccount}, "0");
-    	
-	my $config = $tmp->{configs};
-    my $repositories = [];
-    my $tmpRepositories = [];
-    if (ref($config->{repository}) ne "ARRAY") {
-    	push @{$tmpRepositories}, $config->{repository};
-    	$config->{repository} = $tmpRepositories;
-    }
-    my $cnt = $#{$config->{repository}};
-    for (my $i = 0; $i<= $cnt; $i++) {
-        my $repository = {};
-        $repository->{id}           = $self->_get_value($config->{repository}->[$i]->{id}, "");
-        $repository->{type}         = $self->_get_value($config->{repository}->[$i]->{type}, "git");
-		$repository->{useRuntimeAccount}= $self->_get_value($config->{repository}->[$i]->{useRuntimeAccount}, $G_CFG->{useRuntimeAccount});
-		if ($repository->{useRuntimeAccount} =~ m/true/i) {
-		    $repository->{useRuntimeAccount} = '1';
-		} elsif ($repository->{useRuntimeAccount} =~ m/false/i) {
-		    $repository->{useRuntimeAccount} = '0';
-		}
-		
-		$repository->{account_id} 			= $self->_get_value($config->{repository}->[$i]->{account_id},   ($repository->{type} eq "cvs" ? $G_CFG->{cvsId} : $G_CFG->{svnId}));
-       	$repository->{account_pw} 			= $self->_get_value($config->{repository}->[$i]->{account_pw},   ($repository->{type} eq "cvs" ? $G_CFG->{cvsPw} : $G_CFG->{svnPw}));
-        $repository->{access_mode} 			= $self->_get_value($config->{repository}->[$i]->{access_mode},  ($repository->{type} eq "cvs" ? $G_CFG->{cvsMode} : $G_CFG->{svnMode}));					
-        $repository->{file_filter} 			= $self->_get_value($config->{repository}->[$i]->{file_filter}, 	$G_CFG->{file_filter});					
-        $repository->{log}          		= $config->{repository}->[$i]->{id} . ".log";
-        $repository->{diff}         		= $config->{repository}->[$i]->{id} . ".diff";
-        $repository->{url}         			= $config->{repository}->[$i]->{url} . ".diff";
-		
-		$repository->{account_pw} 			= $self->escape4Bash($repository->{account_pw});
-		        
-        remove_redundant_slash(\$repository->{repository});
-    }
-    
-    $self->{repositories} = $repositories;
-    return $self->{repositories};	
-}
-
 sub getModules4UI() {
 	my $self = shift;
 	$self->getModules();
-	$self->constructModules4UI();
-	
+	$self->_constructModules4UI();
 	return $self->{modules4UI};
+}
+
+sub _fixTreePPOnlyOneItemIssue() {
+	my $self = shift;
+	my $config = shift;
+	my $type = shift;
+	
+	my $tmpModules = [];
+    if (defined($config->{$type}) && ref($config->{$type}) ne "ARRAY") {
+    	push @{$tmpModules}, $config->{$type};
+    	$config->{$type} = $tmpModules;
+    }  	
+}
+
+sub _getRepositoryTypeItems() {
+	my $self = shift;
+	my $config = shift;
+	my $globalCfg = shift;
+	my $repositoryType = shift;
+	my $items = [];
+print "$repositoryType\n";	
+    for (my $i = 0; $i<= $#{$config->{$repositoryType}}; $i++) {
+        my $item = {};
+        my $cfgI = $config->{$repositoryType}->[$i];
+        $item->{id} = $self->_get_value($cfgI->{id}, "");
+        if ($repositoryType eq "module") {
+        	$item->{type} = lc($self->_get_value($cfgI->{type}, "cvs"));
+    	} else {
+    		$item->{type} = $repositoryType;
+    	}
+		
+		if ($repositoryType eq "module" 
+			|| $repositoryType eq "cvs"
+			|| $repositoryType eq "svn") {
+	        $item->{module} = $self->_get_value($cfgI->{module}, "");
+	    	if ($item->{module} eq '/' || $item->{module} eq '*') {
+	    		$item->{module} = $item->{type} eq 'svn' ? '' : '.';	
+	    	}
+	        $item->{server}       = $self->_get_value($cfgI->{server}, "");
+	        $item->{repository}   = $self->_get_value($cfgI->{repository}, "");
+	        
+	        remove_redundant_slash(\$item->{module});
+	        remove_redundant_slash(\$item->{repository});	        
+    	}
+        
+        if ($item->{type} eq "cvs") {
+	        $item->{viewvc_entry} 		= $self->_get_value($cfgI->{viewvc_entry}, "");					
+	        $item->{viewvc_repository} 	= $self->_get_value($cfgI->{viewvc_repository}, "");					
+	        $item->{repository_mapping} 	= $self->_get_value($cfgI->{repository_mapping}, "");
+    	}
+    	
+        if ($item->{type} eq "svn") {
+        	$item->{original_trunk_directory}  = $self->_get_value($cfgI->{trunk_directory}, "");
+        	$item->{original_branch_directory} = $self->_get_value($cfgI->{branch_directory}, "");
+        	$item->{original_tag_directory}    = $self->_get_value($cfgI->{tag_directory}, "");        	
+        	
+        	if ($item->{module} eq '') {
+	        	$item->{trunk_directory}  = $item->{original_trunk_directory};
+	        	$item->{branch_directory} = $item->{original_branch_directory} . "/%s";
+	        	$item->{tag_directory}    = $item->{original_tag_directory} . "/%s";
+        	} else {
+	        	$item->{trunk_directory}  = $item->{original_trunk_directory} . "/" . $item->{module};
+	        	$item->{branch_directory} = $item->{original_branch_directory} . "/%s/" . $item->{module};
+	        	$item->{tag_directory}    = $item->{original_tag_directory} . "/%s/" . $item->{module};
+        	}
+        	remove_redundant_slash(\$item->{trunk_directory});
+        	remove_redundant_slash(\$item->{branch_directory});
+        	remove_redundant_slash(\$item->{tag_directory});
+        } 
+        if ($item->{type} eq "git") {
+	        $item->{url} 		= $self->_get_value($cfgI->{url}, "");					
+    	}           	
+    			
+		$item->{account_id} 			= $self->_get_value($cfgI->{account_id}, "");
+       	$item->{account_pw} 			= $self->_get_value($cfgI->{account_pw});
+        $item->{access_mode} 			= $self->_get_value($cfgI->{access_mode});					
+        $item->{file_filter} 			= $self->_get_value($cfgI->{file_filter}, $globalCfg->{file_filter});
+        $item->{log}          			= $cfgI->{id} . ".log";
+        $item->{diff}         			= $cfgI->{id} . ".diff";
+		$item->{account_pw} 			= $self->escape4Bash($item->{account_pw});
+
+		$item->{useRuntimeAccount}= $self->_get_value($cfgI->{useRuntimeAccount}, $globalCfg->{useRuntimeAccount});
+		if ($item->{useRuntimeAccount} =~ m/true/i) {
+		    $item->{useRuntimeAccount} = '1';
+		} elsif ($item->{useRuntimeAccount} =~ m/false/i) {
+		    $item->{useRuntimeAccount} = '0';
+		}
+		if ($item->{account_id} eq '') {
+			$item->{useRuntimeAccount} = '1';
+		}
+
+        push @{$items}, $item;
+    }
+    return $items;
 }
 
 sub getModules() {
@@ -285,100 +325,42 @@ sub getModules() {
 	};
 	
 	my $config = $tmp->{configs};
-	
-	if (defined($config->{repository})) {
-		return $self->getRepositories($cfgFile);
-	}
 
-    my $G_CFG = {};
-    $G_CFG->{cvsId}     = $self->_get_value($config->{cvs_account_id}, "");
-    $G_CFG->{cvsPw}     = $self->_get_value($config->{cvs_account_pw}, "");
-    $G_CFG->{cvsMode}   = $self->_get_value($config->{cvs_access_mode}, "pserver");
-    $G_CFG->{svnId}     = $self->_get_value($config->{svn_account_id}, "");
-    $G_CFG->{svnPw}     = $self->_get_value($config->{svn_account_pw}, "");
-    $G_CFG->{svnMode}   = $self->_get_value($config->{svn_access_mode}, "svn");
-    
-    $G_CFG->{file_filter} = $self->_get_value($config->{file_filter}, ".*");
-    $G_CFG->{useRuntimeAccount} = $self->_get_value($config->{useRuntimeAccount}, "0");
+    my $globalCfg = {};
+    $globalCfg->{cvsId}     = $self->_get_value($config->{cvs_account_id}, "");
+    $globalCfg->{cvsPw}     = $self->_get_value($config->{cvs_account_pw}, "");
+    $globalCfg->{cvsMode}   = $self->_get_value($config->{cvs_access_mode}, "pserver");
+    $globalCfg->{svnId}     = $self->_get_value($config->{svn_account_id}, "");
+    $globalCfg->{svnPw}     = $self->_get_value($config->{svn_account_pw}, "");
+    $globalCfg->{svnMode}   = $self->_get_value($config->{svn_access_mode}, "svn");
+    $globalCfg->{file_filter} = $self->_get_value($config->{file_filter}, ".*");
+    $globalCfg->{useRuntimeAccount} = $self->_get_value($config->{useRuntimeAccount}, "0");
    
-    my $modules = [];
-    my $tmpModules = [];
-    if (ref($config->{module}) ne "ARRAY") {
-    	push @{$tmpModules}, $config->{module};
-    	$config->{module} = $tmpModules;
-    }
-    my $cnt = $#{$config->{module}};
-    for (my $i = 0; $i<= $cnt; $i++) {
-        my $module = {};
-        $module->{id}           = $self->_get_value($config->{module}->[$i]->{id}, "");
-        $module->{type}         = lc($self->_get_value($config->{module}->[$i]->{type}, "cvs"));
-        $module->{module}       = $self->_get_value($config->{module}->[$i]->{module}, "");
-    	if ($module->{module} eq '/' || $module->{module} eq '*') {
-    		$module->{module} = $module->{type} eq 'svn' ? '' : '.';	
+    my $items = [];
+    my $types = ['module', 'cvs', 'svn', 'git'];
+    for (my $i = 0; $i <= $#{$types}; $i++) {
+    	my $type = $types->[$i];
+    	if (defined($type)) {
+    		$self->_fixTreePPOnlyOneItemIssue($config, $type);
+    		my $typeItems = $self->_getRepositoryTypeItems($config, $globalCfg, $type);
+    		splice @{$items}, ($#{$items} + 1), 0, @{$typeItems};
     	}
-        
-        $module->{server}       = $self->_get_value($config->{module}->[$i]->{server}, "");
-        $module->{repository}   = $self->_get_value($config->{module}->[$i]->{repository}, "");
-		
-		$module->{useRuntimeAccount}= $self->_get_value($config->{module}->[$i]->{useRuntimeAccount}, $G_CFG->{useRuntimeAccount});
-		if ($module->{useRuntimeAccount} =~ m/true/i) {
-		    $module->{useRuntimeAccount} = '1';
-		} elsif ($module->{useRuntimeAccount} =~ m/false/i) {
-		    $module->{useRuntimeAccount} = '0';
-		}
-		
-		$module->{account_id} 			= $self->_get_value($config->{module}->[$i]->{account_id},   ($module->{type} eq "cvs" ? $G_CFG->{cvsId} : $G_CFG->{svnId}));
-       	$module->{account_pw} 			= $self->_get_value($config->{module}->[$i]->{account_pw},   ($module->{type} eq "cvs" ? $G_CFG->{cvsPw} : $G_CFG->{svnPw}));
-        $module->{access_mode} 			= $self->_get_value($config->{module}->[$i]->{access_mode},  ($module->{type} eq "cvs" ? $G_CFG->{cvsMode} : $G_CFG->{svnMode}));					
-        
-        $module->{file_filter} 			= $self->_get_value($config->{module}->[$i]->{file_filter}, 	$G_CFG->{file_filter});					
-        $module->{viewvc_entry} 		= $self->_get_value($config->{module}->[$i]->{viewvc_entry}, "");					
-        $module->{viewvc_repository} 	= $self->_get_value($config->{module}->[$i]->{viewvc_repository}, "");					
-        $module->{repository_mapping} 	= $self->_get_value($config->{module}->[$i]->{repository_mapping}, "");
-
-        $module->{log}          		= $config->{module}->[$i]->{id} . ".log";
-        $module->{diff}         		= $config->{module}->[$i]->{id} . ".diff";
-		
-		$module->{account_pw} 			= $self->escape4Bash($module->{account_pw});
-		        
-        remove_redundant_slash(\$module->{module});
-        remove_redundant_slash(\$module->{repository});
-        if (uc($module->{type}) eq "SVN") {
-        	$module->{original_trunk_directory}  = $self->_get_value($config->{module}->[$i]->{trunk_directory}, "");
-        	$module->{original_branch_directory} = $self->_get_value($config->{module}->[$i]->{branch_directory}, "");
-        	$module->{original_tag_directory}    = $self->_get_value($config->{module}->[$i]->{tag_directory}, "");        	
-        	
-        	if ($module->{module} eq '') {
-	        	$module->{trunk_directory}  = $module->{original_trunk_directory};
-	        	$module->{branch_directory} = $module->{original_branch_directory} . "/%s";
-	        	$module->{tag_directory}    = $module->{original_tag_directory} . "/%s";
-        	} else {
-	        	$module->{trunk_directory}  = $module->{original_trunk_directory} . "/" . $module->{module};
-	        	$module->{branch_directory} = $module->{original_branch_directory} . "/%s/" . $module->{module};
-	        	$module->{tag_directory}    = $module->{original_tag_directory} . "/%s/" . $module->{module};
-        	}
-        	remove_redundant_slash(\$module->{trunk_directory});
-        	remove_redundant_slash(\$module->{branch_directory});
-        	remove_redundant_slash(\$module->{tag_directory});
-        }
-        
-        push @{$modules}, $module;
     }
 
-	$self->{modules} = $modules;
+	$self->{modules} = $items;
 	return $self->{modules};
 }
 
-sub constructModules4UI() {
+sub _constructModules4UI() {
     my $self = shift;
     my $modules4UI = [];
 	for (my $i = 0; $i <= $#{$self->{modules}}; $i++) {
 		my $module = $self->{modules}->[$i];
         my $module4UI = {};
-        $module4UI->{id} 			= $module->{id};
-        $module4UI->{type} 			= $module->{type};
-        my $type = uc($module->{type};
-        if ($type eq "CVS" || $type eq "SVN") {
+        $module4UI->{id} = $module->{id};
+        $module4UI->{type} = $module->{type};
+        my $type = $module->{type};
+        if ($type eq "cvs" || $type eq "svn") {
 	        $module4UI->{module}		= $module->{module};
 	        if ($module->{module} eq '.' || $module->{module} eq '') {#svn '', cvs '.'  --> *
 	        	$module4UI->{module} 	= '*';
@@ -389,7 +371,7 @@ sub constructModules4UI() {
         
         $module4UI->{useRuntimeAccount} = $module->{useRuntimeAccount};
         $module4UI->{access_mode} 	= $module->{access_mode};
-        if ($type eq "SVN") {
+        if ($type eq "svn") {
         	$module4UI->{trunk_directory} =  $module->{trunk_directory};
         	$module4UI->{branch_directory} =  $module->{branch_directory};
         	$module4UI->{tag_directory} =  $module->{tag_directory};
@@ -397,52 +379,50 @@ sub constructModules4UI() {
         	$module4UI->{trunkFullPath} =  $self->get_svn_module_url($module, "", "trunk");
         	$module4UI->{branchFullPath} =  $self->get_svn_module_url($module, "%s", "branch");
         	$module4UI->{tagFullPath} =  $self->get_svn_module_url($module, "%s", "tag");
-        } elsif ($type eq "CVS") {
+        } elsif ($type eq "cvs") {
         	$module4UI->{repositoryPath}= $self->get_module_cvsroot_without_uid($module4UI);	
-        } elsif ($type eq "GIT") {
+        } elsif ($type eq "git") {
         	$module4UI->{url}= $module->{url};
         }
+        $self->_attachValidation2ModulesUI($module, $module4UI);
         push @{$modules4UI}, $module4UI;
     }
     
     $self->{modules4UI} = $modules4UI;
-    
-    if ($type eq "CVS" || $type eq "SVN") {
-    	$self->attachValidation2ModulesUI();	
-    }
 }
 
-sub attachValidation2ModulesUI() {
+sub _attachValidation2ModulesUI() {
 	my $self = shift;
-	for (my $i = 0; $i <= $#{$self->{modules4UI}}; $i++) {
-		my $module = $self->{modules}->[$i];
-		my $moduleUI = $self->{modules4UI}->[$i];
-		$moduleUI->{CFG_ERROR} = "";
-		
-		my $ckherCnt = $#{$self->{CHKER_KEY_PRIORITY_QUEUE}} + 1;
-		for (my $p = 0; $p < $ckherCnt; $p++) {
-			my $chkerKey = $self->{CHKER_KEY_PRIORITY_QUEUE}->[$p];
-			my $moduleInfoKeyValue = $module->{$chkerKey};
+	my $module = shift;
+	my $moduleUI = shift;
+	if ($module->{type} eq 'git') {
+		return;
+	}
+	
+	$moduleUI->{CFG_ERROR} = "";
+	my $ckherCnt = $#{$self->{CHKER_KEY_PRIORITY_QUEUE}} + 1;
+	for (my $p = 0; $p < $ckherCnt; $p++) {
+		my $chkerKey = $self->{CHKER_KEY_PRIORITY_QUEUE}->[$p];
+		my $moduleInfoKeyValue = $module->{$chkerKey};
 
-			if (!defined($moduleInfoKeyValue)) {
-				next;
-			}
-			if ($moduleInfoKeyValue =~ m/^\s*$/) {
-				if ($chkerKey eq 'account_id' || $chkerKey eq 'account_pw') {
-					if ($module->{useRuntimeAccount}) {
-						next;
-					}
-				}
-				
-				$moduleUI->{CFG_ERROR} = "<$chkerKey> - Can not be empty or unset";
-				last;					
-			}
-			if (!$self->{CHKER}->{$chkerKey}->{fn}($module->{type}, $moduleInfoKeyValue)) {
-				$moduleUI->{CFG_ERROR} = "<$chkerKey> - $self->{CHKER}->{$chkerKey}->{error}";
-				last;
-			}				
+		if (!defined($moduleInfoKeyValue)) {
+			next;
 		}
-	}	
+		if ($moduleInfoKeyValue =~ m/^\s*$/) {
+			if ($chkerKey eq 'account_id' || $chkerKey eq 'account_pw') {
+				if ($module->{useRuntimeAccount}) {
+					next;
+				}
+			}
+			
+			$moduleUI->{CFG_ERROR} = "<$chkerKey> - Can not be empty or unset";
+			last;					
+		}
+		if (!$self->{CHKER}->{$chkerKey}->{fn}($module->{type}, $moduleInfoKeyValue)) {
+			$moduleUI->{CFG_ERROR} = "<$chkerKey> - $self->{CHKER}->{$chkerKey}->{error}";
+			last;
+		}				
+	}
 }
 
 sub injectRuntimeAccount2Modules() {
@@ -1416,3 +1396,4 @@ sub logCcvQueryEntry() {
 #==============================================================================
 1;
 __END__
+

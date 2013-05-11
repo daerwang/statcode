@@ -9,7 +9,7 @@ use XML::TreePP;
 use Assistor;
 use PerlBase64;
 
-my $ass = new Assistor("example.xml");
+my $ass = new Assistor("example.git.xml");
 
 my $ms = $ass->getModules4UI();
 
