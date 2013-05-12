@@ -235,7 +235,6 @@ sub _getRepositoryTypeItems() {
 	my $globalCfg = shift;
 	my $repositoryType = shift;
 	my $items = [];
-print "$repositoryType\n";	
     for (my $i = 0; $i<= $#{$config->{$repositoryType}}; $i++) {
         my $item = {};
         my $cfgI = $config->{$repositoryType}->[$i];

@@ -119,6 +119,19 @@ ccv.uifn = {
 	        }, 4000);
 	    }   	
     },
+    
+    _getCodeItemDetailsString: function(item) {
+    	var str = "";
+        if (item.type == "cvs") {
+        	str = item.module + "<br>" + item.repositoryPath;
+        } else if (item.type == "svn"){
+        	str = item.module + "<br>" + item.trunkFullPath + "<br>" + item.branchFullPath + "<br>" + item.tagFullPath;
+        } else if (item.type == "git"){
+        	str = item.url;
+        }
+        
+        return str; 	
+    },
 
     refreshModules: function(modules) {
         ccv.vars.counterUseRuntimeAccount = 0;
@@ -146,9 +159,7 @@ ccv.uifn = {
         	
         	ccv.domJQ.MODULES_CONTAINER.append(addedItems);
         	ccv.domJQ.MODULES = ccv.domJQ.MODULES_CONTAINER.find("div.module");
-        };
-        
-        toDynamicModuleItems();
+        }();
         
         for (var i = 0; i < modules.length; i++) {
             if (modules[i].useRuntimeAccount == '1') {
@@ -163,22 +174,13 @@ ccv.uifn = {
             }
             
             jqModule.find("div.moduleInfo span.moduleId").html(shownMid);
-            var jqType = jqModule.find("div.moduleInfo span.moduleType").html("(" + modules[i].type + ")");
+            jqModule.find("div.moduleInfo span.moduleType").html("(" + modules[i].type + ")");
             
             var indicator = modules[i].useRuntimeAccount == '1' ? ' use Runtime Account' : '';
             var jqIndicator = jqModule.find("div.moduleInfo span.moduleIndicator").html(indicator);
             
-            var moduleHtmlDetails = "";
-            if (modules[i].type == "cvs") {
-            	jqModule.removeClass("svn");
-            	jqType.removeClass("typeSVN");
-            	moduleHtmlDetails = modules[i].module + "<br>" + modules[i].repositoryPath;
-            } else {
-            	jqModule.addClass("svn");
-            	jqType.addClass("typeSVN");
-            	moduleHtmlDetails = modules[i].module + "<br><span class='svnRevBase fixwidth'>trunk: </span><span class='moduleURI'>" + modules[i].trunkFullPath + "</span><br><span class='svnRevBase fixwidth'>branch: </span><span class='moduleURI'>" + modules[i].branchFullPath + "</span><br><span class='svnRevBase fixwidth'>tag: </span><span class='moduleURI'>" + modules[i].tagFullPath + "</span>";
-            }
-            jqModule.find("div.moduleInfo span.moduleDetails").html(moduleHtmlDetails);
+            jqModule.removeClass("cvs svn git").addClass(modules[i].type);
+            jqModule.find("div.moduleInfo span.moduleDetails").html(ccv.uifn._getCodeItemDetailsString(modules[i]));
             jqModule.show();
         }
         

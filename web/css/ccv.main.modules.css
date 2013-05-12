@@ -209,20 +209,24 @@
 
 .ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleType {
 	font-style: italic;
-	color: #777;	
 	font-size: 11px;
 	-webkit-text-size-adjust: none;
 }
+.ccv div.main div.cfgModules div.modules div.module.cvs .moduleInfo .moduleType {
+	color: #777;	
+}
+.ccv div.main div.cfgModules div.modules div.module.svn .moduleInfo .moduleType {
+	color: #00cc00;	
+}
+.ccv div.main div.cfgModules div.modules div.module.git .moduleInfo .moduleType {
+	color: #0000cc;	
+}
+
 .ccv div.main div.cfgModules div.modules div.module .moduleInfo .moduleIndicator {
-	color: #ff0000;
+	color: #ff0000;	
 	font-style: italic;
 	font-size: 11px;
 	-webkit-text-size-adjust: none;
-}
-
-
-.ccv div.main div.cfgModules div.modules div.module .moduleInfo .typeSVN {
-	color: #00cc00 !important;	
 }
 
 
