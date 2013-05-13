@@ -13,11 +13,13 @@ use ApiInnerParamUtil;
 
 sub main();
 
+sub isModuleIn($);
 sub gen_report_file($$);
 sub get_rdiff_log_revs_dates();
 sub generateTasksQueue();
 sub generateCvsModuleTasks($);
 sub generateSvnModuleTasks($);
+sub generateGitModuleTasks($);
 sub construct_rlog_analyse_cmd($);
 sub construct_cvs_rdiff_analyse_cmd($);
 sub construct_svn_diff_analyse_cmd($);
@@ -26,12 +28,17 @@ sub addTasksInfoContext($);
 sub constructAndPersistenceTasksInfo();
 sub persistencePMS();
 sub constructSvnDiffCmd($$);
+sub mkdir4Module($);    
+sub getModuleMainUrl($);
+sub logSelfCmdLine();
+sub mkdir4Workspace();
+sub startTaskManager();
+sub instantiateReportTpl();
 
-
-my $scriptName = $0;
-my $cmdLine = join (" ", @ARGV);
-my $paramUtil = new ApiInnerParamUtil("inner", $cmdLine);
-my $pms = $paramUtil->constructPmsObjectFromInnerCmdLine();
+my $gScriptName = $0;
+my $gCmdLine = join (" ", @ARGV);
+my $gParamUtil = new ApiInnerParamUtil("inner", $gCmdLine);
+my $pms = $gParamUtil->constructPmsObjectFromInnerCmdLine();
 
 my $assistor = new Assistor($pms->{cfg}, $pms->{T_SNAP});
 my $ccvUtil = new CcvUtil();
@@ -41,166 +48,170 @@ if (!$pms->{T_SNAP}) {
 }
 
 $assistor->set_diff_revs_dates($pms);#pay attention to this
-my $pl_path = getcwd;
-my $modulesInfo = $assistor->getModules();
+my $gBasePath = getcwd;
+my $gModulesInfo = $assistor->getModules();
 $assistor->injectRuntimeAccount2Modules($pms->{uid}, $pms->{upw});
 
-my $moudlesCnt = $#{$modulesInfo};
-my $_H_XLOG_ = undef;
-my $_X_CCV_LOG_ = $assistor->get_specified_operate_file("PROGRESS_LOG");
-my $revsDirUnderT_SNAP = $assistor->get_operate_revs_dates_dir_name($pms);
+my $gMoudlesCnt = $#{$gModulesInfo};
+my $ghTaskLog = undef;
+my $gTaskLogFile = $assistor->get_specified_operate_file("PROGRESS_LOG");
+my $gOnRevs = $assistor->get_operate_revs_dates_dir_name($pms);
 
 exit main();
 
 sub main() {
-    #class ConfigAssistor method get_config return value is reference to hash
-    my $R_TEMPLATE      = $assistor->get_report_template_file("FRAME");            
-    my $R_TOP_TEMPLATE  = $assistor->get_report_template_file("TOP");
+	mkdir4Workspace();
+	instantiateReportTpl();
+	   
+    if (!open($ghTaskLog, ">>", $gTaskLogFile)) {
+		print $ghTaskLog "Err: Can not create/open $gTaskLogFile!\n";
+		return;
+	}
+	logSelfCmdLine();
+    close($ghTaskLog);
+	
+	persistencePMS();
+	constructAndPersistenceTasksInfo();
+	startTaskManager();
     
-    my $REPORT          = $assistor->read_whole_file($R_TEMPLATE);
-    my $REPORT_TOP      = $assistor->read_whole_file($R_TOP_TEMPLATE);
+    return 0;
+}
 
+sub mkdir4Workspace() {
     my $date            = $assistor->get_time_date();
     my $serial          = $assistor->get_time_serial();
-    
     my $old_mask = umask(0);
     mkdir("web/reports/$date");
     mkdir("web/reports/$date/$serial");
         
     mkdir("operate/$date");
     mkdir("operate/$date/$serial");
+    mkdir("operate/$date/$serial/$gOnRevs");
+    
+    chdir("operate/$date/$serial/$gOnRevs");
+    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
+        mkdir4Module($gModulesInfo->[$j]);    
+    }
+    chdir($gBasePath);
+    umask($old_mask);
+}
 
-    if (!open($_H_XLOG_, ">>", $_X_CCV_LOG_)) {
-		print $_H_XLOG_ "Err: Can not create/open $_X_CCV_LOG_!\n";
-	}
-	my $shownCmdLine = $cmdLine;
-	$shownCmdLine =~ s/-upw[^\s]+//g;
-	$shownCmdLine =~ s/-uid[^\s]+//g;
-    print $_H_XLOG_ "perl -w $scriptName $shownCmdLine\n\n";
-    chdir("operate/$date/$serial");
-     
-    my $operate_path         = getcwd;
-  
-    mkdir($revsDirUnderT_SNAP);
-    chdir($revsDirUnderT_SNAP);
-  
-    my $ld_entry 	= getcwd;
+sub mkdir4Module($) {
+	my $moduleInfo = shift;
+    my $moduleId 	= $moduleInfo->{id};
+    my $moduleType = $moduleInfo->{type};
     
-    my $report      = $REPORT;
-    my $report_top  = $REPORT_TOP;
-    my $counter     = 0;
-    my $top_url     = "";
-    
-    $top_url = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "TOP", revs => $revsDirUnderT_SNAP}));
+    mkdir($moduleId);
+    if ($pms->{mode} == 0 || $pms->{mode} == 2) {
+    	if ($moduleType eq 'cvs') {
+	        mkdir($moduleId . "/rev_files");
+	        mkdir($moduleId . "/1.1");
+	        mkdir($moduleId . "/head");
+    	} elsif ($moduleType eq 'svn') {
+    		mkdir($moduleId . "/rev_df");
+    		mkdir($moduleId . "/rev_co");
+	        mkdir($moduleId . "/rev_src");
+	        mkdir($moduleId . "/rev_src/init");
+	        mkdir($moduleId . "/rev_src/head");
+    	} elsif ($moduleType eq 'git') {
+    		;#@todo
+    	}
+    } elsif ($pms->{mode} == 1) {
+    	;
+    }
+}
 
-    my $main_url    = "";
-    
-    $report =~ s/#TOP#/$top_url/;
-  
-    for (my $j = 0; $j <= $moudlesCnt; $j++) {
-    	my $moduleInfo 	= $modulesInfo->[$j];
-        my $moudleId 	= $moduleInfo->{id};
+sub instantiateReportTpl() {
+    my $R_TEMPLATE = $assistor->get_report_template_file("FRAME");            
+    my $R_TOP_TEMPLATE = $assistor->get_report_template_file("TOP");
+    my $frameReportContent = $assistor->read_whole_file($R_TEMPLATE);
+    my $topReportContent = $assistor->read_whole_file($R_TOP_TEMPLATE);
+   
+    my $counter = 0;
+    my $topUrl = "";
+    $topUrl = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "TOP", revs => $gOnRevs}));
+    $frameReportContent =~ s/#TOP#/$topUrl/;
+    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
+    	my $moduleInfo 	= $gModulesInfo->[$j];
+        my $moduleId 	= $moduleInfo->{id};
         
-        if ($pms->{mids} eq "*" || index(",$pms->{mids},", ",$moudleId,") != -1) {
+        if (isModuleIn($moduleId)) {
 			$counter ++;            
         } else {
         	next;
-        }        
-        
-        mkdir($moudleId);
-
-        if ($pms->{mode} == 0) {
-        	if ($moduleInfo->{type} eq 'cvs') {
-		        mkdir($moudleId . "/rev_files");
-		        mkdir($moudleId . "/1.1");
-		        mkdir($moudleId . "/head");
-        	} else {
-        		mkdir($moudleId . "/rev_df");
-        		mkdir($moudleId . "/rev_co");
-		        mkdir($moudleId . "/rev_src");
-		        mkdir($moudleId . "/rev_src/init");
-		        mkdir($moudleId . "/rev_src/head");
-        	}
-			if ($moduleInfo->{type} eq 'cvs') {
-				$main_url = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "LOG_USERS", revs => $revsDirUnderT_SNAP, mid=> $moudleId}));	
-			} else {
-				$main_url = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "LOG_USERS", revs => $revsDirUnderT_SNAP, mid=> $moudleId}));	
-			}
-        	
-        } elsif ($pms->{mode} == 1){
-	        $main_url = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "DIFF_GROUP", revs => $revsDirUnderT_SNAP, mid=> $moudleId}));
-	    } elsif ($pms->{mode} == 2){
-        	if ($moduleInfo->{type} eq 'cvs') {
-		        mkdir($moudleId . "/rev_files");
-		        mkdir($moudleId . "/1.1");
-		        mkdir($moudleId . "/head");
-        	} else {
-        		mkdir($moudleId . "/rev_df");
-        		mkdir($moudleId . "/rev_co");
-		        mkdir($moudleId . "/rev_src");
-		        mkdir($moudleId . "/rev_src/init");
-		        mkdir($moudleId . "/rev_src/head");
-        	}
-        	
-        	my $df = "";
-        	my $moduleURI = "";
-	        if ($moduleInfo->{type} eq 'cvs') {
-	        	$df = $assistor->transOperateLocalPath2WebPath($assistor->get_cvs_module_files_info_file($revsDirUnderT_SNAP, $moudleId));
-	        	$moduleURI = $assistor->get_module_cvsroot_without_uid($moduleInfo) . "/" . $moduleInfo->{module};
-			} else {
-				$df = $assistor->transOperateLocalPath2WebPath($assistor->getSvnMoudleFilesInfoDataFile($pms, $moudleId));
-				$moduleURI = $assistor->get_svn_module_url($moduleInfo, $pms->{rev});
-			}
-			
-			$main_url = sprintf("/ccv/fsi.html?df=%s&moduleURI=%s",
-							$df,
-							$moduleURI
-			);			
-	    }
-	    
-        if ($counter == 1) {
-            $report =~ s/#MAIN#/$main_url/;
         }
         
-        #$report_top =~ s/((<div class="tabbertab" title=")#TITLE(" id=")#URL#("><\/div>))/$2$module_id$3$main_url$4\n$1/;
-        $report_top =~ s/((<li><a id=")#URL#(" href="#tab-c">)#TITLE#(<\/a><\/li>))/$2$main_url$3$moudleId$4\n$1/;
+        my $mainUrl = getModuleMainUrl($moduleInfo);
+	    
+        if ($counter == 1) {
+            $frameReportContent =~ s/#MAIN#/$mainUrl/;
+        }
+        
+        $topReportContent =~ s/((<li><a id=")#URL#(" href="#tab-c">)#TITLE#(<\/a><\/li>))/$2$mainUrl$3$moduleId$4\n$1/;
     }
     #Add to adjust top height according to modules amount
-    my $top_height = 40;
+    my $topHeight = 40;
     if ($counter > 20) {
-    	$top_height = 100;	
+    	$topHeight = 100;	
     } elsif ($counter > 10) {
-    	$top_height = 70;	
+    	$topHeight = 70;	
     }
-    $report =~ s/#HEIGHT#/$top_height/;    
+    $frameReportContent =~ s/#HEIGHT#/$topHeight/;    
     #End
-    
-    $report_top =~ s/((<li><a id=")#URL#(" href="#tab-c">)#TITLE#(<\/a><\/li>))//;
-    chdir($pl_path);
-    
-    my $reportFrames 	= $assistor->get_specified_output_report_file({flag => "FRAME", revs => $revsDirUnderT_SNAP});
-    my $reportTop 		= $assistor->get_specified_output_report_file({flag => "TOP", revs => $revsDirUnderT_SNAP});
+    $topReportContent =~ s/((<li><a id=")#URL#(" href="#tab-c">)#TITLE#(<\/a><\/li>))//;
+    my $reportFrames 	= $assistor->get_specified_output_report_file({flag => "FRAME", revs => $gOnRevs});
+    my $reportTop 		= $assistor->get_specified_output_report_file({flag => "TOP", revs => $gOnRevs});
      
-    gen_report_file($reportFrames, \$report);
-    gen_report_file($reportTop, \$report_top);
-    
-    chdir($operate_path);
-    chdir($pl_path);
-    
-    if (defined($_H_XLOG_)) {
-        close($_H_XLOG_);
-    }
-    umask($old_mask);
-	
-	persistencePMS();
-	
-	constructAndPersistenceTasksInfo();
-	
+    gen_report_file($reportFrames, \$frameReportContent);
+    gen_report_file($reportTop, \$topReportContent);	
+}
+
+sub startTaskManager() {
 	my $flagInBG = $pms->{fromCgi} == 1 ? "&" : "";
 	my $runTaskManager = "perl -w task.manager.pl \"$pms->{T_SNAP}\" $flagInBG";
-    system($runTaskManager);
+    system($runTaskManager);	
+}
+
+sub logSelfCmdLine() {
+	my $shownCmdLine = $gCmdLine;
+	$shownCmdLine =~ s/-upw[^\s]+//g;
+	$shownCmdLine =~ s/-uid[^\s]+//g;
+    print $ghTaskLog "perl -w $gScriptName $shownCmdLine\n\n";
+}
+
+sub getItemMainUrl() {
+	my $moduleInfo = shift;
+    my $moduleId 	= $moduleInfo->{id};
+    my $moduleType = $moduleInfo->{type};
+	
+	my $mainUrl = "";
+    if ($pms->{mode} == 0) {
+		if ($moduleType eq 'cvs') {
+			$mainUrl = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "LOG_USERS", revs => $gOnRevs, mid=> $moduleId}));	
+		} elsif ($moduleType eq 'svn') {
+			$mainUrl = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "LOG_USERS", revs => $gOnRevs, mid=> $moduleId}));	
+		} elsif ($moduleType eq 'svn') {
+			;#@todo	
+		}
+    } elsif ($pms->{mode} == 1){
+        $mainUrl = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "DIFF_GROUP", revs => $gOnRevs, mid=> $moduleId}));
+    } elsif ($pms->{mode} == 2){
+    	my $df = "";
+    	my $moduleURI = "";
+        if ($moduleType eq 'cvs') {
+        	$df = $assistor->transOperateLocalPath2WebPath($assistor->get_cvs_module_files_info_file($gOnRevs, $moduleId));
+        	$moduleURI = $assistor->get_module_cvsroot_without_uid($moduleInfo) . "/" . $moduleInfo->{module};
+		} elsif ($moduleType eq 'svn') {
+			$df = $assistor->transOperateLocalPath2WebPath($assistor->getSvnMoudleFilesInfoDataFile($pms, $moduleId));
+			$moduleURI = $assistor->get_svn_module_url($moduleInfo, $pms->{rev});
+		} elsif ($moduleType eq 'svn') {
+			;#@todo	
+		}
+		
+		$mainUrl = sprintf("/ccv/fsi.html?df=%s&moduleURI=%s", $df, $moduleURI);			
+    }
     
-    return 0;
+    return $mainUrl;
 }
 
 sub persistencePMS() {
@@ -219,7 +230,7 @@ sub constructAndPersistenceTasksInfo() {
 
 sub addTasksInfoContext($) {
 	my $tasksInfo = $_[0];
-    my $htmlReportURL  = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "FRAME", revs => $revsDirUnderT_SNAP}));
+    my $htmlReportURL  = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "FRAME", revs => $gOnRevs}));
     my $plainReportURL = $assistor->transReportLocalPath2WebPath($assistor->get_brief_report_file());
 	my $log_entry = constructCCVQueueEntry($htmlReportURL);
 
@@ -227,7 +238,7 @@ sub addTasksInfoContext($) {
 	$tasksInfo->{context}->{fromCgi} 			= $pms->{fromCgi};
 
 	$tasksInfo->{context}->{reportMode}			= $pms->{mode};
-	$tasksInfo->{context}->{revsDirUnderT_SNAP}	= $revsDirUnderT_SNAP;
+	$tasksInfo->{context}->{gOnRevs}	= $gOnRevs;
 
 	$tasksInfo->{context}->{htmlReportURL} 		= $htmlReportURL;
 	$tasksInfo->{context}->{plainReportURL} 	= $plainReportURL;
@@ -267,7 +278,7 @@ sub constructCCVQueueEntry($) {
                     $dt);
     }
     
-    my $revs_dates  = (($pms->{mode} == 0 ||  $pms->{mode} == 2) ? $revsDirUnderT_SNAP : get_rdiff_log_revs_dates());
+    my $revs_dates  = (($pms->{mode} == 0 ||  $pms->{mode} == 2) ? $gOnRevs : get_rdiff_log_revs_dates());
     my $log_entry = sprintf("%s$LOG_SP%s$LOG_SP%s$LOG_SP%s\n",
                               $pms->{mode},
                               $history,
@@ -283,7 +294,7 @@ sub gen_report_file($$) {
     my $h_file;
     
     if (!open($h_file, ">>", $file_name)) {
-		print $_H_XLOG_ "Err: Can not create/open $file_name!\n";
+		print $ghTaskLog "Err: Can not create/open $file_name!\n";
 		
 		return 1;
 	}         
@@ -327,7 +338,7 @@ sub generateCvsModuleTasks($) {
     my $moduleName = $moduleInfo->{module};
     my $logFile    = $moduleInfo->{log};
     my $diffFile   = $moduleInfo->{diff};
-    my $moudleId   = $moduleInfo->{id};
+    my $moduleId   = $moduleInfo->{id};
     my $cvsroot = $assistor->get_module_cvsroot($moduleInfo);
     my $cvsrootNoUID = $assistor->get_module_cvsroot_without_uid($moduleInfo);
     my $operatePath = $assistor->get_operate_revs_location($assistor->get_operate_revs_dates_dir_name($pms));
@@ -343,7 +354,7 @@ sub generateCvsModuleTasks($) {
     	$taskrLog->{type} = "cvs";
     	$taskrLog->{mode} = $moduleInfo->{mode};#pserver, ext
 		$taskrLog->{workPath} = $operatePath;
-		$taskrLog->{title} = "<b>$moudleId</b>";
+		$taskrLog->{title} = "<b>$moduleId</b>";
 		$taskrLog->{desc} = "$moduleName - $cvsrootNoUID";
 		push(@{$moduleTasks}, $taskrLog);
     	#End
@@ -355,7 +366,7 @@ sub generateCvsModuleTasks($) {
 	    	$taskCO11->{cmd} = "cvs -Q -d $cvsroot co -r1.1 \"$moduleName\" 2>&1";
 	    	$taskCO11->{type} = "cvs";
 	    	$taskCO11->{mode} = $moduleInfo->{mode};
-			$taskCO11->{workPath} = $operatePath . $moudleId . "/1.1";
+			$taskCO11->{workPath} = $operatePath . $moduleId . "/1.1";
 			$taskCO11->{title} = "";
 			$taskCO11->{desc} = "";
 			push(@{$moduleTasks}, $taskCO11);		    	
@@ -369,7 +380,7 @@ sub generateCvsModuleTasks($) {
 	    	$taskCO->{cmd} = "cvs -Q -d $cvsroot co $revRestrict \"$moduleName\" 2>&1";
 	    	$taskCO->{type} = "cvs";
 	    	$taskCO->{mode} = $moduleInfo->{mode};
-			$taskCO->{workPath} = $operatePath . $moudleId . "/head";
+			$taskCO->{workPath} = $operatePath . $moduleId . "/head";
 			$taskCO->{title} = "";
 			$taskCO->{desc} = "";
 			push(@{$moduleTasks}, $taskCO);	
@@ -377,7 +388,7 @@ sub generateCvsModuleTasks($) {
 	    #End
 	    
 		my $taskAnalyse = {};
-		$taskAnalyse->{cmd} = construct_rlog_analyse_cmd($moudleId);		
+		$taskAnalyse->{cmd} = construct_rlog_analyse_cmd($moduleId);		
 		$taskAnalyse->{workPath} = "";
 		$taskAnalyse->{title} = "";
 		$taskAnalyse->{desc} = "";
@@ -385,7 +396,7 @@ sub generateCvsModuleTasks($) {
 		
 	    #stat. module files when need graph
 	    if ($pms->{gopt}->{graph}) {
-	    	my $modulePath = $assistor->get_module_co_head_path($revsDirUnderT_SNAP, $moudleId);
+	    	my $modulePath = $assistor->get_module_co_head_path($gOnRevs, $moduleId);
 	    	my $statDirectory = $moduleName;
 	    	if ($moduleName =~ m|^([^/]+)/.*$|) {#cvs module
 	    		$statDirectory = $1;
@@ -420,12 +431,12 @@ sub generateCvsModuleTasks($) {
     	$taskrDiff->{type} = "cvs";
     	$taskrDiff->{mode} = $moduleInfo->{mode};
 		$taskrDiff->{workPath} = $operatePath;
-		$taskrDiff->{title} = "<b>$moudleId</b>";
+		$taskrDiff->{title} = "<b>$moduleId</b>";
 		$taskrDiff->{desc} = "$moduleName - $cvsrootNoUID";
 		push(@{$moduleTasks}, $taskrDiff);
 		
 		my $taskAnalyse = {};
-		$taskAnalyse->{cmd} = construct_cvs_rdiff_analyse_cmd($moudleId);		
+		$taskAnalyse->{cmd} = construct_cvs_rdiff_analyse_cmd($moduleId);		
 		$taskAnalyse->{workPath} = "";
 		$taskAnalyse->{title} = "";
 		$taskAnalyse->{desc} = "";
@@ -437,13 +448,13 @@ sub generateCvsModuleTasks($) {
     	$taskCO->{cmd} = "cvs -Q -d $cvsroot co $revRestrict \"$moduleName\" 2>&1";
     	$taskCO->{type} = "cvs";
     	$taskCO->{mode} = $moduleInfo->{mode};
-		$taskCO->{workPath} = $operatePath . $moudleId . "/head";
-		$taskCO->{title} = "<b>$moudleId</b>";
+		$taskCO->{workPath} = $operatePath . $moduleId . "/head";
+		$taskCO->{title} = "<b>$moduleId</b>";
 		$taskCO->{desc} = "$moduleName - $cvsrootNoUID";
 		push(@{$moduleTasks}, $taskCO);	
 	    #End
 	    		
-    	my $modulePath = $assistor->get_module_co_head_path($revsDirUnderT_SNAP, $moudleId);
+    	my $modulePath = $assistor->get_module_co_head_path($gOnRevs, $moduleId);
     	my $statDirectory = $moduleName;
     	if ($moduleName =~ m|^([^/]+)/.*$|) {#cvs Module
     		$statDirectory = $1;
@@ -460,14 +471,13 @@ sub generateCvsModuleTasks($) {
 	return $moduleTasks;
 }
 
-
 sub generateSvnModuleTasks($) {
 	my $moduleInfo = $_[0];
 	
     my $moduleName = $moduleInfo->{module};
     my $logFile    = $moduleInfo->{log};
     my $diffFile   = $moduleInfo->{diff};
-    my $moudleId   = $moduleInfo->{id};
+    my $moduleId   = $moduleInfo->{id};
     my $svnModuleUrl= "";
     my $operatePath = $assistor->get_operate_revs_location($assistor->get_operate_revs_dates_dir_name($pms));
 	
@@ -490,29 +500,29 @@ sub generateSvnModuleTasks($) {
     	$taskrLog->{type} = "svn";
     	$taskrLog->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 		$taskrLog->{workPath} = $operatePath;
-		$taskrLog->{title} = "<b>$moudleId</b>";
+		$taskrLog->{title} = "<b>$moduleId</b>";
 		$taskrLog->{desc} = "$moduleName - $svnModuleUrl";
 		push(@{$moduleTasks}, $taskrLog);
 		#End
 		
 		#svn log analyse
 	    my $taskAnalyse = {};
-    	$taskAnalyse->{cmd} = "perl -w analyse.svn.log.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moudleId\"";
+    	$taskAnalyse->{cmd} = "perl -w analyse.svn.log.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moduleId\"";
     	$taskAnalyse->{type} 	= "svn";
     	$taskAnalyse->{mode} 	= $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 		$taskAnalyse->{workPath}= "";
-		$taskAnalyse->{title} 	= "<b>$moudleId</b>";
+		$taskAnalyse->{title} 	= "<b>$moduleId</b>";
 		$taskAnalyse->{desc} 	= "$moduleName - $svnModuleUrl";
 		push(@{$moduleTasks}, $taskAnalyse);
 		#End
 		if ($pms->{gopt}->{OSvnWithLoc}) {
 			#processor base on svn module log parsed info
 		    my $taskParsedInfoMgr = {};
-	    	$taskParsedInfoMgr->{cmd} = "perl -w svn.log.locer.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moudleId\"";
+	    	$taskParsedInfoMgr->{cmd} = "perl -w svn.log.locer.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moduleId\"";
 	    	$taskParsedInfoMgr->{type} = "svn";
 	    	$taskParsedInfoMgr->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 			$taskParsedInfoMgr->{workPath} = '';
-			$taskParsedInfoMgr->{title} = "<b>$moudleId</b>";
+			$taskParsedInfoMgr->{title} = "<b>$moduleId</b>";
 			$taskParsedInfoMgr->{desc} = "$moduleName - $svnModuleUrl";
 			push(@{$moduleTasks}, $taskParsedInfoMgr);
 			#End			
@@ -520,7 +530,7 @@ sub generateSvnModuleTasks($) {
 		
 	    #stat files & generate, output graph json data
 	    if ($pms->{gopt}->{graph}) {
-	    	my $modulePath = "$operatePath$moudleId";
+	    	my $modulePath = "$operatePath$moduleId";
 	    	my $statDirectory = $moduleName;
 	    	if ($moduleName =~ m|^.*/([^/]+)$|) {#svn module
 	    		$statDirectory = $1;
@@ -536,7 +546,7 @@ sub generateSvnModuleTasks($) {
 	    	$taskCoHead->{type} = "svn";
 	    	$taskCoHead->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 			$taskCoHead->{workPath} = $srcHeadLocation;
-			$taskCoHead->{title} = "<b>$moudleId</b>";
+			$taskCoHead->{title} = "<b>$moduleId</b>";
 			$taskCoHead->{desc} = "$moduleName - $svnModuleUrl";
 			push(@{$moduleTasks}, $taskCoHead);
 
@@ -558,11 +568,11 @@ sub generateSvnModuleTasks($) {
 	    		
 		#generate report base on log & diff parsed data
 	    my $taskGenReport = {};
-    	$taskGenReport->{cmd} = "perl -w gen.svn.log.report.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moudleId\"";
+    	$taskGenReport->{cmd} = "perl -w gen.svn.log.report.pl -f\"$pms->{cfg}\" -t\"$pms->{T_SNAP}\" -m\"$moduleId\"";
     	$taskGenReport->{type} = "svn";
     	$taskGenReport->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 		$taskGenReport->{workPath} = '';
-		$taskGenReport->{title} = "<b>$moudleId</b>";
+		$taskGenReport->{title} = "<b>$moduleId</b>";
 		$taskGenReport->{desc} = "$moduleName - $svnModuleUrl";
 		push(@{$moduleTasks}, $taskGenReport);
 		#End
@@ -574,19 +584,19 @@ sub generateSvnModuleTasks($) {
     	$taskrDiff->{type} = "svn";
     	$taskrDiff->{mode} = $moduleInfo->{mode};
 		$taskrDiff->{workPath} = '';
-		$taskrDiff->{title} = "<b>$moudleId</b>";
+		$taskrDiff->{title} = "<b>$moduleId</b>";
 		$taskrDiff->{desc} = "$moduleName - $svnModuleUrl";
 		push(@{$moduleTasks}, $taskrDiff);
 		
 		my $taskAnalyse = {};
-		$taskAnalyse->{cmd} = construct_svn_diff_analyse_cmd($moudleId);		
+		$taskAnalyse->{cmd} = construct_svn_diff_analyse_cmd($moduleId);		
 		$taskAnalyse->{workPath} = "";
 		$taskAnalyse->{title} = "";
 		$taskAnalyse->{desc} = "";
 		push(@{$moduleTasks}, $taskAnalyse);		
 	} elsif ($pms->{mode} == 2) {# file
 		$svnModuleUrl = $assistor->get_svn_module_url($moduleInfo, $pms->{rev});
-    	my $modulePath = "$operatePath$moudleId";
+    	my $modulePath = "$operatePath$moduleId";
     	my $statDirectory = $moduleName;
     	if ($moduleName =~ m|^.*/([^/]+)$|) {#svn module
     		$statDirectory = $1;
@@ -602,7 +612,7 @@ sub generateSvnModuleTasks($) {
     	$taskCoHead->{type} = "svn";
     	$taskCoHead->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
 		$taskCoHead->{workPath} = $srcHeadLocation;
-		$taskCoHead->{title} = "<b>$moudleId</b>";
+		$taskCoHead->{title} = "<b>$moduleId</b>";
 		$taskCoHead->{desc} = "$moduleName - $svnModuleUrl";
 		push(@{$moduleTasks}, $taskCoHead);
 
@@ -612,6 +622,82 @@ sub generateSvnModuleTasks($) {
 		$taskStatFiles->{title} = "";
 		$taskStatFiles->{desc} = "";
 		push(@{$moduleTasks}, $taskStatFiles);	
+	}
+	
+	return $moduleTasks;
+}
+
+sub generateGitModuleTasks($) {
+	my $moduleInfo = $_[0];
+	
+    my $logFile    = $moduleInfo->{log};
+    my $diffFile   = $moduleInfo->{diff};
+    my $moduleId   = $moduleInfo->{id};
+    
+    my $operatePath = $assistor->get_operate_revs_location($assistor->get_operate_revs_dates_dir_name($pms));
+	my $moduleTasks = [];
+    #clone
+    my $taskrLog = {};
+	$taskrLog->{cmd} = "git clone -Q -d $cvsroot rlog -N $revRestrict $dateRestrict \"$moduleName\" > $logFile 2>&1";
+	$taskrLog->{type} = "git";
+	$taskrLog->{mode} = $moduleInfo->{mode};
+	$taskrLog->{workPath} = $operatePath;
+	$taskrLog->{title} = "<b>$moduleId</b>";
+	$taskrLog->{desc} = "$moduleName - $cvsrootNoUID";
+	push(@{$moduleTasks}, $taskrLog);
+	#End	
+	if ($pms->{mode} == 0) { #log
+	    my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-r$pms->{rev}";
+	    my $dateRestrict = ($pms->{date} eq "") ? "" : "-d\"$pms->{date}\"";
+
+	} elsif($pms->{mode} == 1) {#rdiff
+		my $revs = "";
+		my $dates = "";
+		if ($pms->{r1} ne "" || $pms->{r2} ne "") {
+			$revs = (($pms->{r1} ne "") ? "-r$pms->{r1}" : "") . (($pms->{r2} ne "") ? " -r$pms->{r2}" : "");
+		} else {
+			$dates = (($pms->{d1} ne "") ? "-D$pms->{d1}" : "") . (($pms->{d2} ne "") ? " -D$pms->{d2}" : "");
+		}
+		my $taskrDiff = {};
+    	$taskrDiff->{cmd} = "cvs -Q -d $cvsroot rdiff -u $revs $dates \"$moduleName\" > $diffFile 2>&1";
+    	$taskrDiff->{type} = "cvs";
+    	$taskrDiff->{mode} = $moduleInfo->{mode};
+		$taskrDiff->{workPath} = $operatePath;
+		$taskrDiff->{title} = "<b>$moduleId</b>";
+		$taskrDiff->{desc} = "$moduleName - $cvsrootNoUID";
+		push(@{$moduleTasks}, $taskrDiff);
+		
+		my $taskAnalyse = {};
+		$taskAnalyse->{cmd} = construct_cvs_rdiff_analyse_cmd($moduleId);		
+		$taskAnalyse->{workPath} = "";
+		$taskAnalyse->{title} = "";
+		$taskAnalyse->{desc} = "";
+		push(@{$moduleTasks}, $taskAnalyse);
+	} elsif($pms->{mode} == 2) {#file
+	    my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-r$pms->{rev}";
+	    #check out latest, can not use cvs export , cvs can not export r1.1
+    	my $taskCO = {};
+    	$taskCO->{cmd} = "cvs -Q -d $cvsroot co $revRestrict \"$moduleName\" 2>&1";
+    	$taskCO->{type} = "cvs";
+    	$taskCO->{mode} = $moduleInfo->{mode};
+		$taskCO->{workPath} = $operatePath . $moduleId . "/head";
+		$taskCO->{title} = "<b>$moduleId</b>";
+		$taskCO->{desc} = "$moduleName - $cvsrootNoUID";
+		push(@{$moduleTasks}, $taskCO);	
+	    #End
+	    		
+    	my $modulePath = $assistor->get_module_co_head_path($gOnRevs, $moduleId);
+    	my $statDirectory = $moduleName;
+    	if ($moduleName =~ m|^([^/]+)/.*$|) {#cvs Module
+    		$statDirectory = $1;
+    	}
+    	
+    	my $taskStatFiles = {};
+    	$taskStatFiles->{cmd} = "perl -w stat.files.pl \"$pms->{T_SNAP}\" \"$modulePath\" \"$statDirectory\"";
+		$taskStatFiles->{workPath} = "";
+		$taskStatFiles->{title} = "";
+		$taskStatFiles->{desc} = "";
+		push(@{$moduleTasks}, $taskStatFiles);
 	}
 	
 	return $moduleTasks;
@@ -686,18 +772,31 @@ sub constructSvnDiffCmd($$) {
 	return $svnDfCmd;
 }
 
+sub isModuleIn($) {
+	my $moduleId = shift;
+	return $pms->{mids} eq "*" || index(",$pms->{mids},", ",$moduleId,") != -1;
+}
+
 sub generateTasksQueue() {
 	my $tasksQueue = [];
 	
-    for (my $j = 0; $j <= $moudlesCnt; $j++) {
-    	my $moduleInfo = $modulesInfo->[$j];
-        my $moudleId = $moduleInfo->{id};
+    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
+    	my $moduleInfo = $gModulesInfo->[$j];
+        my $moduleId = $moduleInfo->{id};
+        my $moduleType = $moduleInfo->{type};
         
-		if (!($pms->{mids} eq "*" || index(",$pms->{mids},", ",$moudleId,") != -1)) {
+		if (!isModuleIn($moduleId)) {
 			next;	
 		}
 		
-		my $moduleTasks = (uc($moduleInfo->{type}) eq "CVS") ? generateCvsModuleTasks($moduleInfo) : generateSvnModuleTasks($moduleInfo);
+		my $moduleTasks;
+		if ($moduleType eq "cvs") {
+			$moduleTasks = generateCvsModuleTasks($moduleInfo);
+		} elsif ($moduleType eq "svn") {
+			$moduleTasks = generateSvnModuleTasks($moduleInfo);
+		} elsif ($moduleType eq "git") {
+			$moduleTasks = generateGitModuleTasks($moduleInfo);
+		}
 		
 		push(@{$tasksQueue}, $moduleTasks);
     }

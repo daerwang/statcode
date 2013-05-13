@@ -229,7 +229,7 @@ sub _fixTreePPOnlyOneItemIssue() {
     }  	
 }
 
-sub _getRepositoryTypeItems() {
+sub _getConfigItemsBytype() {
 	my $self = shift;
 	my $config = shift;
 	my $globalCfg = shift;
@@ -341,7 +341,7 @@ sub getModules() {
     	my $type = $types->[$i];
     	if (defined($type)) {
     		$self->_fixTreePPOnlyOneItemIssue($config, $type);
-    		my $typeItems = $self->_getRepositoryTypeItems($config, $globalCfg, $type);
+    		my $typeItems = $self->_getConfigItemsBytype($config, $globalCfg, $type);
     		splice @{$items}, ($#{$items} + 1), 0, @{$typeItems};
     	}
     }
