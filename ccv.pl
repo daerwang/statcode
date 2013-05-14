@@ -23,6 +23,7 @@ sub generateGitModuleTasks($);
 sub construct_rlog_analyse_cmd($);
 sub construct_cvs_rdiff_analyse_cmd($);
 sub construct_svn_diff_analyse_cmd($);
+sub construct_git_log_analyse_cmd($);
 sub construct_git_diff_analyse_cmd($);
 sub constructCCVQueueEntry($);
 sub addTasksInfoContext($);
@@ -662,6 +663,13 @@ sub generateGitModuleTasks($) {
 		$taskLog->{title} = "<b>$moduleId</b>";
 		$taskLog->{desc} = $url;
 		push(@{$moduleTasks}, $taskLog);
+		
+		my $taskAnalyse = {};
+		$taskAnalyse->{cmd} = construct_git_log_analyse_cmd($moduleId);		
+		$taskAnalyse->{workPath} = "";
+		$taskAnalyse->{title} = "";
+		$taskAnalyse->{desc} = "";
+		push(@{$moduleTasks}, $taskAnalyse);		
 	} elsif($pms->{mode} == 1) {#diff
 		my $revs = "";
 		my $dates = "";
@@ -847,6 +855,16 @@ sub construct_git_diff_analyse_cmd($) {
 	my $mid = $_[0];
     return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
         "analyse.git.diff.pl",
+        "-f"  . $pms->{cfg},
+        "-t"  . $pms->{T_SNAP},
+        "-m"  . $mid
+	);
+}
+
+sub construct_git_log_analyse_cmd($) {
+	my $mid = $_[0];
+    return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
+        "analyse.git.log.pl",
         "-f"  . $pms->{cfg},
         "-t"  . $pms->{T_SNAP},
         "-m"  . $mid
