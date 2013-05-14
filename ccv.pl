@@ -23,6 +23,7 @@ sub generateGitModuleTasks($);
 sub construct_rlog_analyse_cmd($);
 sub construct_cvs_rdiff_analyse_cmd($);
 sub construct_svn_diff_analyse_cmd($);
+sub construct_git_diff_analyse_cmd($);
 sub constructCCVQueueEntry($);
 sub addTasksInfoContext($);
 sub constructAndPersistenceTasksInfo();
@@ -72,7 +73,7 @@ sub main() {
 	
 	persistencePMS();
 	constructAndPersistenceTasksInfo();
-	startTaskManager();
+	#startTaskManager();
     
     return 0;
 }
@@ -179,7 +180,7 @@ sub logSelfCmdLine() {
     print $ghTaskLog "perl -w $gScriptName $shownCmdLine\n\n";
 }
 
-sub getItemMainUrl() {
+sub getModuleMainUrl($) {
 	my $moduleInfo = shift;
     my $moduleId 	= $moduleInfo->{id};
     my $moduleType = $moduleInfo->{type};
@@ -225,7 +226,9 @@ sub constructAndPersistenceTasksInfo() {
 	addTasksInfoContext($tasksInfo);
 
 	my $queueFile = $assistor->get_specified_operate_file("TASK_QUEUE");	
-    $ccvUtil->dumpFile($queueFile, $tasksInfo);	
+    $ccvUtil->dumpFile($queueFile, $tasksInfo);
+    
+print Dumper($tasksInfo);    
 }
 
 sub addTasksInfoContext($) {
@@ -628,72 +631,63 @@ sub generateSvnModuleTasks($) {
 }
 
 sub generateGitModuleTasks($) {
-	my $moduleInfo = $_[0];
-	
-    my $logFile    = $moduleInfo->{log};
-    my $diffFile   = $moduleInfo->{diff};
-    my $moduleId   = $moduleInfo->{id};
+	my $moduleInfo = shift;
+    my $logFile = $moduleInfo->{log};
+    my $diffFile = $moduleInfo->{diff};
+    my $moduleId = $moduleInfo->{id};
+    my $url = $moduleInfo->{url};
     
     my $operatePath = $assistor->get_operate_revs_location($assistor->get_operate_revs_dates_dir_name($pms));
 	my $moduleTasks = [];
+	
+	my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-b$pms->{rev}";
     #clone
-    my $taskrLog = {};
-	$taskrLog->{cmd} = "git clone -Q -d $cvsroot rlog -N $revRestrict $dateRestrict \"$moduleName\" > $logFile 2>&1";
-	$taskrLog->{type} = "git";
-	$taskrLog->{mode} = $moduleInfo->{mode};
-	$taskrLog->{workPath} = $operatePath;
-	$taskrLog->{title} = "<b>$moduleId</b>";
-	$taskrLog->{desc} = "$moduleName - $cvsrootNoUID";
-	push(@{$moduleTasks}, $taskrLog);
-	#End	
+    my $taskClone = {};
+	$taskClone->{cmd} = "git clone $revRestrict \"$url\" $moduleId > $logFile 2>&1";
+	$taskClone->{type} = "git";
+	$taskClone->{mode} = $moduleInfo->{mode};
+	$taskClone->{workPath} = $operatePath;
+	$taskClone->{title} = "<b>$moduleId</b>";
+	$taskClone->{desc} = $url;
+	push(@{$moduleTasks}, $taskClone);
+	#End
+	my $diffOptions = "--numstat -p";
 	if ($pms->{mode} == 0) { #log
-	    my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-r$pms->{rev}";
 	    my $dateRestrict = ($pms->{date} eq "") ? "" : "-d\"$pms->{date}\"";
-
-	} elsif($pms->{mode} == 1) {#rdiff
+		my $taskLog = {};
+		$taskLog->{cmd} = "git log $diffOptions > $logFile 2>&1";
+		$taskLog->{type} = "git";
+		$taskLog->{mode} = $moduleInfo->{mode};
+		$taskLog->{workPath} = "$operatePath/$moduleId";
+		$taskLog->{title} = "<b>$moduleId</b>";
+		$taskLog->{desc} = $url;
+		push(@{$moduleTasks}, $taskLog);
+	} elsif($pms->{mode} == 1) {#diff
 		my $revs = "";
 		my $dates = "";
 		if ($pms->{r1} ne "" || $pms->{r2} ne "") {
-			$revs = (($pms->{r1} ne "") ? "-r$pms->{r1}" : "") . (($pms->{r2} ne "") ? " -r$pms->{r2}" : "");
+			$revs = (($pms->{r1} ne "") ? "$pms->{r1}" : "HEAD") . (($pms->{r2} ne "") ? " $pms->{r2}" : "HEAD");
 		} else {
 			$dates = (($pms->{d1} ne "") ? "-D$pms->{d1}" : "") . (($pms->{d2} ne "") ? " -D$pms->{d2}" : "");
 		}
-		my $taskrDiff = {};
-    	$taskrDiff->{cmd} = "cvs -Q -d $cvsroot rdiff -u $revs $dates \"$moduleName\" > $diffFile 2>&1";
-    	$taskrDiff->{type} = "cvs";
-    	$taskrDiff->{mode} = $moduleInfo->{mode};
-		$taskrDiff->{workPath} = $operatePath;
-		$taskrDiff->{title} = "<b>$moduleId</b>";
-		$taskrDiff->{desc} = "$moduleName - $cvsrootNoUID";
-		push(@{$moduleTasks}, $taskrDiff);
+		my $taskDiff = {};
+    	$taskDiff->{cmd} = "git diff $diffOptions $revs $dates > $diffFile 2>&1";
+    	$taskDiff->{type} = "cvs";
+    	$taskDiff->{mode} = $moduleInfo->{mode};
+		$taskDiff->{workPath} = "$operatePath/$moduleId";
+		$taskDiff->{title} = "<b>$moduleId</b>";
+		$taskDiff->{desc} = "$url";
+		push(@{$moduleTasks}, $taskDiff);
 		
 		my $taskAnalyse = {};
-		$taskAnalyse->{cmd} = construct_cvs_rdiff_analyse_cmd($moduleId);		
+		$taskAnalyse->{cmd} = construct_git_diff_analyse_cmd($moduleId);		
 		$taskAnalyse->{workPath} = "";
 		$taskAnalyse->{title} = "";
 		$taskAnalyse->{desc} = "";
 		push(@{$moduleTasks}, $taskAnalyse);
 	} elsif($pms->{mode} == 2) {#file
-	    my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-r$pms->{rev}";
-	    #check out latest, can not use cvs export , cvs can not export r1.1
-    	my $taskCO = {};
-    	$taskCO->{cmd} = "cvs -Q -d $cvsroot co $revRestrict \"$moduleName\" 2>&1";
-    	$taskCO->{type} = "cvs";
-    	$taskCO->{mode} = $moduleInfo->{mode};
-		$taskCO->{workPath} = $operatePath . $moduleId . "/head";
-		$taskCO->{title} = "<b>$moduleId</b>";
-		$taskCO->{desc} = "$moduleName - $cvsrootNoUID";
-		push(@{$moduleTasks}, $taskCO);	
-	    #End
-	    		
-    	my $modulePath = $assistor->get_module_co_head_path($gOnRevs, $moduleId);
-    	my $statDirectory = $moduleName;
-    	if ($moduleName =~ m|^([^/]+)/.*$|) {#cvs Module
-    		$statDirectory = $1;
-    	}
-    	
     	my $taskStatFiles = {};
-    	$taskStatFiles->{cmd} = "perl -w stat.files.pl \"$pms->{T_SNAP}\" \"$modulePath\" \"$statDirectory\"";
+    	$taskStatFiles->{cmd} = "perl -w stat.files.pl \"$pms->{T_SNAP}\" . \"$moduleId\"";
 		$taskStatFiles->{workPath} = "";
 		$taskStatFiles->{title} = "";
 		$taskStatFiles->{desc} = "";
@@ -841,6 +835,15 @@ sub construct_svn_diff_analyse_cmd($) {
 	my $mid = $_[0];
     return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
                         "analyse.svn.diff.pl",
+                        "-f"  . $pms->{cfg},
+                        "-t"  . $pms->{T_SNAP},
+                        "-m"  . $mid);
+}
+
+sub construct_git_diff_analyse_cmd($) {
+	my $mid = $_[0];
+    return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
+                        "analyse.git.diff.pl",
                         "-f"  . $pms->{cfg},
                         "-t"  . $pms->{T_SNAP},
                         "-m"  . $mid);
