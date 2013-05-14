@@ -802,18 +802,19 @@ sub construct_rlog_analyse_cmd($){
     my $mid = $_[0];
 
     my $cmd = sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", 
-                        "analyse.cvs.log.pl",
-                        "-f" . $pms->{cfg},
-                        "-t" . $pms->{T_SNAP},
-                        "-r" . $pms->{rev},
-                        "-m" . $mid,
-                        "-d" . $pms->{date},
-                        "-w" . $pms->{wids},
-                        "-gm".  $pms->{gopt}->{graph},
-                        "-arm". $pms->{gopt}->{allRevs},
-                        "-sbm". $pms->{gopt}->{statBin},
-                        "-sbl". $pms->{gopt}->{statBinLines},
-                        "-nsd". $pms->{gopt}->{notStatDeleted});
+        "analyse.cvs.log.pl",
+        "-f" . $pms->{cfg},
+        "-t" . $pms->{T_SNAP},
+        "-r" . $pms->{rev},
+        "-m" . $mid,
+        "-d" . $pms->{date},
+        "-w" . $pms->{wids},
+        "-gm".  $pms->{gopt}->{graph},
+        "-arm". $pms->{gopt}->{allRevs},
+        "-sbm". $pms->{gopt}->{statBin},
+        "-sbl". $pms->{gopt}->{statBinLines},
+        "-nsd". $pms->{gopt}->{notStatDeleted}
+	);
     
     return $cmd;
 }
@@ -821,30 +822,33 @@ sub construct_rlog_analyse_cmd($){
 sub construct_cvs_rdiff_analyse_cmd($) {
 	my $mid = $_[0];
     return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" \"%s\"", 
-                        "analyse.cvs.rdiff.pl",
-                        "-f"  . $pms->{cfg},
-                        "-t"  . $pms->{T_SNAP},
-                        "-r1" . $pms->{r1},
-                        "-r2" . $pms->{r2},
-                        "-D1" . $pms->{d1},
-                        "-D2" . $pms->{d2},
-                        "-m"  . $mid);
+        "analyse.cvs.rdiff.pl",
+        "-f"  . $pms->{cfg},
+        "-t"  . $pms->{T_SNAP},
+        "-r1" . $pms->{r1},
+        "-r2" . $pms->{r2},
+        "-D1" . $pms->{d1},
+        "-D2" . $pms->{d2},
+        "-m"  . $mid
+	);
 }
 
 sub construct_svn_diff_analyse_cmd($) {
 	my $mid = $_[0];
     return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
-                        "analyse.svn.diff.pl",
-                        "-f"  . $pms->{cfg},
-                        "-t"  . $pms->{T_SNAP},
-                        "-m"  . $mid);
+        "analyse.svn.diff.pl",
+        "-f"  . $pms->{cfg},
+        "-t"  . $pms->{T_SNAP},
+        "-m"  . $mid
+	);
 }
 
 sub construct_git_diff_analyse_cmd($) {
 	my $mid = $_[0];
     return sprintf("perl -w \"%s\" \"%s\" \"%s\" \"%s\"", 
-                        "analyse.git.diff.pl",
-                        "-f"  . $pms->{cfg},
-                        "-t"  . $pms->{T_SNAP},
-                        "-m"  . $mid);
+        "analyse.git.diff.pl",
+        "-f"  . $pms->{cfg},
+        "-t"  . $pms->{T_SNAP},
+        "-m"  . $mid
+	);
 }
