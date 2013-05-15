@@ -11,6 +11,14 @@ use PerlBase64;
 
 my $ass = new Assistor("example.git.xml");
 
-my $ms = $ass->getModules4UI();
+my $ms = $ass->getModules();
 
 print Dumper($ms);
+my $a = {
+	url => "https://a.b.c/dsf/dsf",
+	account_id => "lonli",
+	account_pw => "123"
+};
+
+$ass->injectAccountInfo2GitUrl($a);
+print Dumper($a);

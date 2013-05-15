@@ -244,6 +244,24 @@ sub _getConfigItemsBytype() {
     	} else {
     		$item->{type} = $repositoryType;
     	}
+    	
+		$item->{account_id} 			= $self->_get_value($cfgI->{account_id}, "");
+       	$item->{account_pw} 			= $self->_get_value($cfgI->{account_pw});
+        $item->{access_mode} 			= $self->_get_value($cfgI->{access_mode});					
+        $item->{file_filter} 			= $self->_get_value($cfgI->{file_filter}, $globalCfg->{file_filter});
+        $item->{log}          			= $cfgI->{id} . ".log";
+        $item->{diff}         			= $cfgI->{id} . ".diff";
+		$item->{account_pw} 			= $self->escape4Bash($item->{account_pw});
+
+		$item->{useRuntimeAccount}= $self->_get_value($cfgI->{useRuntimeAccount}, $globalCfg->{useRuntimeAccount});
+		if ($item->{useRuntimeAccount} =~ m/true/i) {
+		    $item->{useRuntimeAccount} = '1';
+		} elsif ($item->{useRuntimeAccount} =~ m/false/i) {
+		    $item->{useRuntimeAccount} = '0';
+		}
+		if ($item->{account_id} eq '') {
+			$item->{useRuntimeAccount} = '1';
+		}    	
 		
 		if ($repositoryType eq "module" 
 			|| $repositoryType eq "cvs"
@@ -255,8 +273,10 @@ sub _getConfigItemsBytype() {
 	        $item->{server}       = $self->_get_value($cfgI->{server}, "");
 	        $item->{repository}   = $self->_get_value($cfgI->{repository}, "");
 	        
-	        remove_redundant_slash(\$item->{module});
-	        remove_redundant_slash(\$item->{repository});	        
+	        $self->remove_redundant_slash(\$item->{module});
+	        $self->remove_redundant_slash(\$item->{repository});
+	        $self->backslash2slash(\$item->{module});
+	        $self->backslash2slash(\$item->{repository});	        	        
     	}
         
         if ($item->{type} eq "cvs") {
@@ -279,31 +299,19 @@ sub _getConfigItemsBytype() {
 	        	$item->{branch_directory} = $item->{original_branch_directory} . "/%s/" . $item->{module};
 	        	$item->{tag_directory}    = $item->{original_tag_directory} . "/%s/" . $item->{module};
         	}
-        	remove_redundant_slash(\$item->{trunk_directory});
-        	remove_redundant_slash(\$item->{branch_directory});
-        	remove_redundant_slash(\$item->{tag_directory});
+        	$self->remove_redundant_slash(\$item->{trunk_directory});
+        	$self->remove_redundant_slash(\$item->{branch_directory});
+        	$self->remove_redundant_slash(\$item->{tag_directory});
+        	$self->backslash2slash(\$item->{trunk_directory});
+        	$self->backslash2slash(\$item->{branch_directory});
+        	$self->backslash2slash(\$item->{tag_directory});
+        	
         } 
         if ($item->{type} eq "git") {
-	        $item->{url} 		= $self->_get_value($cfgI->{url}, "");					
+	        $item->{url} 		= $self->_get_value($cfgI->{url}, "");
+	        $self->backslash2slash(\$item->{url});
+	        $self->injectAccountInfo2GitUrl($item);
     	}           	
-    			
-		$item->{account_id} 			= $self->_get_value($cfgI->{account_id}, "");
-       	$item->{account_pw} 			= $self->_get_value($cfgI->{account_pw});
-        $item->{access_mode} 			= $self->_get_value($cfgI->{access_mode});					
-        $item->{file_filter} 			= $self->_get_value($cfgI->{file_filter}, $globalCfg->{file_filter});
-        $item->{log}          			= $cfgI->{id} . ".log";
-        $item->{diff}         			= $cfgI->{id} . ".diff";
-		$item->{account_pw} 			= $self->escape4Bash($item->{account_pw});
-
-		$item->{useRuntimeAccount}= $self->_get_value($cfgI->{useRuntimeAccount}, $globalCfg->{useRuntimeAccount});
-		if ($item->{useRuntimeAccount} =~ m/true/i) {
-		    $item->{useRuntimeAccount} = '1';
-		} elsif ($item->{useRuntimeAccount} =~ m/false/i) {
-		    $item->{useRuntimeAccount} = '0';
-		}
-		if ($item->{account_id} eq '') {
-			$item->{useRuntimeAccount} = '1';
-		}
 
         push @{$items}, $item;
     }
@@ -1282,8 +1290,12 @@ sub get_wids_file() {
 # #End
 #==============================================================================
 
-sub remove_redundant_slash($) {
-    ${$_[0]} =~ s|/{2,}|/|g;
+sub remove_redundant_slash() {
+    ${$_[1]} =~ s|/{2,}|/|g;
+}
+
+sub backslash2slash() {
+    ${$_[1]} =~ s|\\|/|g;
 }
 
 #==============================================================================
@@ -1386,6 +1398,24 @@ sub logCcvQueryEntry() {
 # file io assistant functions
 # #End
 #==============================================================================
+
+
+
+# git relative functions
+sub injectAccountInfo2GitUrl() {
+	my $self = shift;	
+	my $gitInfo = shift;
+	
+	my $url = $gitInfo->{url};
+	my $idxProtocalDelimiter = index($url, '://');
+	my $protocal = substr($url, 0, $idxProtocalDelimiter);
+	my $accountInfo = "$gitInfo->{account_id}:$gitInfo->{account_pw}@";
+	$gitInfo->{urlWithAccount} = substr($url, 0, $idxProtocalDelimiter + 3)
+		. "$gitInfo->{account_id}:$gitInfo->{account_pw}@"
+		. substr($url, $idxProtocalDelimiter + 3);
+}
+# git relative functions
+# #End
 
 
 
