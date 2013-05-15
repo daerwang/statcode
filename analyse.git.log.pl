@@ -18,15 +18,14 @@ sub storeCmtInfo($);
 sub setCmtFileDiffOffset($);
 sub generateMoreInfos($);
 
-my $T_SNAP		= "";
-my $CFG			= "example.sf.xml";
-my $MID			= "winscp.winscp3";
-#parse_command_line();
+#my $CFG		= $ARGV[1];
+#my $T_SNAP		= $ARGV[0];
+#my $MID		= $ARGV[2];
+parse_command_line();
 
 my $assistor	= new Assistor($CFG, $T_SNAP); $assistor->getModules();
 my $ccvUtil 	= new CcvUtil();
-#my $pms 		= $ccvUtil->loadFile($assistor->get_specified_operate_file("PMS"));
-my $pms = {};
+my $pms 		= $ccvUtil->loadFile($assistor->get_specified_operate_file("PMS"));
 
 my $GV = {}; setGV();
 exit main();
@@ -38,8 +37,7 @@ sub setGV() {
     $GV->{AllExts} 		=~ s/(^|\s)/ \./g;
     $GV->{FileFilter}   = $GV->{ModuleInfo}->{file_filter};
     $GV->{ModuleName}   = $GV->{ModuleInfo}->{module};
-    #$GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{cmt}, $GV->{ModuleInfo}->{log});
-	$GV->{LogFile}      = '2';
+    $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{cmt}, $GV->{ModuleInfo}->{log});
 	
     $GV->{OverallInfo}  = {
         'authorsCnt' => 0,
