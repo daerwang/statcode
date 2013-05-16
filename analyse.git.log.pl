@@ -18,9 +18,9 @@ sub storeCmtInfo($);
 sub setCmtFileDiffOffset($);
 sub generateMoreInfos($);
 
-#my $CFG		= $ARGV[1];
-#my $T_SNAP		= $ARGV[0];
-#my $MID		= $ARGV[2];
+my $CFG;
+my $T_SNAP;
+my $MID;
 parse_command_line();
 
 my $assistor	= new Assistor($CFG, $T_SNAP); $assistor->getModules();
@@ -37,7 +37,7 @@ sub setGV() {
     $GV->{AllExts} 		=~ s/(^|\s)/ \./g;
     $GV->{FileFilter}   = $GV->{ModuleInfo}->{file_filter};
     $GV->{ModuleName}   = $GV->{ModuleInfo}->{module};
-    $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{cmt}, $GV->{ModuleInfo}->{log});
+    $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{rev}, $GV->{ModuleInfo}->{log});
 	
     $GV->{OverallInfo}  = {
         'authorsCnt' => 0,

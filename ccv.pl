@@ -13,6 +13,7 @@ use ApiInnerParamUtil;
 
 sub main();
 
+sub getIdxOfInModules();
 sub isModuleIn($);
 sub gen_report_file($$);
 sub get_rdiff_log_revs_dates();
@@ -51,10 +52,11 @@ if (!$pms->{T_SNAP}) {
 
 $assistor->set_diff_revs_dates($pms);#pay attention to this
 my $gBasePath = getcwd;
-my $gModulesInfo = $assistor->getModules();
+my $gModules = $assistor->getModules();
+my $gIdxOfInModules = [];
 $assistor->injectRuntimeAccount2Modules($pms->{uid}, $pms->{upw});
 
-my $gMoudlesCnt = $#{$gModulesInfo};
+my $gMoudlesCnt = $#{$gModules};
 my $ghTaskLog = undef;
 my $gTaskLogFile = $assistor->get_specified_operate_file("PROGRESS_LOG");
 my $gOnRevs = $assistor->get_operate_revs_dates_dir_name($pms);
@@ -62,6 +64,7 @@ my $gOnRevs = $assistor->get_operate_revs_dates_dir_name($pms);
 exit main();
 
 sub main() {
+	getIdxOfInModules();
 	mkdir4Workspace();
 	instantiateReportTpl();
 	   
@@ -74,9 +77,17 @@ sub main() {
 	
 	persistencePMS();
 	constructAndPersistenceTasksInfo();
-	#startTaskManager();
+	startTaskManager();
     
     return 0;
+}
+
+sub getIdxOfInModules() {
+    for (my $i = 0; $i <= $#{$gModules}; $i++) {
+        if (isModuleIn($gModules->[$i]->{id})) {
+			push @{$gIdxOfInModules}, $i;
+        }
+    }	
 }
 
 sub mkdir4Workspace() {
@@ -91,8 +102,8 @@ sub mkdir4Workspace() {
     mkdir("operate/$date/$serial/$gOnRevs");
     
     chdir("operate/$date/$serial/$gOnRevs");
-    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
-        mkdir4Module($gModulesInfo->[$j]);    
+    for (my $i = 0; $i <= $#{$gIdxOfInModules}; $i++) {
+        mkdir4Module($gModules->[$gIdxOfInModules->[$i]]);    
     }
     chdir($gBasePath);
     umask($old_mask);
@@ -129,29 +140,21 @@ sub instantiateReportTpl() {
     my $frameReportContent = $assistor->read_whole_file($R_TEMPLATE);
     my $topReportContent = $assistor->read_whole_file($R_TOP_TEMPLATE);
    
-    my $counter = 0;
     my $topUrl = "";
     $topUrl = $assistor->transReportLocalPath2WebPath($assistor->get_specified_output_report_file({flag => "TOP", revs => $gOnRevs}));
     $frameReportContent =~ s/#TOP#/$topUrl/;
-    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
-    	my $moduleInfo 	= $gModulesInfo->[$j];
-        my $moduleId 	= $moduleInfo->{id};
-        
-        if (isModuleIn($moduleId)) {
-			$counter ++;            
-        } else {
-        	next;
-        }
-        
+    for (my $i = 0; $i <= $#{$gIdxOfInModules}; $i++) {
+    	my $moduleInfo = $gModules->[$gIdxOfInModules->[$i]];
+    	my $moduleId 	= $moduleInfo->{id};
+    	
         my $mainUrl = getModuleMainUrl($moduleInfo);
-	    
-        if ($counter == 1) {
+        if ($i == 0) {
             $frameReportContent =~ s/#MAIN#/$mainUrl/;
         }
-        
         $topReportContent =~ s/((<li><a id=")#URL#(" href="#tab-c">)#TITLE#(<\/a><\/li>))/$2$mainUrl$3$moduleId$4\n$1/;
     }
     #Add to adjust top height according to modules amount
+    my $counter = $#{$gIdxOfInModules} + 1;
     my $topHeight = 40;
     if ($counter > 20) {
     	$topHeight = 100;	
@@ -637,6 +640,7 @@ sub generateGitModuleTasks($) {
     my $diffFile = $moduleInfo->{diff};
     my $moduleId = $moduleInfo->{id};
     my $url = $moduleInfo->{url};
+    my $urlWithAccount = $moduleInfo->{urlWithAccount};
     
     my $operatePath = $assistor->get_operate_revs_location($assistor->get_operate_revs_dates_dir_name($pms));
 	my $moduleTasks = [];
@@ -644,7 +648,7 @@ sub generateGitModuleTasks($) {
 	my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-b$pms->{rev}";
     #clone
     my $taskClone = {};
-	$taskClone->{cmd} = "git clone $revRestrict \"$url\" $moduleId > $logFile 2>&1";
+	$taskClone->{cmd} = "git clone $revRestrict \"$urlWithAccount\" $moduleId > $logFile 2>&1";
 	$taskClone->{type} = "git";
 	$taskClone->{mode} = $moduleInfo->{mode};
 	$taskClone->{workPath} = $operatePath;
@@ -781,15 +785,11 @@ sub isModuleIn($) {
 
 sub generateTasksQueue() {
 	my $tasksQueue = [];
-	
-    for (my $j = 0; $j <= $gMoudlesCnt; $j++) {
-    	my $moduleInfo = $gModulesInfo->[$j];
+
+    for (my $i = 0; $i <= $#{$gIdxOfInModules}; $i++) {
+    	my $moduleInfo = $gModules->[$gIdxOfInModules->[$i]];
         my $moduleId = $moduleInfo->{id};
-        my $moduleType = $moduleInfo->{type};
-        
-		if (!isModuleIn($moduleId)) {
-			next;	
-		}
+        my $moduleType = $moduleInfo->{type};    	
 		
 		my $moduleTasks;
 		if ($moduleType eq "cvs") {
@@ -800,7 +800,7 @@ sub generateTasksQueue() {
 			$moduleTasks = generateGitModuleTasks($moduleInfo);
 		}
 		
-		push(@{$tasksQueue}, $moduleTasks);
+		push(@{$tasksQueue}, $moduleTasks);  
     }
     
     return $tasksQueue;

@@ -310,7 +310,6 @@ sub _getConfigItemsBytype() {
         if ($item->{type} eq "git") {
 	        $item->{url} 		= $self->_get_value($cfgI->{url}, "");
 	        $self->backslash2slash(\$item->{url});
-	        $self->injectAccountInfo2GitUrl($item);
     	}           	
 
         push @{$items}, $item;
@@ -439,9 +438,14 @@ sub injectRuntimeAccount2Modules() {
 
     my $cnt = $#{$self->{modules}};
     for (my $i = 0; $i<= $cnt; $i++) {
-        if ($self->{modules}->[$i]->{useRuntimeAccount} eq '1') {
-    		$self->{modules}->[$i]->{account_id} = $runtimeAccountId;   	
-    		$self->{modules}->[$i]->{account_pw} = $self->escape4Bash($runtimeAccountPw);   	
+    	my $item = $self->{modules}->[$i];
+        if ($item->{useRuntimeAccount} eq '1') {
+    		$item->{account_id} = $runtimeAccountId;   	
+    		$item->{account_pw} = $self->escape4Bash($runtimeAccountPw);   	
+        }
+        
+        if ($item->{type} eq "git") {
+        	$self->injectAccountInfo2GitUrl($item);	
         }
     }
 }
