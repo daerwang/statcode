@@ -648,7 +648,7 @@ sub generateGitModuleTasks($) {
 	my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-b$pms->{rev}";
     #clone
     my $taskClone = {};
-	$taskClone->{cmd} = "git clone $revRestrict \"$urlWithAccount\" $moduleId > $logFile 2>&1";
+	$taskClone->{cmd} = "git clone $revRestrict \"$urlWithAccount\" \"$moduleId\" 2>&1";
 	$taskClone->{type} = "git";
 	$taskClone->{mode} = $moduleInfo->{mode};
 	$taskClone->{workPath} = $operatePath;
@@ -684,7 +684,7 @@ sub generateGitModuleTasks($) {
 		}
 		my $taskDiff = {};
     	$taskDiff->{cmd} = "git diff $diffOptions $revs $dates > $diffFile 2>&1";
-    	$taskDiff->{type} = "cvs";
+    	$taskDiff->{type} = "git";
     	$taskDiff->{mode} = $moduleInfo->{mode};
 		$taskDiff->{workPath} = "$operatePath/$moduleId";
 		$taskDiff->{title} = "<b>$moduleId</b>";

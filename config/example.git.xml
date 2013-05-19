@@ -10,6 +10,13 @@
 </git>
 
 <git>
+  <id>jquery</id>
+  <url>https://github.com/jquery/jquery.git</url>
+  <account_id>AcountId</account_id>
+  <account_pw>password</account_pw>	
+</git>
+
+<git>
   <id>jshtml5-boxman1</id>
   <url>https://github.com/lilongen/jshtml5-boxman.repository</url>
   <account_id>AcountId</account_id>
