@@ -665,25 +665,27 @@ sub get_program_langs_ext() {
     	my $ext = $item->{'-ext'};
     	my $type = $item->{'-type'};
     	
-		$langs->{name} .= $name;
-		$langs->{ext} .= $ext;
-		
-		if ($type eq "code") {
-			$langs->{code}->{name} .=  $name . " ";
-			$langs->{code}->{ext} .=  $ext . " ";
-		} elsif ($type eq "configure") {
-			$langs->{configure}->{name} .=  $name . " ";
-			$langs->{configure}->{ext} .=  $ext . " ";			
-		} elsif ($type eq "html") {
-			$langs->{html}->{name} .=  $name . " ";
-			$langs->{html}->{ext} .=  $ext . " ";			
-		}  else {
-			$langs->{other}->{name} .=  $name . " ";
-			$langs->{other}->{ext} .=  $ext . " ";					
-		}    	
+    	my $separator = $i < ($cnt - 1) ? " " : "";
     	
+		$langs->{name} .= $name . $separator;
+		$langs->{ext} .= $ext . $separator;
+		
+		for my $key (keys %{$langs}) {
+			if ($key =~ m/(name|ext)/) {
+				next;
+			}
+			$langs->{$key}->{name} .=  $name . $separator;
+			$langs->{$key}->{ext} .=  $ext . $separator;			
+		} 
     }
-	
+	for my $key (keys %{$langs}) {
+		if ($key =~ m/(name|ext)/) {
+			next;
+		}
+		$langs->{$key}->{name} =~ s/\s$//;
+		$langs->{$key}->{ext} =~ s/\s$//;			
+	}     
+    
 	return $langs;
 }
 # program language configure assistant functions

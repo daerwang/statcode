@@ -656,11 +656,11 @@ sub generateGitModuleTasks($) {
 	$taskClone->{desc} = $url;
 	push(@{$moduleTasks}, $taskClone);
 	#End
-	my $diffOptions = "--numstat -p";
+	my $diffOptions = "--date=iso --numstat -p";
 	if ($pms->{mode} == 0) { #log
 	    my $dateRestrict = ($pms->{date} eq "") ? "" : "-d\"$pms->{date}\"";
 		my $taskLog = {};
-		$taskLog->{cmd} = "git log $diffOptions > $logFile 2>&1";
+		$taskLog->{cmd} = "git log $diffOptions > \"../$logFile\" 2>&1";
 		$taskLog->{type} = "git";
 		$taskLog->{mode} = $moduleInfo->{mode};
 		$taskLog->{workPath} = "$operatePath/$moduleId";

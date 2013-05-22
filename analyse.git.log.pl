@@ -53,8 +53,9 @@ sub setGV() {
 
 sub main() {
 	my $LOG = undef;
+print "$GV->{LogFile}\n\n";
 	if (!open($LOG, $GV->{LogFile})) {
-		output('Can not open $GV->{LogFile}!\n');
+		print "Can not open $GV->{LogFile}!\n";
 		
 		return 1;
 	}
@@ -138,11 +139,12 @@ sub main() {
 #oldMode => m/^old mode(.+)$/,
 #newMode => m/^new mode(.+)$/
 
-		#print Dumper($flags);
+		#print Dumper($line);
 
 		if ($flags->{doCmtReTest}) {
+			#commit 9a32f12bdfcc9b7d27cd5907d838c638e5c735f7
 			if ($line =~ m/^commit ([\d\w]+)$/) {
-print "cmtFound: $1 \n";
+print "cmtFound: $1 -- lineCnter: $lineCnter\n";
 				$cmtCnter++;
 				if ($cmtCnter > 1) {
 					setCmtFileDiffOffset({
@@ -165,8 +167,9 @@ print "cmtFound: $1 \n";
 			}
 		}
 		
+		#Author: lilongen <lilongen@163.com>
 		if ($flags->{cmtFound} && $line =~  m/^Author: (.+) <(.*)>$/) {
-print "authorFound: $1 \n";		
+print "authorFound: $1 -- lineCnter: $lineCnter \n";		
 			$flags->{authorFound} = 1;
 			$flags->{cmtFound} = 0;
 			$cmtInfo->{author} = $1;
@@ -174,8 +177,10 @@ print "authorFound: $1 \n";
 			next;
 		}
 		
-		if ($flags->{authorFound} && $line =~ m/^Date:\s+([\d\-]+) ([\d:]+) \-(\d+)$/) {
-print "dateFound: $1 \n";			
+		#Date:   2013-04-14 23:21:59 -0700
+		#Date:   2013-04-14 23:21:59 +0800
+		if ($flags->{authorFound} && $line =~ m/^Date:\s+(\d\d\d\d-\d\d-\d\d) (\d\d:\d\d:\d\d) [\+\-](\d+)$/) {
+print "dateFound: $1  -- lineCnter: $lineCnter -> $line\n";		
 			$flags->{dateFound} = 1;
 			$flags->{authorFound} = 0;
 			$cmtInfo->{date} = $1;
@@ -193,7 +198,6 @@ print "commentBeginFound:\n";
 		}
 
 		if ($flags->{commentBeginFound}) {
-
 			if ($line =~ m/^$/) {
 print "cmtFilesBeginFound: \n";			
 				$flags->{cmtFilesBeginFound} = 1;
@@ -278,7 +282,7 @@ print "diff --git:  \n";
 	#	'Error' 	=> $GV->{Error}
 	#});
 	
-	$assistor->write_file('git.log.ccv', Dumper($GV));
+	$ccvUtil->writeJsonToFile($GV, 'git.log.json');
 
 	return 0;
 }

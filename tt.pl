@@ -13,7 +13,7 @@ my $ass = new Assistor("example.git.xml");
 
 my $ms = $ass->getModules();
 
-print Dumper($ms);
+#print Dumper($ms);
 my $a = {
 	url => "https://a.b.c/dsf/dsf",
 	account_id => "lonli",
@@ -21,4 +21,12 @@ my $a = {
 };
 
 $ass->injectAccountInfo2GitUrl($a);
-print Dumper($a);
+#print Dumper($a);
+
+my $name = "lilongen";
+my $lilongen = "man";
+
+${$name} = "ha";
+
+print "${$name} \n";
+print "$lilongen\n";
