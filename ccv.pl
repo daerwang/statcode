@@ -127,7 +127,7 @@ sub mkdir4Module($) {
 	        mkdir($moduleId . "/rev_src/init");
 	        mkdir($moduleId . "/rev_src/head");
     	} elsif ($moduleType eq 'git') {
-    		;#@todo
+    		mkdir($moduleId . "/code");
     	}
     } elsif ($pms->{mode} == 1) {
     	;
@@ -648,10 +648,10 @@ sub generateGitModuleTasks($) {
 	my $revRestrict = (uc($pms->{rev}) eq "MAIN") ? "" : "-b$pms->{rev}";
     #clone
     my $taskClone = {};
-	$taskClone->{cmd} = "git clone $revRestrict \"$urlWithAccount\" \"$moduleId\" 2>&1";
+	$taskClone->{cmd} = "git clone $revRestrict \"$urlWithAccount\" \"code\" 2>&1";
 	$taskClone->{type} = "git";
 	$taskClone->{mode} = $moduleInfo->{mode};
-	$taskClone->{workPath} = $operatePath;
+	$taskClone->{workPath} = "$operatePath/$moduleId";
 	$taskClone->{title} = "<b>$moduleId</b>";
 	$taskClone->{desc} = $url;
 	push(@{$moduleTasks}, $taskClone);
@@ -660,10 +660,10 @@ sub generateGitModuleTasks($) {
 	if ($pms->{mode} == 0) { #log
 	    my $dateRestrict = ($pms->{date} eq "") ? "" : "-d\"$pms->{date}\"";
 		my $taskLog = {};
-		$taskLog->{cmd} = "git log $diffOptions > \"../$logFile\" 2>&1";
+		$taskLog->{cmd} = "git log $diffOptions > \"../../$logFile\" 2>&1";
 		$taskLog->{type} = "git";
 		$taskLog->{mode} = $moduleInfo->{mode};
-		$taskLog->{workPath} = "$operatePath/$moduleId";
+		$taskLog->{workPath} = "$operatePath/$moduleId/code";
 		$taskLog->{title} = "<b>$moduleId</b>";
 		$taskLog->{desc} = $url;
 		push(@{$moduleTasks}, $taskLog);

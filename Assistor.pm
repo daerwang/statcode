@@ -1245,6 +1245,14 @@ sub getSvnModuleLogParsedInfoFile() {
 	return $self->operateLocalPath() . "$pms->{rev}/$mid/$self->{DEF}->{MID_DATA_FILE_NAME}->{LOG_PARSED_INFO}";
 }
 
+sub getGitLogParsedInfoFile() {
+	my $self = shift;
+	my $pms = shift;
+	my $mid = shift;
+			
+	return $self->operateLocalPath() . "$pms->{rev}/$mid/$self->{DEF}->{MID_DATA_FILE_NAME}->{LOG_PARSED_INFO}";
+}
+
 sub getSvnMoudleAllRevsDFFile() {
 	my $self = shift;
 	my $pms = shift;

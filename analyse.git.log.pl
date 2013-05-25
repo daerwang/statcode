@@ -23,6 +23,8 @@ sub viewlizeCommitsInfo();
 sub viewlizeFilesInfo();
 sub getViewlizeFileInfo($$);
 sub add2TotalLoc($);
+sub persistPhasedViewlizeInfo();
+
 
 my $CFG;
 my $T_SNAP;
@@ -278,9 +280,16 @@ print "diff --git:  \n";
 	}
 	
 	viewlizeInfo();
-	$ccvUtil->writeJsonToFile($GV, 'git.log.json');
-	$ccvUtil->writeJsonToFile($GV->{ViewlizeInfo}, 'git.view.json');
+	persistPhasedViewlizeInfo();
+	
 	return 0;
+}
+
+sub persistPhasedViewlizeInfo() {
+	my $file = $assistor->getGitLogParsedInfoFile($pms, $MID);
+	$ccvUtil->dumpFile($file, $GV->{ViewlizeInfo});
+	$ccvUtil->writeJsonToFile($GV, "$file.gv.json");
+	$ccvUtil->writeJsonToFile($GV->{ViewlizeInfo}, "$file.json");
 }
 
 sub storeCmtInfo($) {
@@ -365,10 +374,10 @@ sub viewlizeInfo() {
 	my @files = keys %{$GV->{FilesInfo}};
 	$GV->{ViewlizeInfo} = {
 		AuthorsInfo => {},
-		CommitsInfo => {},
+		CmtsInfo => {},
 		FilesInfo => {},
 		addLines => 0,
-		deleLines => 0,
+		delLines => 0,
 		cmtCnt => $#{$GV->{Cmts}} + 1,
 		authorCnt => $#authors + 1,
 		foc => $#files + 1
