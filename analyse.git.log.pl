@@ -414,6 +414,16 @@ sub viewlizeCommitsInfo() {
 		Cmts => $GV->{Cmts},
 		hashCmts => $GV->{CmtsInfo}
 	};
+	
+	foreach my $cmt (keys %{$GV->{CmtsInfo}}) {
+		$GV->{CmtsInfo}->{$cmt}->{addLines} = 0;
+		$GV->{CmtsInfo}->{$cmt}->{delLines} = 0;
+		foreach my $file (keys %{$GV->{CmtsInfo}->{$cmt}->{hashFiles}}) {
+			my $cmtFileInfo = $GV->{CmtsInfo}->{$cmt}->{hashFiles}->{$file};
+			$GV->{CmtsInfo}->{$cmt}->{addLines} += $cmtFileInfo->{addLines};
+			$GV->{CmtsInfo}->{$cmt}->{delLines} += $cmtFileInfo->{delLines};
+		}
+	}
 }
 
 sub viewlizeFilesInfo() {
