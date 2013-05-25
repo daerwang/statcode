@@ -18,9 +18,11 @@ sub storeCmtInfo($);
 sub setCmtFileDiffOffset($);
 sub generateMoreInfos($);
 sub viewlizeInfo();
-sub viewlizeAuthorInfo();
-sub viewlizeCommitInfo();
-sub viewlizeFileInfo();
+sub viewlizeAuthorsInfo();
+sub viewlizeCommitsInfo();
+sub viewlizeFilesInfo();
+sub getViewlizeFileInfo($$);
+sub add2TotalLoc($);
 
 my $CFG;
 my $T_SNAP;
@@ -43,11 +45,6 @@ sub setGV() {
     $GV->{ModuleName}   = $GV->{ModuleInfo}->{module};
     $GV->{LogFile}      = $assistor->get_repository_log_cmd_output_file($pms->{rev}, $GV->{ModuleInfo}->{log});
 	
-    $GV->{OverallInfo}  = {
-        'authorsCnt' => 0,
-        'filesCnt' => 0,
-        'cmtsCnt'  => 0   
-    };
 	$GV->{Cmts} = [];
     $GV->{CmtsInfo}     = {}; 
     $GV->{AuthorsInfo}    = {};
@@ -279,14 +276,6 @@ print "diff --git:  \n";
 	if ($lineCnter == 1) {
 		$GV->{Error} = $prevLine;
 	}
-
-	#$ccvUtil->dumpFile('git.log.ccv', {
-	#    'OverallInfo' => $GV->{OverallInfo},
-	#	'AuthorsInfo' => $GV->{AuthorsInfo},
-	#	'CmtsInfo'  => $GV->{CmtsInfo},
-	#	'FilesInfo'  => $GV->{FilesInfo},
-	#	'Error' 	=> $GV->{Error}
-	#});
 	
 	viewlizeInfo();
 	$ccvUtil->writeJsonToFile($GV, 'git.log.json');
@@ -372,17 +361,25 @@ sub resetFlags($) {
 }
 
 sub viewlizeInfo() {
+	my @authors = keys %{$GV->{AuthorsInfo}};
+	my @files = keys %{$GV->{FilesInfo}};
 	$GV->{ViewlizeInfo} = {
 		AuthorsInfo => {},
 		CommitsInfo => {},
 		FilesInfo => {},
+		addLines => 0,
+		deleLines => 0,
+		cmtCnt => $#{$GV->{Cmts}} + 1,
+		authorCnt => $#authors + 1,
+		foc => $#files + 1
 	};
-	viewlizeAuthorInfo();
-	viewlizeCommitInfo();
-	viewlizeFileInfo();
+	
+	viewlizeAuthorsInfo();
+	viewlizeCommitsInfo();
+	viewlizeFilesInfo();
 }
 
-sub viewlizeAuthorInfo() {
+sub viewlizeAuthorsInfo() {
 	my $info = $GV->{AuthorsInfo};
 	my $viewInfo = $GV->{ViewlizeInfo}->{AuthorsInfo};
 	foreach my $author (sort keys %{$info}) {
@@ -395,51 +392,71 @@ sub viewlizeAuthorInfo() {
 		};
 		
 		foreach my $file (sort keys %{$authorInfo->{hashFiles}}) {
-			my $viewlizeFileInfo = {
-				addLines => 0,
-				delLines => 0,
-				binary => 0,
-				cmts => []
-			};
-			
-			my $fileCommits = $authorInfo->{hashFiles}->{$file};
-			for (my $i = 0; $i <= $#{$fileCommits}; $i++) {
-				my $cmt = $fileCommits->[$i];
-				my $cmtInfo = $GV->{CmtsInfo}->{$cmt};
-				my $fileCmtInfo = $cmtInfo->{hashFiles}->{$file};
-				
-				my $viewlizeFileCmtInfo = {
-					date => $cmtInfo->{date},
-					time => $cmtInfo->{time},
-					comment => $cmtInfo->{comment},
-					timeZone => $cmtInfo->{timeZone},
-					binary => $fileCmtInfo->{binary},
-					addLines => $fileCmtInfo->{addLines},
-					delLines => $fileCmtInfo->{delLines},
-					offsetB => $fileCmtInfo->{offsetB},
-					offsetE => $fileCmtInfo->{offsetE},
-					changeMode => $fileCmtInfo->{changeMode}
-				};
-				$viewlizeFileInfo->{addLines} += $viewlizeFileCmtInfo->{addLines};
-				$viewlizeFileInfo->{delLines} += $viewlizeFileCmtInfo->{delLines};
-				$viewlizeFileInfo->{binary} += $viewlizeFileCmtInfo->{binary};
-				push(@{$viewlizeFileInfo->{cmts}}, $viewlizeFileCmtInfo);
-			}
-			
+			my $viewlizeFileInfo = getViewlizeFileInfo($file, $authorInfo->{hashFiles}->{$file});
 			$viewInfo->{$author}->{foc} += 1;
 			$viewInfo->{$author}->{addLines} += $viewlizeFileInfo->{addLines};
 			$viewInfo->{$author}->{delLines} += $viewlizeFileInfo->{delLines};
-			$viewInfo->{$author}->{hashFiles}->{$file} = $viewlizeFileInfo;			
+			$viewInfo->{$author}->{hashFiles}->{$file} = $viewlizeFileInfo;
+			
+			add2TotalLoc($viewlizeFileInfo);
 		}
 	}	
 }
 
-sub viewlizeCommitInfo() {
-	
+sub add2TotalLoc($) {
+	my $info = shift;
+	$GV->{ViewlizeInfo}->{addLines} += $info->{addLines};		
+	$GV->{ViewlizeInfo}->{delLines} += $info->{delLines};	
 }
 
-sub viewlizeFileInfo() {
+sub viewlizeCommitsInfo() {
+	$GV->{ViewlizeInfo}->{CmtsInfo} = {
+		Cmts => $GV->{Cmts},
+		hashCmts => $GV->{CmtsInfo}
+	};
+}
+
+sub viewlizeFilesInfo() {
+	foreach my $file (sort keys %{$GV->{FilesInfo}}) {
+		$GV->{ViewlizeInfo}->{FilesInfo}->{$file} = getViewlizeFileInfo($file, $GV->{FilesInfo}->{$file});
+	}
+}
+
+sub getViewlizeFileInfo($$) {
+	my $file = shift;
+	my $cmtsOnFile = shift;
 	
+	my $viewlizeFileInfo = {
+		addLines => 0,
+		delLines => 0,
+		binary => 0,
+		cmts => []
+	};
+	
+	for (my $i = 0; $i <= $#{$cmtsOnFile}; $i++) {
+		my $cmt = $cmtsOnFile->[$i];
+		my $cmtInfo = $GV->{CmtsInfo}->{$cmt};
+		my $fileCmtInfo = $cmtInfo->{hashFiles}->{$file};
+		
+		my $viewlizeFileCmtInfo = {
+			date => $cmtInfo->{date},
+			time => $cmtInfo->{time},
+			comment => $cmtInfo->{comment},
+			timeZone => $cmtInfo->{timeZone},
+			binary => $fileCmtInfo->{binary},
+			addLines => $fileCmtInfo->{addLines},
+			delLines => $fileCmtInfo->{delLines},
+			offsetB => $fileCmtInfo->{offsetB},
+			offsetE => $fileCmtInfo->{offsetE},
+			changeMode => $fileCmtInfo->{changeMode}
+		};
+		$viewlizeFileInfo->{addLines} += $viewlizeFileCmtInfo->{addLines};
+		$viewlizeFileInfo->{delLines} += $viewlizeFileCmtInfo->{delLines};
+		$viewlizeFileInfo->{binary} += $viewlizeFileCmtInfo->{binary};
+		push(@{$viewlizeFileInfo->{cmts}}, $viewlizeFileCmtInfo);
+	}
+	
+	return $viewlizeFileInfo;
 }
 
 sub parse_command_line() {
