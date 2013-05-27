@@ -656,7 +656,7 @@ sub generateGitModuleTasks($) {
 	$taskClone->{desc} = $url;
 	push(@{$moduleTasks}, $taskClone);
 	#End
-	my $diffOptions = "--date=iso --abbrev-commit --numstat -p";
+	my $diffOptions = "--date=iso --abbrev-commit --numstat -p -M";
 	if ($pms->{mode} == 0) { #log
 	    my $dateRestrict = ($pms->{date} eq "") ? "" : "-d\"$pms->{date}\"";
 		my $taskLog = {};

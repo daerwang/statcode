@@ -226,9 +226,13 @@ print "cmt changed file:  $3\n";
 				$cmtFileInfo->{binary} = $isBinary ? 1 : 0;
 				$cmtFileInfo->{cmt} = $cmtInfo->{cmt};
 				
-				if ($cmtFileInfo->{file} =~ m/^(.+) => (.+)$/) {
+				if ($cmtFileInfo->{file} =~ m/^([^\{]+) => ([^}]+)$/) {
 					$cmtFileInfo->{file} = $1;
 					$cmtFileInfo->{toFile} = $2;
+					$cmtFileInfo->{changeMode} = "rename";
+				} elsif ($cmtFileInfo->{file} =~ m/^\{(.+) => (.+)\}(.+)$/) {
+					$cmtFileInfo->{file} = $1.$3;
+					$cmtFileInfo->{toFile} = $2.$3;
 					$cmtFileInfo->{changeMode} = "rename";
 				}
 				push(@{$cmtInfo->{arrayFiles}}, $cmtFileInfo->{file});
