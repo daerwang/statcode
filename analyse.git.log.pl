@@ -226,6 +226,8 @@ print "cmt changed file:  $3\n";
 				$cmtFileInfo->{binary} = $isBinary ? 1 : 0;
 				$cmtFileInfo->{cmt} = $cmtInfo->{cmt};
 				
+				#Begin, following handle rename (file, dir)
+				#log with -M with out rename info
 				if ($cmtFileInfo->{file} =~ m/^([^\{]+) => ([^}]+)$/) {
 					$cmtFileInfo->{file} = $1;
 					$cmtFileInfo->{toFile} = $2;
@@ -235,6 +237,7 @@ print "cmt changed file:  $3\n";
 					$cmtFileInfo->{toFile} = $2.$3;
 					$cmtFileInfo->{changeMode} = "rename";
 				}
+				#End-
 				push(@{$cmtInfo->{arrayFiles}}, $cmtFileInfo->{file});
 				$cmtInfo->{hashFiles}->{$cmtFileInfo->{file}} = $cmtFileInfo;
 			} else {
