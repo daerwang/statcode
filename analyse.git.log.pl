@@ -225,6 +225,12 @@ print "cmt changed file:  $3\n";
 				$cmtFileInfo->{delLines} = $isBinary ? 0 : $2;
 				$cmtFileInfo->{binary} = $isBinary ? 1 : 0;
 				$cmtFileInfo->{cmt} = $cmtInfo->{cmt};
+				
+				if ($cmtFileInfo->{file} =~ m/^(.+) => (.+)$/) {
+					$cmtFileInfo->{file} = $1;
+					$cmtFileInfo->{toFile} = $2;
+					$cmtFileInfo->{changeMode} = "rename";
+				}
 				push(@{$cmtInfo->{arrayFiles}}, $cmtFileInfo->{file});
 				$cmtInfo->{hashFiles}->{$cmtFileInfo->{file}} = $cmtFileInfo;
 			} else {
@@ -247,7 +253,9 @@ print "diff --git:  \n";
 				});
 				$flags->{prevDiffFile} = $1;
 				$flags->{doCmtReTest} = 1;
-				$flags->{doFileChangeModeTest} = 1;
+				if (!defined($cmtFileInfo->{changeMode})) {
+					$flags->{doFileChangeModeTest} = 1;
+				}
 			} else {
 				if ($flags->{doFileChangeModeTest}) {
 					my $changeMode = 'normal';
@@ -380,7 +388,7 @@ sub viewlizeInfo() {
 		delLines => 0,
 		cmtCnt => $#{$GV->{Cmts}} + 1,
 		authorCnt => $#authors + 1,
-		foc => $#files + 1
+		fileCnt => $#files + 1
 	};
 	
 	viewlizeAuthorsInfo();
@@ -394,7 +402,7 @@ sub viewlizeAuthorsInfo() {
 	foreach my $author (sort keys %{$info}) {
 		my $authorInfo = $info->{$author};
 		$viewInfo->{$author} = {
-			foc => 0,
+			fileCnt => 0,
 			addLines => 0,
 			delLines => 0,
 			hashFiles => {}
@@ -402,7 +410,7 @@ sub viewlizeAuthorsInfo() {
 		
 		foreach my $file (sort keys %{$authorInfo->{hashFiles}}) {
 			my $viewlizeFileInfo = getViewlizeFileInfo($file, $authorInfo->{hashFiles}->{$file});
-			$viewInfo->{$author}->{foc} += 1;
+			$viewInfo->{$author}->{fileCnt} += 1;
 			$viewInfo->{$author}->{addLines} += $viewlizeFileInfo->{addLines};
 			$viewInfo->{$author}->{delLines} += $viewlizeFileInfo->{delLines};
 			$viewInfo->{$author}->{hashFiles}->{$file} = $viewlizeFileInfo;
