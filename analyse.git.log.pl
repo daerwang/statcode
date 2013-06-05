@@ -320,13 +320,13 @@ sub generateMoreInfos($) {
 	
 	if (!defined($GV->{AuthorsInfo}->{$cmtInfo->{author}})) {
 		$GV->{AuthorsInfo}->{$cmtInfo->{author}} = {
-			cmtsArray => [],
+			cmts => [],
 			hashFiles => {}
 		};
 	}
 	
 	my $authorInfo = $GV->{AuthorsInfo}->{$cmtInfo->{author}};
-	push(@{$authorInfo->{cmtsArray}}, $cmtInfo->{cmt});
+	push(@{$authorInfo->{cmts}}, $cmtInfo->{cmt});
 	
 	for my $file (keys %{$cmtInfo->{hashFiles}}) {
 		if (!defined($authorInfo->{hashFiles}->{$file})) {
@@ -409,6 +409,8 @@ sub viewlizeAuthorsInfo() {
 	foreach my $author (sort keys %{$info}) {
 		my $authorInfo = $info->{$author};
 		$viewInfo->{$author} = {
+			cmts => $info->{$author}->{cmts},
+			cmtCnt => $#{$info->{$author}->{cmts}} + 1,
 			fileCnt => 0,
 			addLines => 0,
 			delLines => 0,
@@ -473,6 +475,7 @@ sub getViewlizeFileInfo($$) {
 		my $fileCmtInfo = $cmtInfo->{hashFiles}->{$file};
 		
 		my $viewlizeFileCmtInfo = {
+			cmt => $cmt,
 			date => $cmtInfo->{date},
 			time => $cmtInfo->{time},
 			comment => $cmtInfo->{comment},
@@ -484,6 +487,9 @@ sub getViewlizeFileInfo($$) {
 			offsetE => $fileCmtInfo->{offsetE},
 			changeMode => $fileCmtInfo->{changeMode}
 		};
+		if (defined($fileCmtInfo->{toFile})) {
+			$viewlizeFileCmtInfo->{toFile} = $fileCmtInfo->{toFile};
+		}
 		$viewlizeFileInfo->{addLines} += $viewlizeFileCmtInfo->{addLines};
 		$viewlizeFileInfo->{delLines} += $viewlizeFileCmtInfo->{delLines};
 		$viewlizeFileInfo->{binary} += $viewlizeFileCmtInfo->{binary};

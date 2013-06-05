@@ -368,34 +368,34 @@ sub writeUserViewItems() {
 	for (my $i = 0; $i < $cnt; $i++) {
 		my $user = $sortedKeys[$i];
 		my $authorInfo = $authorsInfo->{$user};
-		if ($authorInfo->{info}->{fileCnt} == 0) {
+		if ($authorInfo->{fileCnt} == 0) {
 			next;
 		}		
 		
-		my @sortedPaths = sort { lc($a) cmp lc($b) } keys %{$authorInfo->{paths}};
-		my $pathsCnt = $#sortedPaths + 1;
+		my @sortedFiles = sort { lc($a) cmp lc($b) } keys %{$authorInfo->{hashFiles}};
+		my $filesCnt = $#sortedFiles + 1;
 		$usersOut .= sprintf($GV->{EntryTpl}->{UserEntryTpl}, 
-			$authorInfo->{info}->{fileCnt},
-			$ccvUtil->formatLoc4UI($authorInfo->{info}, $GV->{WithLoc}),
+			$authorInfo->{fileCnt},
+			$ccvUtil->formatLoc4UI($authorInfo, $GV->{WithLoc}),
 			$user
 		);
-		plusUserBriefInfo($user, $authorInfo->{info});
+		plusUserBriefInfo($user, $authorInfo);
 		
-		for (my $j = 0; $j < $pathsCnt; $j++) {
-			my $file = $sortedPaths[$j];
-			my $fileInfo = $authorInfo->{paths}->{$file};
-			my $fileLastRev = $fileInfo->{revs}->[0];
-			my $latestRevFileInfo = $cmtsInfo->{$fileLastRev}->{hashPaths}->{$file};
-			my $fileType = $filesInfo->{$file}->{info}->{type} || $latestRevFileInfo->{type} || 'B';
+		for (my $j = 0; $j < $filesCnt; $j++) {
+			my $file = $sortedFiles[$j];
+			my $fileInfo = $authorInfo->{hashFiles}->{$file};
+			my $fileLastCmt = $fileInfo->{cmts}->[0]->{cmt};
+			my $latestCmtFileInfo = $cmtsInfo->{$fileLastCmt}->{hashPaths}->{$file};
+			my $fileType = $filesInfo->{$file}->{isBinary} == 0 ? 'T' : 'B';
 			my $fileInUI = _getFileInUI($file);
 			if ($fileType eq 'T') {#text file
 				$usersOut .= sprintf($GV->{EntryTpl}->{UserFileEntryTpl},
 					$fileType,	
-					$fileInfo->{info}->{revsCnt},
-					$ccvUtil->getFileDiffParams($file, $fileLastRev, $latestRevFileInfo),
-					$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastRev}->{comment}),
+					$fileInfo->{cmtCnt},
+					$ccvUtil->getFileDiffParams($file, $fileLastCmt, $latestCmtFileInfo),
+					$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastCmt}->{comment}),
 					$ccvUtil->formatLoc4UI($fileInfo->{info}, $GV->{WithLoc}),
-					$ccvUtil->getFileUIClz($latestRevFileInfo->{action}),
+					$ccvUtil->getFileUIClz($latestCmtFileInfo->{action}),
 					$fileInUI,
 					$ccvUtil->getFileTypeIndicatorHtml($fileType)
 				);				
@@ -403,9 +403,9 @@ sub writeUserViewItems() {
 				$usersOut .= sprintf($GV->{EntryTpl}->{UserFileEntryTpl4BD}, 
 					$fileType,
 					$fileInfo->{info}->{revsCnt},
-					$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastRev}->{comment}),
+					$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastCmt}->{comment}),
 					$ccvUtil->formatLoc4UI($fileInfo->{info}, $GV->{WithLoc}),
-					$ccvUtil->getFileUIClz($latestRevFileInfo->{action}),
+					$ccvUtil->getFileUIClz($latestCmtFileInfo->{action}),
 					$fileInUI,
 					$ccvUtil->getFileTypeIndicatorHtml($fileType)
 				);					
@@ -445,27 +445,26 @@ sub writeUserViewItems() {
 }
 
 sub writeFileViewItems() {
-	my $filesInfo = $GV->{ViewlizeInfo}->{PathsInfo};
-	my $cmtsInfo = $GV->{ViewlizeInfo}->{RevsInfo};
-	my $filesInfo = $GV->{ViewlizeInfo}->{PathsInfo};
+	my $filesInfo = $GV->{ViewlizeInfo}->{FilesInfo};
+	my $cmtsInfo = $GV->{ViewlizeInfo}->{CmtsInfo};
 	my @sortedKeys = sort { lc($a) cmp lc($b) } keys %{$filesInfo};
 	my $cnt = $#sortedKeys + 1;
 	my $filesOut = '';	
 	for (my $i = 0; $i < $cnt; $i++) {
 		my $file = $sortedKeys[$i];
 		my $fileInfo = $filesInfo->{$file};
-		my $fileLastRev = $fileInfo->{revs}->[0];
-		my $latestRevFileInfo = $cmtsInfo->{$fileLastRev}->{hashPaths}->{$file};
-		my $fileType = $filesInfo->{$file}->{info}->{type} || $latestRevFileInfo->{type} || 'B';
+		my $fileLastCmt = $fileInfo->{cmts}->[0];
+		my $latestCmtFileInfo = $cmtsInfo->{$fileLastCmt}->{hashPaths}->{$file};
+		my $fileType = $filesInfo->{$file}->{binary} == 0 : 'T' : 'B';
 		my $fileInUI = _getFileInUI($file);
 		if ($fileType eq 'T') {#text file
 			$filesOut .= sprintf($GV->{EntryTpl}->{FileEntryTpl},
 				$fileType,
 				$fileInfo->{info}->{revsCnt},
-				$ccvUtil->getFileDiffParams($file, $fileLastRev, $latestRevFileInfo),
-				$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastRev}->{comment}),
+				$ccvUtil->getFileDiffParams($file, $fileLastCmt, $latestCmtFileInfo),
+				$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastCmt}->{comment}),
 				$ccvUtil->formatLoc4UI($fileInfo->{info}, $GV->{WithLoc}),
-				$ccvUtil->getFileUIClz($latestRevFileInfo->{action}),
+				$ccvUtil->getFileUIClz($latestCmtFileInfo->{action}),
 				$fileInUI,
 				$ccvUtil->getFileTypeIndicatorHtml($fileType)
 			);
@@ -473,9 +472,9 @@ sub writeFileViewItems() {
 			$filesOut .= sprintf($GV->{EntryTpl}->{FileEntryTpl4BD}, 
 				$fileType,
 				$fileInfo->{info}->{revsCnt},
-				$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastRev}->{comment}),
+				$ccvUtil->replaceCharInComment($cmtsInfo->{$fileLastCmt}->{comment}),
 				$ccvUtil->formatLoc4UI($fileInfo->{info}, $GV->{WithLoc}),
-				$ccvUtil->getFileUIClz($latestRevFileInfo->{action}),
+				$ccvUtil->getFileUIClz($latestCmtFileInfo->{action}),
 				$fileInUI,
 				$ccvUtil->getFileTypeIndicatorHtml($fileType)
 			);
