@@ -3,9 +3,8 @@
 #
 
 setVersion() {
-	echo "Set new build no..."
-	sed -i -re "s|[0-9]{4,}|$VERSION|" VERSION
-	cvs ci -m "set new build version" VERSION
+	echo "Set version..."
+	echo $VERSION > VERSION
 }
 
 enterBuildWorkspace() {
@@ -18,14 +17,15 @@ leaveBuildWorkspace() {
 	cd ..
 }
 
-checkout() {
-	echo "Checkout files..."
-	cvs export -f -D "1/1/2018"  -d ccv cvschangeviewer
+clone() {
+	echo "clone ..."
+	git clone git@github.com:lilongen/statcode.git ccv
 }
 
 preparePackageSource() {
 	echo "Prepare package source files..."
 
+	rm -rf ccv/.git
 	rm -rf ccv/docs
 	
 	cp ccv/INSTALL.pl .
@@ -81,11 +81,12 @@ main() {
 	
 	setVersion
 	enterBuildWorkspace
-	checkout
+	clone
 	preparePackageSource
 	generatePackage
 	if [ $1 -gt 0 ]
 	then
+		echo 
 		uploadPackage
 	fi	
 	leaveBuildWorkspace

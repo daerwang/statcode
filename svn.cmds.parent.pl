@@ -55,7 +55,8 @@ sub main() {
 		if (defined($pid)) {
 			if ($pid == 0) {#child process
 				$GV->{dfSemaphore}->setval($i, 1);
-				system("bash $sh \"$GV->{DfSliceInfo}->{uid}\"  \"$GV->{DfSliceInfo}->{upw}\"");
+				#system("bash $sh \"$GV->{DfSliceInfo}->{uid}\"  $GV->{DfSliceInfo}->{upw}");
+				system("bash $sh");
 				$GV->{dfSemaphore}->setval($i, 2);
 				
 				exit 0;

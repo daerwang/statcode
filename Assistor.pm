@@ -971,7 +971,7 @@ sub get_co_svn_file_cmd() {
     my $file 		= shift;
     my $rev			= shift;
 	
-	return sprintf("svn cat --non-interactive --username \"%s\" --password \"%s\" -r %s \"%s\"",
+	return sprintf("svn cat --non-interactive --username \"%s\" --password '%s' -r %s \"%s\"",
 		$mInfo->{account_id},
 		$mInfo->{account_pw},
 		$rev,
@@ -986,7 +986,7 @@ sub get_df_svn_file_cmd() {
     my $rev			= shift;
     my $dfOpts		= shift;
     
-	return sprintf("svn diff %s --non-interactive --username \"%s\" --password \"%s\" -c %s \"%s\"",
+	return sprintf("svn diff %s --non-interactive --username \"%s\" --password '%s' -c %s \"%s\"",
 		$dfOpts,
 		$mInfo->{account_id},
 		$mInfo->{account_pw},

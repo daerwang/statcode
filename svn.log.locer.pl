@@ -225,14 +225,17 @@ sub getDfCmdTpl() {
     		$pms->{dfOpts}->{svn},
     		$GV->{ModuleUrl},
     		$GV->{DF_OUT_PLACEHOLDER}
-    	) 
-    	: 
-        sprintf('echo __ccv_svn_df_c_#REV# >> %s;svn diff %s --non-interactive --trust-server-cert --username "$1" --password "$2" -c "#REV#" "%s" >> %s', 
+    	)
+		:
+        sprintf('echo __ccv_svn_df_c_#REV# >> %s;svn diff %s --non-interactive --trust-server-cert --username "%s" --password \'%s\' -c "#REV#" "%s" >> %s', 
         	$GV->{DF_OUT_PLACEHOLDER},
         	$pms->{dfOpts}->{svn},
+			$GV->{ModuleInfo}->{account_id},
+			$GV->{ModuleInfo}->{account_pw},		
     		$GV->{ModuleUrl},
     		$GV->{DF_OUT_PLACEHOLDER}
-    	);
+    	);		
+
 }
 
 sub generateSvnCmdTasks() {
@@ -257,7 +260,7 @@ sub generateSvnCmdTasks() {
     		$GV->{ModuleUrl}
     	)
     	: 
-    	sprintf('svn export --non-interactive --trust-server-cert --username "%s" --password "%s" -r "%s" "%s"', 
+    	sprintf('svn export --non-interactive --trust-server-cert --username "%s" --password \'%s\' -r "%s" "%s"', 
     		$GV->{ModuleInfo}->{account_id},
     		$GV->{ModuleInfo}->{account_pw},
     		$descRevs->[$#{$descRevs}],

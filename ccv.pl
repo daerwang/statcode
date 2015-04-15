@@ -502,7 +502,7 @@ sub generateSvnModuleTasks($) {
 	    if ($ccvUtil->isAnonymousAccessSVN($moduleInfo)) {
 	        $taskrLog->{cmd} = "svn log --no-auth-cache --non-interactive --trust-server-cert -v $dateScale \"$svnModuleUrl\" > $logFile 2>&1";
 	    } else {
-    	    $taskrLog->{cmd} = "svn log --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password \"$moduleInfo->{account_pw}\" -v $dateScale \"$svnModuleUrl\" > $logFile 2>&1";
+    	    $taskrLog->{cmd} = "svn log --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password '$moduleInfo->{account_pw}' -v $dateScale \"$svnModuleUrl\" > $logFile 2>&1";
     	}
     	$taskrLog->{type} = "svn";
     	$taskrLog->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
@@ -548,7 +548,7 @@ sub generateSvnModuleTasks($) {
 		    if ($ccvUtil->isAnonymousAccessSVN($moduleInfo)) {
 		        $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert \"$svnModuleUrl\"";
 		    } else {
-	    	    $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password \"$moduleInfo->{account_pw}\" \"$svnModuleUrl\"";
+	    	    $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password '$moduleInfo->{account_pw}' \"$svnModuleUrl\"";
 	    	}
 	    	$taskCoHead->{type} = "svn";
 	    	$taskCoHead->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
@@ -614,7 +614,7 @@ sub generateSvnModuleTasks($) {
 	    if ($ccvUtil->isAnonymousAccessSVN($moduleInfo)) {
 	        $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert \"$svnModuleUrl\"";
 	    } else {
-    	    $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password \"$moduleInfo->{account_pw}\" \"$svnModuleUrl\"";
+    	    $taskCoHead->{cmd} = "svn export --no-auth-cache --non-interactive --trust-server-cert --username \"$moduleInfo->{account_id}\" --password '$moduleInfo->{account_pw}' \"$svnModuleUrl\"";
     	}
     	$taskCoHead->{type} = "svn";
     	$taskCoHead->{mode} = $moduleInfo->{mode};#file, svn, svn+ssh, http, https
@@ -721,7 +721,7 @@ sub constructSvnDiffCmd($$) {
 		if ($pms->{rd1b} eq "OnTrunk" || $pms->{rd1b} eq "OnBranch") {
 			$url1 = ($pms->{rd1b} eq "OnTrunk") ? $assistor->get_svn_module_url($moduleInfo, "", "trunk") : $assistor->get_svn_module_url($moduleInfo, $pms->{bb}, "branch");
 			#-r%r1:%r2
-			$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password \"%s\" -r \"%s:%s\" \"%s\" > \"%s\" 2>&1",
+			$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password '%s' -r \"%s:%s\" \"%s\" > \"%s\" 2>&1",
 				$pms->{dfOpts}->{svn},
 				$moduleInfo->{account_id},
 				$moduleInfo->{account_pw},
@@ -747,7 +747,7 @@ sub constructSvnDiffCmd($$) {
 				$url2 = $assistor->get_svn_module_url($moduleInfo, $pms->{r2}, "tag");
 			}
 			
-			$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password \"%s\" \"%s\" \"%s\"> \"%s\" 2>&1",
+			$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password '%s' \"%s\" \"%s\"> \"%s\" 2>&1",
 				$pms->{dfOpts}->{svn},
 				$moduleInfo->{account_id},
 				$moduleInfo->{account_pw},
@@ -764,7 +764,7 @@ sub constructSvnDiffCmd($$) {
 		}
 		
 		#-r{2010-12-1}:{2010-10-1}
-		$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password \"%s\" -r \"{%s}:{%s}\" \"%s\" > \"%s\" 2>&1",
+		$svnDfCmd = sprintf("svn diff %s --no-auth-cache --non-interactive --trust-server-cert --username \"%s\" --password '%s' -r \"{%s}:{%s}\" \"%s\" > \"%s\" 2>&1",
 			$pms->{dfOpts}->{svn},
 			$moduleInfo->{account_id},
 			$moduleInfo->{account_pw},
