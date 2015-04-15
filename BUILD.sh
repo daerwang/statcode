@@ -2,11 +2,6 @@
 # author: lilong'en(lilongen@163.com)
 #
 
-setVersion() {
-	echo "Set version..."
-	echo $VERSION > VERSION
-}
-
 enterBuildWorkspace() {
 	rm -rf _TMP_
 	mkdir _TMP_
@@ -24,13 +19,13 @@ clone() {
 
 preparePackageSource() {
 	echo "Prepare package source files..."
-	setVersion
-
+	
 	rm -rf ccv/.git
 	rm -rf ccv/docs
 	
 	cp ccv/INSTALL.pl .
 	cp ccv/README .
+	echo $VERSION > VERSION
 }
 
 generatePackage() {
@@ -41,7 +36,7 @@ generatePackage() {
 	declare -a cmds
 	cmds=(
 		"tar -czvf $gz_file ccv/"
-		"tar -czvf $up_file INSTALL.pl README $gz_file"
+		"tar -czvf $up_file INSTALL.pl README VERSION $gz_file"
 	)
 	
 	index=0
