@@ -78,16 +78,14 @@ main() {
 	clone
 	preparePackageSource
 	generatePackage
-	if [ $1 -gt 0 ]
-	then
-		echo 
-		uploadPackage
-	fi	
-	leaveBuildWorkspace
-	
 
-	if [ $1 -gt 1 ]
-	then
+	if [ $1 -gt 0 ]; then
+		uploadPackage
+	fi
+
+	leaveBuildWorkspace
+
+	if [ $1 -gt 1 ]; then
 		uploadManual
 	fi
 		
