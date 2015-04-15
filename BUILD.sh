@@ -24,13 +24,13 @@ clone() {
 
 preparePackageSource() {
 	echo "Prepare package source files..."
+	setVersion
 
 	rm -rf ccv/.git
 	rm -rf ccv/docs
 	
 	cp ccv/INSTALL.pl .
 	cp ccv/README .
-	cp ccv/VERSION .
 }
 
 generatePackage() {
@@ -79,7 +79,6 @@ uploadManual() {
 main() {
 	echo "Start a new build..."
 	
-	setVersion
 	enterBuildWorkspace
 	clone
 	preparePackageSource
